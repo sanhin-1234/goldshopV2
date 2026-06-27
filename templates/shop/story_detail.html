@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ story.title }} | GY JEWELRY</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body class="story-detail-page">
+
+{% include "shop/header.html" %}
+
+<main class="story-detail-main">
+
+    <section class="story-detail-hero">
+
+        <a href="/story" class="story-back">
+            ← STORY
+        </a>
+
+        <p class="story-detail-keyword">
+            {{ story.keyword }}
+        </p>
+
+        <h1>
+            {{ story.title }}
+        </h1>
+
+        <h2>
+            {{ story.subtitle }}
+        </h2>
+
+        <p>
+            {{ story.description }}
+        </p>
+
+    </section>
+
+    <section class="story-detail-body">
+
+        <div class="story-detail-text">
+
+            <p class="story-label">THE MEANING</p>
+
+            <h3>
+                {{ story.title }}이 담고 있는 이야기
+            </h3>
+
+            <p>
+                {{ story.message }}
+            </p>
+
+            <p>
+                이 스토리는 특정 제품 하나를 설명하기보다,
+                누군가에게 전하고 싶은 마음과 오래 간직하고 싶은 순간을 기준으로
+                주얼리를 선택할 수 있도록 돕는 이야기입니다.
+            </p>
+
+        </div>
+
+        <div class="story-detail-symbol">
+
+            <div class="symbol-ring ring-a"></div>
+            <div class="symbol-ring ring-b"></div>
+            <div class="symbol-ring ring-c"></div>
+            <div class="symbol-ring ring-d"></div>
+
+            <span>
+                {{ story.title }}
+            </span>
+
+        </div>
+
+    </section>
+
+    <section class="story-detail-action">
+
+        <p>
+            이 이야기에 어울리는 주얼리를 만나보세요.
+        </p>
+
+        <a href="/shop">
+            SHOP COLLECTION
+        </a>
+
+    </section>
+
+</main>
+
+</body>
+</html>

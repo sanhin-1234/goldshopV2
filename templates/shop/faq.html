@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ | GY JEWELRY</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/faq.css') }}">
+</head>
+
+<body class="faq-page-body">
+
+{% include "shop/header.html" %}
+
+<main class="faq-page">
+
+    <!-- HERO -->
+    <section class="faq-hero">
+        <div class="faq-hero-inner">
+            <p class="faq-hero-label">FAQ</p>
+
+            <h1>
+                자주 묻는 질문
+            </h1>
+
+            <span>
+                주문, 배송, 교환, 상품 관리까지<br>
+                GY JEWELRY 이용 중 자주 궁금해하시는 내용을 모았습니다.
+            </span>
+        </div>
+    </section>
+
+    <!-- FAQ CONTENT -->
+    <section class="faq-content">
+
+        <!-- CATEGORY FILTER -->
+        <div class="faq-category-filter">
+            <button type="button" class="faq-filter-btn is-active" data-filter="ALL">
+                전체
+            </button>
+            <button type="button" class="faq-filter-btn" data-filter="ORDER">
+                주문
+            </button>
+            <button type="button" class="faq-filter-btn" data-filter="DELIVERY">
+                배송
+            </button>
+            <button type="button" class="faq-filter-btn" data-filter="EXCHANGE">
+                교환 / 반품
+            </button>
+            <button type="button" class="faq-filter-btn" data-filter="PRODUCT">
+                상품 관리
+            </button>
+        </div>
+
+        <!-- FAQ LIST -->
+        <div class="faq-list">
+
+            {% if faqs %}
+                {% for faq in faqs %}
+                <article class="faq-item" data-category="{{ faq.category }}">
+                    <button type="button" class="faq-question">
+                        <span class="faq-badge">
+                            {% if faq.category == 'ORDER' %}
+                                주문
+                            {% elif faq.category == 'DELIVERY' %}
+                                배송
+                            {% elif faq.category == 'EXCHANGE' %}
+                                교환 / 반품
+                            {% elif faq.category == 'PRODUCT' %}
+                                상품 관리
+                            {% else %}
+                                기타
+                            {% endif %}
+                        </span>
+
+                        <strong>{{ faq.question }}</strong>
+
+                        <span class="faq-plus">+</span>
+                    </button>
+
+                    <div class="faq-answer">
+                        <p>{{ faq.answer }}</p>
+                    </div>
+                </article>
+                {% endfor %}
+            {% else %}
+                <div class="faq-empty">
+                    아직 등록된 FAQ가 없습니다.
+                </div>
+            {% endif %}
+
+        </div>
+
+        <div class="faq-bottom-action">
+            <a href="/customer">고객센터로 돌아가기</a>
+        </div>
+
+    </section>
+
+</main>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const filterButtons = document.querySelectorAll(".faq-filter-btn");
+    const faqItems = document.querySelectorAll(".faq-item");
+    const questions = document.querySelectorAll(".faq-question");
+
+    filterButtons.forEach(function (button) {
+        button.addEventListener("click", function () {
+            const filter = button.dataset.filter;
+
+            filterButtons.forEach(function (btn) {
+                btn.classList.remove("is-active");
+            });
+
+            button.classList.add("is-active");
+
+            faqItems.forEach(function (item) {
+                const category = item.dataset.category;
+
+                if (filter === "ALL" || category === filter) {
+                    item.style.display = "block";
+                } else {
+                    item.style.display = "none";
+                    item.classList.remove("is-open");
+                }
+            });
+        });
+    });
+
+    questions.forEach(function (question) {
+        question.addEventListener("click", function () {
+            const item = question.closest(".faq-item");
+
+            faqItems.forEach(function (otherItem) {
+                if (otherItem !== item) {
+                    otherItem.classList.remove("is-open");
+                }
+            });
+
+            item.classList.toggle("is-open");
+        });
+    });
+});
+</script>
+
+</body>
+</html>

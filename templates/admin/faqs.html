@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>FAQ 관리 | GY JEWELRY ADMIN</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<main class="admin-faq-page">
+
+    <section class="admin-faq-hero">
+        <p>GY JEWELRY ADMIN</p>
+        <h1>FAQ 관리</h1>
+        <span>고객이 자주 묻는 질문을 등록하고 관리합니다.</span>
+    </section>
+
+    <section class="admin-faq-layout">
+
+        <!-- FAQ 추가 -->
+        <aside class="admin-faq-form-card">
+
+            <h2>FAQ 추가</h2>
+
+            <form method="POST" action="{{ url_for('admin.admin_add_faq') }}">
+
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+
+                <label>카테고리</label>
+                <select name="category" required>
+                    {% for key, label in categories.items() %}
+                        <option value="{{ key }}">{{ label }}</option>
+                    {% endfor %}
+                </select>
+
+                <label>질문</label>
+                <input type="text" name="question" required>
+
+                <label>답변</label>
+                <textarea name="answer" rows="8" required></textarea>
+
+                <label>정렬 순서</label>
+                <input type="number" name="sort_order" value="0" min="0">
+
+                <label class="admin-faq-check">
+                    <input type="checkbox" name="is_active" value="1" checked>
+                    화면에 노출
+                </label>
+
+                <button type="submit">FAQ 추가</button>
+
+            </form>
+
+        </aside>
+
+        <!-- FAQ 목록 -->
+        <section class="admin-faq-list-card">
+
+            <div class="admin-faq-list-head">
+                <h2>FAQ 목록</h2>
+                <span>총 {{ faqs|length }}개</span>
+            </div>
+
+            {% if faqs %}
+
+                <div class="admin-faq-list">
+
+                    {% for faq in faqs %}
+                        <article class="admin-faq-item">
+
+                            <form method="POST" action="{{ url_for('admin.admin_update_faq', faq_id=faq.id) }}">
+
+                                <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+
+                                <div class="admin-faq-top">
+                                    <span>#{{ faq.id }}</span>
+
+                                    {% if faq.is_active %}
+                                        <em class="is-active">노출중</em>
+                                    {% else %}
+                                        <em class="is-hidden">숨김</em>
+                                    {% endif %}
+                                </div>
+
+                                <div class="admin-faq-edit-grid">
+
+                                    <div>
+                                        <label>카테고리</label>
+                                        <select name="category" required>
+                                            {% for key, label in categories.items() %}
+                                                <option value="{{ key }}" {% if faq.category == key %}selected{% endif %}>
+                                                    {{ label }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+
+                                    <div>
+                                        <label>정렬</label>
+                                        <input type="number" name="sort_order" value="{{ faq.sort_order }}" min="0">
+                                    </div>
+
+                                </div>
+
+                                <label>질문</label>
+                                <input type="text" name="question" value="{{ faq.question }}" required>
+
+                                <label>답변</label>
+                                <textarea name="answer" rows="6" required>{{ faq.answer }}</textarea>
+
+                                <label class="admin-faq-check">
+                                    <input type="checkbox" name="is_active" value="1" {% if faq.is_active %}checked{% endif %}>
+                                    화면에 노출
+                                </label>
+
+                                <div class="admin-faq-actions">
+                                    <button type="submit">수정 저장</button>
+                                </div>
+
+                            </form>
+
+                            <form
+                                method="POST"
+                                action="{{ url_for('admin.admin_delete_faq', faq_id=faq.id) }}"
+                                onsubmit="return confirm('이 FAQ를 삭제할까요?');"
+                            >
+                                <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="delete-btn">삭제</button>
+                            </form>
+
+                        </article>
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <div class="admin-faq-empty">
+                    아직 등록된 FAQ가 없습니다.
+                </div>
+
+            {% endif %}
+
+        </section>
+
+    </section>
+
+</main>
+
+</body>
+</html>

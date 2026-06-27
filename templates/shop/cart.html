@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>장바구니 | GY JEWELRY</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body class="cart-page-body">
+
+{% include "shop/header.html" %}
+
+<main class="cart-page">
+
+    <section class="cart-header">
+        <p class="cart-label">SHOPPING BAG</p>
+        <h1>장바구니</h1>
+        <p>선택하신 상품과 옵션을 확인해 주세요.</p>
+    </section>
+
+    <section class="cart-action-row">
+
+        <button type="button"
+                class="continue-shopping-btn"
+                id="continueShoppingBtn"
+                data-back-url="{{ back_url or '/shop' }}">
+            <span class="btn-arrow">←</span>
+            <span>쇼핑 계속하기</span>
+        </button>
+
+        {% if cart_items %}
+            <button type="button"
+                    class="clear-cart-btn"
+                    id="clearCartBtn">
+                장바구니 비우기
+            </button>
+        {% endif %}
+
+    </section>
+
+    {% if cart_items %}
+
+        <section class="cart-layout">
+
+            <section class="cart-list">
+
+                {% for item in cart_items %}
+
+                    <article class="cart-item" data-price="{{ item['price'] }}">
+
+                        <div class="cart-image-area">
+                            {% if item['image'] and item['image']|length > 0 %}
+                                <img src="/uploads/{{ item['image'] }}" alt="{{ item['name'] }}">
+                            {% else %}
+                                <div class="cart-no-image">
+                                    이미지 없음
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="cart-info-area">
+
+                            <h2>{{ item['name'] }}</h2>
+
+                            {% if item.get("option_text") %}
+                                <p class="cart-option-text">
+                                    {{ item.get("option_text") }}
+                                </p>
+                            {% endif %}
+
+                            <p class="cart-price">
+                                {{ "{:,}".format(item['price']) }}원
+                            </p>
+
+                        </div>
+
+                        <div class="cart-quantity-area">
+
+                            <p class="cart-small-label">수량</p>
+
+                            <div class="quantity-box">
+                                <button type="button" class="qty-minus" data-key="{{ item['cart_key'] }}">−</button>
+
+                                <span class="qty">{{ item['quantity'] }}</span>
+
+                                <button type="button" class="qty-plus" data-key="{{ item['cart_key'] }}">＋</button>
+                            </div>
+
+                        </div>
+
+                        <div class="cart-total-area">
+
+                            <p class="cart-small-label">합계</p>
+
+                            <strong>
+                                <span class="item-total">
+                                    {{ "{:,}".format(item['price'] * item['quantity']) }}
+                                </span>원
+                            </strong>
+
+                            <button type="button"
+                                    class="delete-item"
+                                    data-key="{{ item['cart_key'] }}">
+                                삭제
+                            </button>
+
+                        </div>
+
+                    </article>
+
+                {% endfor %}
+
+            </section>
+
+        </section>
+
+        <section class="cart-summary-box">
+
+            <div class="cart-summary-info">
+
+                <p class="cart-summary-label">
+                    ORDER SUMMARY
+                </p>
+
+                <div class="cart-summary-row">
+                    <span>상품 합계</span>
+                    <strong>
+                        <span id="total-price">0</span>원
+                    </strong>
+                </div>
+
+                <div class="cart-summary-row">
+                    <span>배송비</span>
+                    <strong>무료</strong>
+                </div>
+
+                <div class="cart-summary-row cart-summary-total">
+                    <span>총 결제 예정 금액</span>
+                    <strong>
+                        <span id="final-price">0</span>원
+                    </strong>
+                </div>
+
+            </div>
+
+            <div class="cart-summary-action">
+                <a href="/order" class="order-btn">
+                    주문하기
+                </a>
+            </div>
+
+        </section>
+
+    {% else %}
+
+        <section class="empty-cart">
+            <h2>장바구니가 비어 있습니다</h2>
+            <p>마음에 드는 상품을 담아보세요.</p>
+            <a href="/shop">SHOP COLLECTION</a>
+        </section>
+
+    {% endif %}
+
+</main>
+
+<div class="gy-confirm-overlay" id="gyConfirmOverlay">
+
+    <div class="gy-confirm-box">
+
+        <p class="gy-confirm-label">
+            GY JEWELRY
+        </p>
+
+        <h2 id="gyConfirmTitle">
+            확인이 필요합니다
+        </h2>
+
+        <p id="gyConfirmMessage">
+            진행하시겠습니까?
+        </p>
+
+        <div class="gy-confirm-actions">
+            <button type="button" class="gy-confirm-cancel" id="gyConfirmCancel">
+                취소
+            </button>
+
+            <button type="button" class="gy-confirm-ok" id="gyConfirmOk">
+                확인
+            </button>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+    const csrfToken = "{{ csrf_token() }}";
+
+    function gyConfirm(message, title = "확인") {
+        return new Promise((resolve) => {
+            const overlay = document.getElementById("gyConfirmOverlay");
+            const titleEl = document.getElementById("gyConfirmTitle");
+            const messageEl = document.getElementById("gyConfirmMessage");
+            const okBtn = document.getElementById("gyConfirmOk");
+            const cancelBtn = document.getElementById("gyConfirmCancel");
+
+            titleEl.textContent = title;
+            messageEl.textContent = message;
+
+            overlay.classList.add("show");
+
+            function close(result) {
+                overlay.classList.remove("show");
+
+                okBtn.removeEventListener("click", onOk);
+                cancelBtn.removeEventListener("click", onCancel);
+                overlay.removeEventListener("click", onOverlay);
+
+                resolve(result);
+            }
+
+            function onOk() {
+                close(true);
+            }
+
+            function onCancel() {
+                close(false);
+            }
+
+            function onOverlay(e) {
+                if (e.target === overlay) {
+                    close(false);
+                }
+            }
+
+            okBtn.addEventListener("click", onOk);
+            cancelBtn.addEventListener("click", onCancel);
+            overlay.addEventListener("click", onOverlay);
+        });
+    }
+
+    function calculateTotal() {
+        const totalPriceEl = document.getElementById("total-price");
+        const finalPriceEl = document.getElementById("final-price");
+
+        let total = 0;
+
+        document.querySelectorAll(".cart-item").forEach(item => {
+            const price = parseInt(item.dataset.price);
+            const qty = parseInt(item.querySelector(".qty").innerText);
+
+            total += price * qty;
+        });
+
+        if (totalPriceEl) {
+            totalPriceEl.innerText = total.toLocaleString();
+        }
+
+        if (finalPriceEl) {
+            finalPriceEl.innerText = total.toLocaleString();
+        }
+    }
+
+    function updateItemTotal(item) {
+        const price = parseInt(item.dataset.price);
+        const qty = parseInt(item.querySelector(".qty").innerText);
+        const total = price * qty;
+
+        item.querySelector(".item-total").innerText = total.toLocaleString();
+    }
+
+    document.querySelectorAll(".delete-item").forEach(btn => {
+
+        btn.addEventListener("click", async () => {
+
+            const confirmed = await gyConfirm(
+                "선택한 상품을 장바구니에서 삭제하시겠습니까?",
+                "상품 삭제"
+            );
+
+            if (!confirmed) {
+                return;
+            }
+
+            await fetch("/cart/remove", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-Token": csrfToken
+                },
+                body: JSON.stringify({
+                    cart_key: btn.dataset.key
+                })
+            });
+
+            btn.closest(".cart-item").remove();
+
+            calculateTotal();
+
+            if (document.querySelectorAll(".cart-item").length === 0) {
+                location.reload();
+            }
+
+        });
+
+    });
+
+    const clearCartBtn = document.getElementById("clearCartBtn");
+
+    if (clearCartBtn) {
+        clearCartBtn.addEventListener("click", async () => {
+
+            const confirmed = await gyConfirm(
+                "장바구니에 담긴 모든 상품을 비우시겠습니까?",
+                "장바구니 비우기"
+            );
+
+            if (!confirmed) {
+                return;
+            }
+
+            await fetch("/cart/clear", {
+                method: "POST",
+                headers: {
+                    "X-CSRF-Token": csrfToken
+                }
+            });
+
+            location.reload();
+
+        });
+    }
+
+    document.querySelectorAll(".qty-plus").forEach(btn => {
+
+        btn.addEventListener("click", async () => {
+
+            await fetch("/cart/update", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-Token": csrfToken
+                },
+                body: JSON.stringify({
+                    cart_key: btn.dataset.key,
+                    action: "plus"
+                })
+            });
+
+            const item = btn.closest(".cart-item");
+            const qtyEl = item.querySelector(".qty");
+
+            qtyEl.innerText = parseInt(qtyEl.innerText) + 1;
+
+            updateItemTotal(item);
+            calculateTotal();
+
+        });
+
+    });
+
+    document.querySelectorAll(".qty-minus").forEach(btn => {
+
+        btn.addEventListener("click", async () => {
+
+            const item = btn.closest(".cart-item");
+            const qtyEl = item.querySelector(".qty");
+
+            let qty = parseInt(qtyEl.innerText);
+
+            if (qty <= 1) {
+                return;
+            }
+
+            await fetch("/cart/update", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-Token": csrfToken
+                },
+                body: JSON.stringify({
+                    cart_key: btn.dataset.key,
+                    action: "minus"
+                })
+            });
+            qtyEl.innerText = qty - 1;
+
+            updateItemTotal(item);
+            calculateTotal();
+
+        });
+
+    });
+
+    const continueShoppingBtn = document.getElementById("continueShoppingBtn");
+
+    if (continueShoppingBtn) {
+        continueShoppingBtn.addEventListener("click", function () {
+            let backUrl = this.dataset.backUrl;
+
+            if (!backUrl || !backUrl.startsWith("/") || backUrl.startsWith("//")) {
+                backUrl = "/shop";
+            }
+
+            window.location.href = backUrl;
+        });
+    }
+
+    calculateTotal();
+
+});
+</script>
+
+</body>
+</html>

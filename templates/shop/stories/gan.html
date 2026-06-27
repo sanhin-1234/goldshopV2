@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>간 ; 결 | GY JEWELRY</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/stories/gan.css') }}">
+</head>
+
+<body class="gan-story-body">
+
+{% include "shop/header.html" %}
+
+<main class="gan-page">
+
+    <a href="/story" class="gan-back">
+        ← 연으로 돌아가기
+    </a>
+
+    <!-- HERO -->
+    <section class="gan-hero gan-reveal">
+        <p class="gan-kicker">GY JEWELRY STORY 05</p>
+
+        <h1>간 ; 결</h1>
+
+        <p class="gan-subtitle">
+            사이와 사이에 머무는 마음
+        </p>
+    </section>
+
+    <!-- INTRO -->
+    <section class="gan-intro gan-reveal">
+        <p>
+            마음은 언제나 가까움으로만 이어지지 않습니다.<br>
+            때로는 거리 속에서 더 깊어지고,<br>
+            말과 말 사이의 침묵 속에서<br>
+            가장 선명한 감정이 남습니다.
+        </p>
+    </section>
+
+    <!-- SYMBOL -->
+    <section class="gan-symbol-section gan-reveal">
+        <div class="gan-symbol">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+
+        <div class="gan-symbol-text">
+            <p class="gan-kicker">THE SHAPE OF BETWEEN</p>
+            <h2>
+                떨어져 있어도<br>
+                마음은 서로를 향합니다.
+            </h2>
+        </div>
+    </section>
+
+    <!-- STORY 01 -->
+    <section class="gan-chapter gan-reveal">
+        <div class="gan-chapter-num">01</div>
+
+        <div class="gan-chapter-text">
+            <p class="gan-small">첫 번째 사이</p>
+            <h2>말과 침묵 사이</h2>
+            <p>
+                모든 마음이 말로 전해지는 것은 아닙니다.<br>
+                어떤 감정은 멈춘 대화 속에 남고,<br>
+                어떤 진심은 쉽게 꺼내지 못한 채<br>
+                조용히 서로의 곁을 맴돕니다.
+            </p>
+        </div>
+    </section>
+
+    <!-- STORY 02 -->
+    <section class="gan-chapter gan-chapter-dark gan-reveal">
+        <div class="gan-chapter-num">02</div>
+
+        <div class="gan-chapter-text">
+            <p class="gan-small">두 번째 사이</p>
+            <h2>거리의 온도</h2>
+            <p>
+                가까이 있어야만 이어지는 것은 아닙니다.<br>
+                멀리 떨어진 시간 속에서도<br>
+                마음은 자신만의 속도로 움직이고,<br>
+                보이지 않는 곳에서 서로를 기억합니다.
+            </p>
+        </div>
+    </section>
+
+    <!-- STORY 03 -->
+    <section class="gan-chapter gan-reveal">
+        <div class="gan-chapter-num">03</div>
+
+        <div class="gan-chapter-text">
+            <p class="gan-small">세 번째 사이</p>
+            <h2>남겨진 여백</h2>
+            <p>
+                여백은 비어 있음이 아닙니다.<br>
+                아직 말하지 못한 마음이 머무는 자리,<br>
+                다시 이어질 시간을 기다리는 공간.<br>
+                그 고요한 간격이 간 ; 결입니다.
+            </p>
+        </div>
+    </section>
+
+    <!-- PHILOSOPHY -->
+    <section class="gan-meaning gan-reveal">
+        <p class="gan-kicker">THE MEANING</p>
+
+        <h2>
+            간 ; 결은 마음과 마음 사이에 남은<br>
+            조용한 여백을 간직하는 방식입니다.
+        </h2>
+
+        <p>
+            GY JEWELRY는 닿지 못한 마음,<br>
+            그러나 끝내 서로를 향해 있던 감정을<br>
+            하나의 균형 잡힌 형태로 남깁니다.
+        </p>
+    </section>
+
+    <!-- PRODUCTS -->
+    <section class="gan-products gan-reveal">
+        <p class="gan-kicker">REPRESENTED BY</p>
+        <h2>이 사이를 닮은 상품</h2>
+
+        <div class="gan-product-grid">
+            {% for p in products %}
+            <a href="/product/{{ p['id'] }}" class="gan-product-card">
+                {% if p['image'] %}
+                    <img src="/uploads/{{ p['image'] }}" alt="{{ p['name'] }}">
+                {% endif %}
+
+                <h3>{{ p['name'] }}</h3>
+                <p>{{ "{:,}".format(p['price']) }}원</p>
+            </a>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="gan-bottom">
+        <a href="/story">
+            다른 연 둘러보기
+        </a>
+    </section>
+
+</main>
+
+<script>
+const ganRevealItems = document.querySelectorAll(".gan-reveal");
+
+const ganObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+        }
+    });
+}, {
+    threshold: 0.18
+});
+
+ganRevealItems.forEach((item) => {
+    ganObserver.observe(item);
+});
+</script>
+
+</body>
+</html>

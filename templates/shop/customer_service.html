@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Service | GY JEWELRY</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/customer_service.css') }}">
+</head>
+
+<body class="cs-page-body">
+
+{% include "shop/header.html" %}
+
+<main class="cs-page">
+
+    <!-- HERO -->
+    <section class="cs-hero">
+        <div class="cs-hero-inner">
+            <p>CUSTOMER SERVICE</p>
+
+            <h1>
+                당신의 순간이<br>
+                더 편안하게 빛날 수 있도록.
+            </h1>
+
+            <span>
+                주문, 배송, 교환, 상품 상담까지  
+                GY JEWELRY가 필요한 안내를 차분히 도와드립니다.
+            </span>
+        </div>
+    </section>
+
+    <!-- QUICK HELP -->
+    <section class="cs-quick-section">
+
+        <div class="cs-section-head">
+            <p>QUICK HELP</p>
+            <h2>무엇을 도와드릴까요?</h2>
+        </div>
+
+        <div class="cs-quick-grid">
+
+            <article class="cs-quick-card">
+                <span>01</span>
+                <h3>주문 / 배송</h3>
+                <p>
+                    주문 내역, 배송 상태, 배송지 정보 확인이 필요하신가요?
+                </p>
+                <a href="/mypage">주문 내역 보기</a>
+            </article>
+
+            <article class="cs-quick-card">
+                <span>02</span>
+                <h3>교환 / 반품</h3>
+                <p>
+                    상품 수령 후 교환 또는 반품이 필요한 경우 안내를 확인해주세요.
+                </p>
+                <a href="/faq">FAQ 확인하기</a>
+            </article>
+
+            <article class="cs-quick-card">
+                <span>03</span>
+                <h3>회원 / 결제</h3>
+                <p>
+                    로그인, 회원가입, 결제 관련 문의를 확인할 수 있습니다.
+                </p>
+                <a href="/login">로그인하기</a>
+            </article>
+
+            <article class="cs-quick-card">
+                <span>04</span>
+                <h3>상품 상담</h3>
+                <p>
+                    사이즈, 소재, 관리 방법 등 상품과 관련된 상담을 도와드립니다.
+                </p>
+                <a href="#contact">문의 안내 보기</a>
+            </article>
+
+        </div>
+
+    </section>
+
+    <!-- FAQ -->
+    <section class="cs-faq-section" id="faq">
+
+        <div class="cs-section-head">
+            <p>FAQ</p>
+            <h2>자주 묻는 질문</h2>
+        </div>
+
+        <div class="cs-faq-list">
+
+            <details class="cs-faq-item">
+                <summary>
+                    배송은 얼마나 걸리나요?
+                    <span></span>
+                </summary>
+                <p>
+                    일반 상품은 결제 완료 후 보통 2~5일 이내 출고됩니다.
+                    제작 상품이나 주문량이 많은 기간에는 일정이 조금 더 소요될 수 있습니다.
+                </p>
+            </details>
+
+            <details class="cs-faq-item">
+                <summary>
+                    교환이나 반품은 어떻게 하나요?
+                    <span></span>
+                </summary>
+                <p>
+                    상품 수령 후 7일 이내에 교환/반품 문의가 가능합니다.
+                    단, 착용 흔적이 있거나 고객 요청에 따라 제작된 상품은 제한될 수 있습니다.
+                </p>
+            </details>
+
+            <details class="cs-faq-item">
+                <summary>
+                    주얼리 관리는 어떻게 해야 하나요?
+                    <span></span>
+                </summary>
+                <p>
+                    착용 후에는 부드러운 천으로 닦아주시고, 습기와 화장품, 향수에 오래 노출되지 않도록 보관해주세요.
+                    개별 파우치에 보관하면 스크래치를 줄일 수 있습니다.
+                </p>
+            </details>
+
+            <details class="cs-faq-item">
+                <summary>
+                    주문 후 배송지를 변경할 수 있나요?
+                    <span></span>
+                </summary>
+                <p>
+                    상품 출고 전에는 배송지 변경이 가능합니다.
+                    이미 배송이 시작된 경우에는 변경이 어려울 수 있습니다.
+                </p>
+            </details>
+
+            <details class="cs-faq-item">
+                <summary>
+                    비회원도 주문할 수 있나요?
+                    <span></span>
+                </summary>
+                <p>
+                    현재는 회원 주문을 기준으로 운영됩니다.
+                    주문 내역 확인과 배송 조회를 위해 회원가입 후 이용해주세요.
+                </p>
+            </details>
+
+        </div>
+
+        <div class="cs-faq-more">
+            <a href="/faq">전체 FAQ 보기</a>
+        </div>
+
+    </section>
+
+    <!-- CONTACT -->
+    <section class="cs-contact-section" id="contact">
+
+        <div class="cs-contact-box">
+
+            <div class="cs-contact-text">
+                <p>CONTACT</p>
+
+                <h2>
+                    더 자세한 도움이<br>
+                    필요하신가요?
+                </h2>
+
+                <span>
+                    문의하실 주문 번호, 상품명, 상담 내용을 함께 준비해주시면
+                    더 빠르고 정확하게 안내드릴 수 있습니다.
+                </span>
+            </div>
+
+            <div class="cs-contact-info">
+
+                <div>
+                    <strong>상담 시간</strong>
+                    <span>MON - FRI / 10:00 - 17:00</span>
+                </div>
+
+                <div>
+                    <strong>점심 시간</strong>
+                    <span>12:00 - 13:00</span>
+                </div>
+
+                <div>
+                    <strong>휴무</strong>
+                    <span>SAT, SUN, HOLIDAY</span>
+                </div>
+
+                <div>
+                    <strong>문의 준비중</strong>
+                    <span>카카오 상담 / 1:1 문의 기능은 추후 연결 예정</span>
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- ENDING -->
+    <section class="cs-ending">
+
+        <p>GY JEWELRY SERVICE</p>
+
+        <h2>
+            작은 문의도<br>
+            소중한 경험의 일부입니다.
+        </h2>
+
+        <div class="cs-ending-actions">
+            <a href="/mypage">MY PAGE</a>
+            <a href="/shop">SHOP NOW</a>
+        </div>
+
+    </section>
+
+</main>
+
+</body>
+</html>

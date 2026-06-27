@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Collection | GY JEWELRY</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body class="new-page">
+
+{% include "shop/header.html" %}
+
+<main class="new-page">
+
+    <!-- NEW HERO -->
+    <section class="new-hero-section">
+
+        <div class="new-hero-media">
+            <div class="new-hero-placeholder">
+                NEW COLLECTION IMAGE / VIDEO
+            </div>
+
+            <!-- 나중에 이미지 넣을 때는 위 div 대신 아래 사용 -->
+            <!--
+            <img src="{{ url_for('static', filename='images/new-hero.jpg') }}" alt="NEW Collection">
+            -->
+
+            <!-- 나중에 영상 넣을 때는 아래 사용 -->
+            <!--
+            <video autoplay muted loop playsinline>
+                <source src="{{ url_for('static', filename='videos/new-hero.mp4') }}" type="video/mp4">
+            </video>
+            -->
+        </div>
+
+        <div class="new-hero-copy">
+            <p>NEW COLLECTION</p>
+
+            <h1>
+                The New<br>
+                Shape of Light
+            </h1>
+
+            <span>
+                GY JEWELRY가 새롭게 제안하는 빛의 형태.
+                매일의 순간을 더 섬세하게 완성하는 새로운 컬렉션을 만나보세요.
+            </span>
+
+            <a href="#newProducts">
+                VIEW COLLECTION
+            </a>
+        </div>
+
+    </section>
+
+    <section class="new-intro">
+        <p class="new-intro-label">JUST ARRIVED</p>
+        <h2>새로운 계절, 새로운 빛</h2>
+        <p>
+            GY JEWELRY가 새롭게 제안하는 주얼리들을 한 줄의 이야기처럼 소개합니다.
+            각각의 상품은 이미지와 설명이 크게 배치되어, 단순한 목록이 아닌 하나의 캠페인처럼 보여집니다.
+        </p>
+    </section>
+
+    {% if products %}
+
+        <section class="new-promo-products" id="newProducts">
+
+            {% for p in products %}
+
+                {% set back_url = request.full_path if request.query_string else request.path %}
+
+                <article class="new-promo-item {% if loop.index is even %}text-right{% else %}text-left{% endif %}">
+
+                    <button
+                        type="button"
+                        class="wishlist-btn {% if p['id'] in wished_product_ids %}active{% endif %}"
+                        data-product-id="{{ p['id'] }}"
+                        aria-label="위시리스트"
+                    >
+                        {% if p['id'] in wished_product_ids %}
+                            ♥
+                        {% else %}
+                            ♡
+                        {% endif %}
+                    </button>
+
+                    <a href="/product/{{ p['id'] }}?back={{ back_url|urlencode }}"
+                    class="new-promo-image-link">
+
+                        {% if p['new_banner_image'] %}
+                            <img src="/uploads/{{ p['new_banner_image'] }}"
+                                alt="{{ p['name'] }}">
+                        {% else %}
+                            <div class="new-promo-no-image">
+                                NEW BANNER IMAGE
+                            </div>
+                        {% endif %}
+
+                        <div class="new-promo-overlay">
+
+                            <p class="new-promo-label">
+                                NEW COLLECTION
+                            </p>
+
+                            <h3>
+                                {{ p['name'] }}
+                            </h3>
+
+                            <p class="new-promo-price">
+                                {{ "{:,}".format(p['price']) }}원
+                            </p>
+
+                            <div class="product-card-rating">
+                                <span class="product-card-stars">
+                                    {% set card_rating = p['avg_rating']|default(0) %}
+
+                                    {% for i in range(1, 6) %}
+                                        {% if i <= card_rating|round(0, 'floor') %}
+                                            ★
+                                        {% else %}
+                                            ☆
+                                        {% endif %}
+                                    {% endfor %}
+                                </span>
+
+                                <small>
+                                    {% if p['review_count']|default(0) > 0 %}
+                                        {{ "%.1f"|format(p['avg_rating']) }} · 리뷰 {{ p['review_count'] }}개
+                                    {% else %}
+                                        리뷰 없음
+                                    {% endif %}
+                                </small>
+                            </div>
+
+                            {% if p['description'] %}
+                                <p class="new-promo-desc">
+                                    {{ p['description'][:72] }}...
+                                </p>
+                            {% endif %}
+
+                            <span class="new-promo-button">
+                                상품 보기
+                            </span>
+
+                        </div>
+
+                    </a>
+
+                </article>
+
+                {% if p['new_between_media'] %}
+
+                    <section class="new-between-media">
+
+                        {% if p['new_between_media_type'] == 'video' %}
+                            <video autoplay muted loop playsinline>
+                                <source src="/uploads/{{ p['new_between_media'] }}" type="video/mp4">
+                            </video>
+                        {% else %}
+                            <img src="/uploads/{{ p['new_between_media'] }}"
+                                alt="NEW COLLECTION 광고 이미지">
+                        {% endif %}
+
+                    </section>
+
+                {% endif %}
+
+            {% endfor %}
+
+        </section>
+
+    {% else %}
+
+        <section class="new-empty">
+            <h2>아직 등록된 NEW 상품이 없습니다</h2>
+            <p>관리자 페이지에서 상품의 Featured 값을 New로 설정해 주세요.</p>
+            <a href="/shop">전체 상품 보기</a>
+        </section>
+
+    {% endif %}
+
+</main>
+
+{% include "shop/footer.html" %}
+
+<script>
+document.querySelectorAll(".wishlist-btn").forEach(function (button) {
+    button.addEventListener("click", function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const productId = button.dataset.productId;
+
+        fetch(`/wishlist/toggle/${productId}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+        .then(function (response) {
+            if (response.status === 401) {
+                window.location.href = "/login";
+                return null;
+            }
+
+            return response.json();
+        })
+        .then(function (data) {
+            if (!data) return;
+
+            if (data.wished) {
+                button.classList.add("active");
+                button.textContent = "♥";
+            } else {
+                button.classList.remove("active");
+                button.textContent = "♡";
+            }
+        })
+        .catch(function (error) {
+            console.error("Wishlist error:", error);
+        });
+    });
+});
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const mainTrack = document.getElementById("mainSliderTrack");
+    const mainDots = document.querySelectorAll("#mainSliderDots .main-dot");
+    const mainPrevBtn = document.getElementById("mainPrevBtn");
+    const mainNextBtn = document.getElementById("mainNextBtn");
+
+    if (!mainTrack || mainDots.length === 0) {
+        return;
+    }
+
+    let mainIndex = 0;
+    let mainTimer = null;
+
+    function moveMainSlider(index) {
+        mainIndex = index;
+        mainTrack.style.transform = `translateX(-${mainIndex * 100}%)`;
+
+        mainDots.forEach(function (dot) {
+            dot.classList.remove("active");
+        });
+
+        mainDots[mainIndex].classList.add("active");
+    }
+
+    function startMainSlider() {
+        clearInterval(mainTimer);
+
+        mainTimer = setInterval(function () {
+            const nextIndex = (mainIndex + 1) % mainDots.length;
+            moveMainSlider(nextIndex);
+        }, 4500);
+    }
+
+    function resetMainSliderTimer() {
+        startMainSlider();
+    }
+
+    mainDots.forEach(function (dot) {
+        dot.addEventListener("click", function () {
+            const index = Number(dot.dataset.index);
+            moveMainSlider(index);
+            resetMainSliderTimer();
+        });
+    });
+
+    if (mainPrevBtn) {
+        mainPrevBtn.addEventListener("click", function () {
+            const prevIndex = (mainIndex - 1 + mainDots.length) % mainDots.length;
+            moveMainSlider(prevIndex);
+            resetMainSliderTimer();
+        });
+    }
+
+    if (mainNextBtn) {
+        mainNextBtn.addEventListener("click", function () {
+            const nextIndex = (mainIndex + 1) % mainDots.length;
+            moveMainSlider(nextIndex);
+            resetMainSliderTimer();
+        });
+    }
+
+    moveMainSlider(0);
+    startMainSlider();
+});
+</script>
+
+</body>
+</html>

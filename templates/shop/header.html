@@ -1,0 +1,417 @@
+{% macro submenu_media(primary_key, fallback_text, second_key=None) %}
+    <span class="submenu-photo">
+        {% set media = home_media.get(primary_key) if home_media is defined else none %}
+
+        {% if (not media or not media.filename) and second_key and home_media is defined %}
+            {% set media = home_media.get(second_key) %}
+        {% endif %}
+
+        {% if media and media.filename %}
+            {% if media.media_type == "video" %}
+                <video src="{{ url_for('uploaded_file', filename=media.filename) }}" autoplay muted loop playsinline></video>
+            {% else %}
+                <img src="{{ url_for('uploaded_file', filename=media.filename) }}" alt="{{ fallback_text }}">
+            {% endif %}
+        {% else %}
+            <span>{{ fallback_text }}</span>
+        {% endif %}
+    </span>
+{% endmacro %}
+
+<!-- TOP PROMOTION BAR -->
+<div class="top-promo-bar">
+    <div class="top-promo-track">
+
+        <div class="top-promo-set">
+
+            <a href="/shop?tag=NEW">NEW</a>
+            <a href="/season">SPECIAL 20% OFF</a>
+            <a href="/best">BEST ITEMS</a>
+
+            <a href="/shop?tag=NEW">NEW</a>
+            <a href="/season">SPECIAL 20% OFF</a>
+            <a href="/best">BEST ITEMS</a>
+
+        </div>
+
+        <div class="top-promo-set" aria-hidden="true">
+
+            <a href="/shop?tag=NEW" tabindex="-1">NEW</a>
+            <a href="/season" tabindex="-1">SPECIAL 20% OFF</a>
+            <a href="/best" tabindex="-1">BEST ITEMS</a>
+            
+            <a href="/shop?tag=NEW" tabindex="-1">NEW</a>
+            <a href="/season" tabindex="-1">SPECIAL 20% OFF</a>
+            <a href="/best" tabindex="-1">BEST ITEMS</a>
+        </div>
+    </div>
+</div>
+
+<header class="site-header">
+
+    <div class="header-left">
+        <button
+            id="megaMenuBtn"
+            class="menu-btn"
+            type="button"
+            aria-controls="megaMenu"
+            aria-expanded="false"
+        >
+            MENU
+        </button>
+    </div>
+
+    <div class="header-center">
+        <a href="/" class="brand-logo">
+            GY JEWELRY
+        </a>
+    </div>
+
+    <div class="header-right">
+
+        <form action="/shop" method="GET" class="header-search">
+            <input
+                type="text"
+                name="search"
+                placeholder="Search"
+                value="{{ request.args.get('search', '') }}"
+            >
+        </form>
+
+        {% set cart_back_url = request.full_path if request.query_string else request.path %}
+
+        <a href="/cart?back={{ cart_back_url|urlencode }}" class="header-link">
+            Cart
+            <span class="cart-count">
+                {% if cart_count is defined %}
+                    {{ cart_count }}
+                {% else %}
+                    {{ session.get("cart", [])|length }}
+                {% endif %}
+            </span>
+        </a>
+
+        {% if session.get("username") %}
+            <a href="/mypage" class="header-link">
+                My
+            </a>
+
+            <a href="/logout" class="header-link">
+                Logout
+            </a>
+        {% else %}
+            <a href="/login" class="header-link">
+                Login
+            </a>
+
+            <a href="/signup" class="header-link">
+                Join
+            </a>
+        {% endif %}
+
+    </div>
+
+</header>
+
+<div id="megaMenu" class="mega-menu horizontal-mega-menu">
+
+    <div class="horizontal-menu-inner">
+
+        <nav class="horizontal-menu-list" aria-label="GY JEWELRY 전체 메뉴">
+
+            <div class="horizontal-menu-item">
+                <button type="button" class="horizontal-menu-title">FEATURED</button>
+
+                <div class="horizontal-submenu">
+                    <a href="/shop?tag=NEW" class="submenu-card">
+                        {{ submenu_media("menu_featured_new", "NEW") }}
+                        <span class="submenu-label">New</span>
+                    </a>
+
+                    <a href="/season" class="submenu-card">
+                        {{ submenu_media("menu_featured_season", "SEASON") }}
+                        <span class="submenu-label">Season Item</span>
+                    </a>
+
+                    <a href="/best" class="submenu-card">
+                        {{ submenu_media("menu_featured_best", "BEST") }}
+                        <span class="submenu-label">Best</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="horizontal-menu-item">
+                <button type="button" class="horizontal-menu-title">JEWELRY</button>
+
+                <div class="horizontal-submenu">
+
+                    <a href="/shop" class="submenu-card">
+                        {{ submenu_media("home_category_all", "ALL") }}
+                        <span class="submenu-label">All</span>
+                    </a>
+
+                    <a href="/shop?category=RING" class="submenu-card">
+                        {{ submenu_media("home_category_ring", "RING") }}
+                        <span class="submenu-label">Ring</span>
+                    </a>
+
+                    <a href="/shop?category=NECKLACE" class="submenu-card">
+                        {{ submenu_media("home_category_necklace", "NECKLACE") }}
+                        <span class="submenu-label">Necklace</span>
+                    </a>
+
+                    <a href="/shop?category=EARRINGS" class="submenu-card">
+                        {{ submenu_media("home_category_earrings", "EARRINGS") }}
+                        <span class="submenu-label">Earrings</span>
+                    </a>
+
+                    <a href="/shop?category=BRACELET" class="submenu-card">
+                        {{ submenu_media("home_category_bracelet", "BRACELET") }}
+                        <span class="submenu-label">Bracelet</span>
+                    </a>
+
+                    <a href="/shop?category=ANKLET" class="submenu-card">
+                        {{ submenu_media("home_category_anklet", "ANKLET") }}
+                        <span class="submenu-label">Anklet</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="horizontal-menu-item">
+                <button type="button" class="horizontal-menu-title">YEON STORY</button>
+
+                <div class="horizontal-submenu yeon-submenu">
+                    <a href="/story/yeon">[결 ; 연]</a>
+                    <a href="/story/sum">[숨 ; 결]</a>
+                    <a href="/story/go">[고 ; 결]</a>
+                    <a href="/story/gan">[간 ; 결]</a>
+                    <a href="/story/bit">[빛 ; 결]</a>
+                    <a href="/story/hon">[흔 ; 결]</a>
+                    <a href="/story/sok">[결 ; 속]</a>
+                    <a href="/story/chae">[결 ; 채]</a>
+                </div>
+            </div>
+
+            <div class="horizontal-menu-item">
+                <button type="button" class="horizontal-menu-title">METAL</button>
+
+                <div class="horizontal-submenu">
+                    <a href="/shop?material=DIAMOND" class="submenu-card">
+                        {{ submenu_media("menu_metal_diamond", "DIAMOND") }}
+                        <span class="submenu-label">Diamond</span>
+                    </a>
+
+                    <a href="/shop?material=GOLDBAR" class="submenu-card">
+                        {{ submenu_media("menu_metal_goldbar", "GOLDBAR") }}
+                        <span class="submenu-label">Gold Bar</span>
+                    </a>
+
+                    <a href="/shop?material=24K" class="submenu-card">
+                        {{ submenu_media("menu_metal_24k", "24K") }}
+                        <span class="submenu-label">24K</span>
+                    </a>
+
+                    <a href="/shop?material=18K" class="submenu-card">
+                        {{ submenu_media("menu_metal_18k", "18K") }}
+                        <span class="submenu-label">18K</span>
+                    </a>
+
+                    <a href="/shop?material=14K" class="submenu-card">
+                        {{ submenu_media("menu_metal_14k", "14K") }}
+                        <span class="submenu-label">14K</span>
+                    </a>
+
+                    <a href="/shop?material=SILVER" class="submenu-card">
+                        {{ submenu_media("menu_metal_silver", "SILVER") }}
+                        <span class="submenu-label">Silver</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="horizontal-menu-item">
+                <button type="button" class="horizontal-menu-title">BRAND</button>
+
+                <div class="horizontal-submenu">
+                    <a href="/brand-story">Brand Story</a>
+                </div>
+            </div>
+
+            <div class="horizontal-menu-item">
+                <button type="button" class="horizontal-menu-title">HELP</button>
+
+                <div class="horizontal-submenu help-submenu">
+                    <a href="/help/refund">반품 및 환불 정책</a>
+                    <a href="/cs">고객센터</a>
+                    <a href="/faq">FAQ</a>
+                </div>
+            </div>
+
+            <div class="horizontal-menu-item mobile-account-menu">
+                <button type="button" class="horizontal-menu-title">ACCOUNT</button>
+
+                <div class="horizontal-submenu help-submenu">
+                    {% if session.get("username") %}
+                        <a href="/mypage">My Page</a>
+                        <a href="/logout">Logout</a>
+                    {% else %}
+                        <a href="/login">Login</a>
+                        <a href="/signup">Join</a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="horizontal-menu-item">
+                <button type="button" class="horizontal-menu-title">LANGUAGE</button>
+
+                <div class="horizontal-submenu">
+                    <a href="#" class="submenu-card">
+                        <span class="submenu-photo">KR</span>
+                        <span class="submenu-label">한국어</span>
+                    </a>
+
+                    <a href="#" class="submenu-card">
+                        <span class="submenu-photo">EN</span>
+                        <span class="submenu-label">English</span>
+                    </a>
+
+                    <a href="#" class="submenu-card">
+                        <span class="submenu-photo">JP</span>
+                        <span class="submenu-label">日本語</span>
+                    </a>
+
+                    <a href="#" class="submenu-card">
+                        <span class="submenu-photo">CN</span>
+                        <span class="submenu-label">中文</span>
+                    </a>
+                </div>
+            </div>
+
+        </nav>
+
+    </div>
+
+</div>
+
+<!-- SCROLL TO TOP BUTTON -->
+<button
+    id="scrollTopBtn"
+    class="gy-scroll-top"
+    type="button"
+    aria-label="페이지 맨 위로 이동"
+>
+    <span class="gy-scroll-arrow">↑</span>
+    <span class="gy-scroll-text">TOP</span>
+</button>
+
+<script>
+(function () {
+    const scrollTopBtn = document.getElementById("scrollTopBtn");
+
+    if (!scrollTopBtn) return;
+
+    const showPoint = 520;
+
+    function toggleScrollTopButton() {
+        if (window.scrollY > showPoint) {
+            scrollTopBtn.classList.add("is-visible");
+        } else {
+            scrollTopBtn.classList.remove("is-visible");
+        }
+    }
+
+    scrollTopBtn.addEventListener("click", function () {
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+    });
+
+    window.addEventListener("scroll", toggleScrollTopButton);
+    window.addEventListener("load", toggleScrollTopButton);
+})();
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const menuBtn = document.getElementById("megaMenuBtn");
+    const megaMenu = document.getElementById("megaMenu");
+
+    if (!menuBtn || !megaMenu) return;
+
+    function openMegaMenu() {
+        megaMenu.classList.add("is-open");
+        document.body.classList.add("mega-open");
+        menuBtn.setAttribute("aria-expanded", "true");
+    }
+
+    function closeMegaMenu() {
+        megaMenu.classList.remove("is-open");
+        document.body.classList.remove("mega-open");
+        menuBtn.setAttribute("aria-expanded", "false");
+    }
+
+    menuBtn.addEventListener("click", function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        if (megaMenu.classList.contains("is-open")) {
+            closeMegaMenu();
+        } else {
+            openMegaMenu();
+        }
+    });
+
+    megaMenu.addEventListener("click", function (event) {
+        event.stopPropagation();
+    });
+
+    document.addEventListener("click", function () {
+        if (megaMenu.classList.contains("is-open")) {
+            closeMegaMenu();
+        }
+    });
+
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") {
+            closeMegaMenu();
+        }
+    });
+});
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const dynamicPages = document.body.classList.contains("header-dynamic");
+
+    if (!dynamicPages) return;
+
+    const themedSections = Array.from(
+        document.querySelectorAll("[data-header-theme]")
+    );
+
+    if (!themedSections.length) return;
+
+    function updateHeaderTheme() {
+        const checkY = 70;
+
+        let currentTheme = "light";
+
+        for (const section of themedSections) {
+            const rect = section.getBoundingClientRect();
+
+            if (rect.top <= checkY && rect.bottom > checkY) {
+                currentTheme = section.dataset.headerTheme || "light";
+                break;
+            }
+        }
+
+        document.body.classList.toggle("header-on-dark", currentTheme === "dark");
+        document.body.classList.toggle("header-on-light", currentTheme !== "dark");
+    }
+
+    window.addEventListener("scroll", updateHeaderTheme, { passive: true });
+    window.addEventListener("resize", updateHeaderTheme);
+    window.addEventListener("load", updateHeaderTheme);
+
+    updateHeaderTheme();
+});
+</script>

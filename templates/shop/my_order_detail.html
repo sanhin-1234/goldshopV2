@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Detail | GY JEWELRY</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body class="order-detail-page-body">
+
+{% include "shop/header.html" %}
+
+<main class="order-detail-wrap">
+
+    <section class="order-detail-hero">
+        <p class="eyebrow">ORDER DETAIL</p>
+        <h1>ORDER #{{ order["id"] }}</h1>
+        <p class="order-detail-sub">
+            주문 정보와 배송 상태를 확인할 수 있습니다.
+        </p>
+    </section>
+
+    <section class="order-detail-grid">
+
+        <div class="order-detail-card">
+            <h2>주문 정보</h2>
+
+            <div class="detail-row">
+                <span>주문번호</span>
+                <strong>#{{ order["id"] }}</strong>
+            </div>
+
+            <div class="detail-row">
+                <span>주문일</span>
+                <strong>{{ order["created_at"] }}</strong>
+            </div>
+
+            <div class="detail-row">
+                <span>주문자</span>
+                <strong>{{ order["customer_name"] }}</strong>
+            </div>
+
+            <div class="detail-row">
+                <span>연락처</span>
+                <strong>{{ order["phone"] }}</strong>
+            </div>
+
+            <div class="detail-row">
+                <span>배송지</span>
+                <strong>{{ order["address"] }}</strong>
+            </div>
+
+            {% set raw_status = order["status"] or "배송준비중" %}
+            {% set status = "배송준비중" if raw_status == "주문접수" else raw_status %}
+
+            <section class="delivery-progress-card">
+
+                <div class="delivery-progress-head">
+                    <p>DELIVERY STATUS</p>
+                    <h2>{{ status }}</h2>
+                </div>
+
+                <di class="delivery-steps">
+
+                    <div class="delivery-step active">
+                        <div class="step-dot">1</div>
+                        <p>주문 완료</p>
+                    </div>
+
+                    <div class="step-line active"></div>
+
+                    <div class="delivery-step active">
+                        <div class="step-dot">2</div>
+                        <p>배송 준비</p>
+                    </div>
+
+                    <div class="step-line {% if status == '배송중' or status == '배송완료' %}active{% endif %}"></div>
+
+                    <div class="delivery-step {% if status == '배송중' or status == '배송완료' %}active{% endif %}">
+                        <div class="step-dot">3</div>
+                        <p>배송 중</p>
+                    </div>
+
+                    <div class="step-line {% if status == '배송완료' %}active{% endif %}"></div>
+
+                    <div class="delivery-step {% if status == '배송완료' %}active{% endif %}">
+                        <div class="step-dot">4</div>
+                        <p>배송 완료</p>
+                    </div>
+
+                </div>
+
+                <p class="delivery-progress-message">
+                    {% if status == "배송준비중" %}
+                        주문이 확인되었으며, 상품 배송을 준비하고 있습니다.
+                    {% elif status == "배송중" %}
+                        소중한 상품이 고객님께 이동 중입니다.
+                    {% elif status == "배송완료" %}
+                        배송이 완료되었습니다. GY JEWELRY를 이용해주셔서 감사합니다.
+                    {% else %}
+                        주문 상태를 확인 중입니다.
+                    {% endif %}
+                </p>
+
+            </section>
+        </div>
+
+        <div class="order-detail-card order-payment-card">
+            <h2>결제 금액</h2>
+
+            <div class="total-price-box">
+                {{ "{:,}".format(order["total_price"]|int) }}원
+            </div>
+
+            <a href="/mypage" class="back-mypage-link">
+                마이페이지로 돌아가기
+            </a>
+        </div>
+
+    </section>
+
+    <section class="order-items-section">
+        <h2>주문 상품</h2>
+
+        {% if items %}
+            <div class="order-items-list">
+                {% for item in items %}
+                    <div class="order-item-row">
+                        <div>
+                            <p class="item-name">{{ item["product_name"] }}</p>
+
+                            {% if item["option_text"] %}
+                                <p class="order-item-option">
+                                    {{ item["option_text"] }}
+                                </p>
+                            {% endif %}
+
+                            <p class="item-quantity">수량 {{ item["quantity"] }}개</p>
+                        </div>
+
+                        <p class="item-price">
+                            {{ "{:,}".format((item["price"]|int) * item["quantity"]|int) }}원
+                        </p>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-orders">
+                <p>주문 상품 정보가 없습니다.</p>
+            </div>
+        {% endif %}
+    </section>
+
+</main>
+
+</body>
+</html>

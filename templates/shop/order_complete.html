@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Complete | GY JEWELRY</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body class="complete-page-body">
+
+{% include "shop/header.html" %}
+
+<main class="complete-page">
+
+    <section class="complete-card">
+
+        <div class="complete-mark">
+            ✓
+        </div>
+
+        <p class="complete-label">
+            ORDER COMPLETE
+        </p>
+
+        <h1>
+            주문이 완료되었습니다
+        </h1>
+
+        <p class="complete-message">
+            GY JEWELRY를 선택해주셔서 감사합니다.<br>
+            주문 내역과 배송 상태는 마이페이지에서 확인하실 수 있습니다.
+        </p>
+
+        {% if order_id %}
+            <div class="complete-order-box">
+                <span>주문번호</span>
+                <strong>#{{ order_id }}</strong>
+            </div>
+        {% endif %}
+
+        <div class="complete-actions">
+
+            {% if order_id %}
+                <a href="/mypage/order/{{ order_id }}" class="complete-main-btn">
+                    주문 상세 보기
+                </a>
+            {% endif %}
+
+            <a href="/mypage" class="complete-sub-btn">
+                마이페이지
+            </a>
+
+            <a href="/shop" class="complete-text-link">
+                쇼핑 계속하기
+            </a>
+
+        </div>
+
+    </section>
+
+</main>
+
+</body>
+</html>

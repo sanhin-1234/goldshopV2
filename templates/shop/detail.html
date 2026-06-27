@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ product['name'] }} | GY JEWELRY</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body class="detail-page-body">
+
+{% include "shop/header.html" %}
+
+<main class="detail-page">
+
+    <section class="detail-container">
+
+        <div class="detail-image-area">
+
+            {% set gallery_images = detail_images|default([]) %}
+
+            <div class="detail-gallery">
+
+                <div class="detail-gallery-main">
+                    {% if gallery_images %}
+                        <img
+                            id="productMainImage"
+                            src="/uploads/{{ gallery_images[0] }}"
+                            alt="{{ product['name'] }}"
+                        >
+                    {% else %}
+                        <div class="detail-no-image">
+                            이미지 없음
+                        </div>
+                    {% endif %}
+                </div>
+
+                {% if gallery_images %}
+                <div class="detail-thumbnail-area">
+
+                    <button type="button" class="thumb-scroll-btn thumb-left" id="thumbLeftBtn">
+                        ‹
+                    </button>
+
+                    <div class="detail-thumbnail-scroll" id="detailThumbnailScroll">
+
+                        {% for img in gallery_images %}
+                        <button
+                            type="button"
+                            class="detail-thumb-btn {% if loop.first %}is-active{% endif %}"
+                            data-image="/uploads/{{ img }}"
+                        >
+                            <img src="/uploads/{{ img }}" alt="{{ product['name'] }} thumbnail {{ loop.index }}">
+                        </button>
+                        {% endfor %}
+
+                    </div>
+
+                    <button type="button" class="thumb-scroll-btn thumb-right" id="thumbRightBtn">
+                        ›
+                    </button>
+
+                </div>
+                {% endif %}
+
+                <p class="detail-image-caption">
+                    GY JEWELRY PRODUCT
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="detail-info-area">
+
+            <p class="detail-collection">
+                {{ product['collection'] or 'GENERAL' }}
+            </p>
+
+            <h1 class="detail-title">
+                {{ product['name'] }}
+            </h1>
+
+            <p class="detail-price">
+                {{ "{:,}".format(product['price']) }}원
+            </p>
+
+            <div class="detail-rating">
+                <span class="stars">
+                    {% for i in range(1, 6) %}
+                        {% if i <= avg_rating|round(0, 'floor') %}
+                            ★
+                        {% else %}
+                            ☆
+                        {% endif %}
+                    {% endfor %}
+                </span>
+
+                <span class="rating-text">
+                    {% if review_count > 0 %}
+                        {{ "%.1f"|format(avg_rating) }} / 5.0 · 리뷰 {{ review_count }}개
+                    {% else %}
+                        아직 리뷰 없음
+                    {% endif %}
+                </span>
+            </div>
+
+            <div class="detail-divider"></div>
+
+            <div class="detail-description">
+                {% if product['description'] %}
+                    {{ product['description'] }}
+                {% else %}
+                    GY JEWELRY의 감각으로 완성된 상품입니다. 시간이 지나도 변하지 않는 가치와 아름다움을 담았습니다.
+                {% endif %}
+            </div>
+
+            <button
+                class="detail-cart-btn"
+                data-product-id="{{ product['id'] }}"
+                data-product-price="{{ product['price'] }}"
+                data-login="{{ 'true' if session.get('username') else 'false' }}"
+            >
+                옵션 선택하기
+            </button>
+
+            <a href="{{ back_url }}" class="detail-back-link">
+                ← 상품 목록으로 돌아가기
+            </a>
+
+            <div class="detail-guide">
+
+                <details open>
+                    <summary>상품 정보</summary>
+                    <p>
+                        섬세한 디자인과 고급스러운 마감으로 완성된 GY JEWELRY 상품입니다.
+                    </p>
+                </details>
+
+                <details>
+                    <summary>배송 안내</summary>
+                    <p>
+                        주문 확인 후 순차적으로 배송 준비가 진행됩니다. 상품에 따라 제작 및 준비 기간이 달라질 수 있습니다.
+                    </p>
+                </details>
+
+                <details>
+                    <summary>교환 / 반품 안내</summary>
+                    <p>
+                        착용 흔적이 있거나 상품 가치가 훼손된 경우 교환 및 반품이 어려울 수 있습니다.
+                    </p>
+                </details>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- RELATED PRODUCTS -->
+    <section class="related-products-section">
+
+        <div class="related-head">
+            <p>YOU MAY ALSO LIKE</p>
+            <h2>비슷한 상품 추천</h2>
+            <span>같은 컬렉션 또는 비슷한 소재의 상품을 함께 둘러보세요.</span>
+        </div>
+
+        {% if related_products %}
+
+            <div class="related-product-grid">
+
+                {% for related in related_products %}
+
+                    <article class="related-product-card">
+
+                        <a href="{{ url_for('product.product_detail', product_id=related['id']) }}">
+
+                            <div class="related-product-image">
+                                {% if related['image'] %}
+                                    <img src="/uploads/{{ related['image'] }}" alt="{{ related['name'] }}">
+                                {% else %}
+                                    <div class="related-placeholder">
+                                        GY
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="related-product-info">
+                                <p>{{ related['collection'] or 'GY JEWELRY' }}</p>
+                                <h3>{{ related['name'] }}</h3>
+                                <span>{{ "{:,}".format(related['price']|int) }}원</span>
+                            </div>
+
+                            <div class="related-rating">
+                                <span>
+                                    {% for i in range(1, 6) %}
+                                        {% if i <= related['avg_rating']|round(0, 'floor') %}
+                                            ★
+                                        {% else %}
+                                            ☆
+                                        {% endif %}
+                                    {% endfor %}
+                                </span>
+
+                                <small>
+                                    {% if related['review_count'] > 0 %}
+                                        {{ "%.1f"|format(related['avg_rating']) }} · 리뷰 {{ related['review_count'] }}개
+                                    {% else %}
+                                        리뷰 없음
+                                    {% endif %}
+                                </small>
+                            </div>
+
+                        </a>
+
+                    </article>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="related-empty">
+                아직 추천할 비슷한 상품이 없습니다.
+            </div>
+
+        {% endif %}
+
+    </section>
+
+    <!-- REVIEW SECTION -->
+    <section class="product-review-section" id="reviews">
+
+        {% set review_list = reviews|default([]) %}
+        {% set review_count = review_list|length %}
+        {% set average_rating = avg_rating|default(0) %}
+
+        <div class="review-summary-card">
+            <p class="review-eyebrow">CUSTOMER REVIEW</p>
+
+            <div class="review-score-wrap">
+                <div class="review-score">
+                    {{ "%.1f"|format(average_rating) }}
+                </div>
+
+                <div class="review-score-info">
+                    <div class="review-stars-display">
+                        {% for i in range(1, 6) %}
+                            {% if i <= average_rating|round(0, 'floor') %}
+                                ★
+                            {% else %}
+                                ☆
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+
+                    <p>
+                        총 <strong>{{ review_count }}</strong>개의 리뷰가 있습니다.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="review-write-card">
+            <div class="review-write-head">
+                <div>
+                    <p class="review-eyebrow">WRITE A REVIEW</p>
+                    <h3>리뷰 작성</h3>
+                </div>
+                <span>구매 경험을 남겨주세요</span>
+            </div>
+
+            {% if session.get("username") %}
+            <form method="POST" action="{{ url_for('product.add_review', product_id=product['id']) }}" class="review-form">
+
+                {% if csrf_token is defined %}
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                {% endif %}
+
+                <div class="review-rating-input">
+                    <input type="radio" id="star5" name="rating" value="5" checked>
+                    <label for="star5">★</label>
+
+                    <input type="radio" id="star4" name="rating" value="4">
+                    <label for="star4">★</label>
+
+                    <input type="radio" id="star3" name="rating" value="3">
+                    <label for="star3">★</label>
+
+                    <input type="radio" id="star2" name="rating" value="2">
+                    <label for="star2">★</label>
+
+                    <input type="radio" id="star1" name="rating" value="1">
+                    <label for="star1">★</label>
+                </div>
+
+                <div class="review-input-row">
+                    <textarea name="content" placeholder="상품의 착용감, 분위기, 만족도를 자유롭게 남겨주세요." required></textarea>
+                    <button type="submit">리뷰 등록</button>
+                </div>
+            </form>
+            {% else %}
+            <div class="review-login-guide">
+                <p>로그인 후 리뷰를 작성할 수 있습니다.</p>
+                <a href="{{ url_for('auth.login') }}">로그인하기</a>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="review-list-card">
+            {% if review_count > 0 %}
+                {% for review in review_list %}
+                <article class="review-item">
+                    <div class="review-item-top">
+                        <div>
+                            <strong>{{ review.username or "GY 고객" }}</strong>
+                            <span>{{ review.created_at }}</span>
+                        </div>
+
+                        <div class="review-item-stars">
+                            {% for i in range(1, 6) %}
+                                {% if i <= review.rating %}
+                                    ★
+                                {% else %}
+                                    ☆
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <p>
+                        {{ review.content or review.review_text }}
+                    </p>
+                </article>
+                {% endfor %}
+            {% else %}
+                <div class="review-empty">
+                    <span>NO REVIEW YET</span>
+                    <p>아직 작성된 리뷰가 없습니다.</p>
+                    <small>첫 번째 후기를 남겨주세요.</small>
+                </div>
+            {% endif %}
+        </div>
+
+    </section>
+
+</main>
+
+<div class="option-overlay" id="optionOverlay"></div>
+
+<aside class="option-drawer" id="optionDrawer">
+
+    <button type="button" class="option-close-btn" id="optionCloseBtn">
+        ×
+    </button>
+
+    <div class="option-product">
+
+        <div class="option-product-image">
+            {% if product['image'] %}
+                <img src="/uploads/{{ product['image'] }}" alt="{{ product['name'] }}">
+            {% else %}
+                <span>GY</span>
+            {% endif %}
+        </div>
+
+        <div>
+            <h2>{{ product['name'] }}</h2>
+            <p>{{ "{:,}".format(product['price']) }}원</p>
+        </div>
+
+    </div>
+
+    <div class="option-quantity">
+        <button type="button" id="qtyMinus">−</button>
+        <span id="optionQty">1</span>
+        <button type="button" id="qtyPlus">＋</button>
+    </div>
+
+    <div class="option-group" data-option="material">
+        <p class="option-label">함량</p>
+
+        <div class="option-buttons">
+            <button type="button" data-value="Silver 925">Silver 925</button>
+            <button type="button" data-value="14K">14K</button>
+            <button type="button" data-value="18K">18K</button>
+        </div>
+    </div>
+
+    <div class="option-group" data-option="length">
+        <p class="option-label">길이</p>
+
+        <div class="option-buttons">
+            <button type="button" data-value="40cm">40cm</button>
+            <button type="button" data-value="42cm">42cm</button>
+            <button type="button" data-value="45cm">45cm</button>
+        </div>
+    </div>
+
+    <div class="option-group" data-option="color">
+        <p class="option-label">색상</p>
+
+        <div class="option-buttons">
+            <button type="button" data-value="Silver">Silver</button>
+            <button type="button" data-value="Gold">Gold</button>
+            <button type="button" data-value="Rose Gold">Rose Gold</button>
+        </div>
+    </div>
+
+    <div class="option-total">
+        <span>총 결제 금액</span>
+        <strong id="optionTotalPrice">
+            {{ "{:,}".format(product['price']) }}원
+        </strong>
+    </div>
+
+    <button type="button" class="option-submit-btn" id="optionSubmitBtn" disabled>
+        옵션을 선택해주세요
+    </button>
+
+</aside>
+
+<div id="toast" class="toast">
+    장바구니에 담겼습니다.
+</div>
+
+<script>
+
+    const csrfToken = "{{ csrf_token() }}";
+
+        const productMainImage = document.getElementById("productMainImage");
+        const thumbButtons = document.querySelectorAll(".detail-thumb-btn");
+        const thumbScroll = document.getElementById("detailThumbnailScroll");
+        const thumbLeftBtn = document.getElementById("thumbLeftBtn");
+        const thumbRightBtn = document.getElementById("thumbRightBtn");
+
+        if (productMainImage && thumbButtons.length > 0) {
+            thumbButtons.forEach(function (button) {
+                button.addEventListener("click", function () {
+                    const newImage = this.dataset.image;
+
+                    if (!newImage) {
+                        return;
+                    }
+
+                    productMainImage.classList.add("is-changing");
+
+                    setTimeout(function () {
+                        productMainImage.src = newImage;
+                        productMainImage.classList.remove("is-changing");
+                    }, 160);
+
+                    thumbButtons.forEach(function (btn) {
+                        btn.classList.remove("is-active");
+                    });
+
+                    this.classList.add("is-active");
+                });
+            });
+        }
+
+        if (thumbScroll) {
+            thumbScroll.addEventListener("wheel", function (event) {
+                if (Math.abs(event.deltaY) > Math.abs(event.deltaX)) {
+                    event.preventDefault();
+                    thumbScroll.scrollLeft += event.deltaY;
+                }
+            }, { passive: false });
+        }
+
+        if (thumbLeftBtn && thumbScroll) {
+            thumbLeftBtn.addEventListener("click", function () {
+                thumbScroll.scrollBy({
+                    left: -180,
+                    behavior: "smooth"
+                });
+            });
+        }
+
+        if (thumbRightBtn && thumbScroll) {
+            thumbRightBtn.addEventListener("click", function () {
+                thumbScroll.scrollBy({
+                    left: 180,
+                    behavior: "smooth"
+                });
+            });
+        }
+
+    const cartBtn = document.querySelector(".detail-cart-btn");
+    const toast = document.getElementById("toast");
+
+    const optionOverlay = document.getElementById("optionOverlay");
+    const optionDrawer = document.getElementById("optionDrawer");
+    const optionCloseBtn = document.getElementById("optionCloseBtn");
+    const optionSubmitBtn = document.getElementById("optionSubmitBtn");
+    const optionTotalPrice = document.getElementById("optionTotalPrice");
+
+    const qtyMinus = document.getElementById("qtyMinus");
+    const qtyPlus = document.getElementById("qtyPlus");
+    const optionQty = document.getElementById("optionQty");
+
+    let selectedOptions = {
+        material: "",
+        length: "",
+        color: ""
+    };
+
+    let quantity = 1;
+
+    const productId = cartBtn.dataset.productId;
+    const productPrice = Number(cartBtn.dataset.productPrice);
+
+    function openOptionDrawer() {
+        optionOverlay.classList.add("show");
+        optionDrawer.classList.add("show");
+    }
+
+    function closeOptionDrawer() {
+        optionOverlay.classList.remove("show");
+        optionDrawer.classList.remove("show");
+    }
+
+    function updateTotalPrice() {
+        const total = productPrice * quantity;
+        optionTotalPrice.textContent = total.toLocaleString() + "원";
+    }
+
+    function checkOptionComplete() {
+        const isComplete =
+            selectedOptions.material &&
+            selectedOptions.length &&
+            selectedOptions.color;
+
+        if (isComplete) {
+            optionSubmitBtn.disabled = false;
+            optionSubmitBtn.textContent = "장바구니 담기";
+        } else {
+            optionSubmitBtn.disabled = true;
+            optionSubmitBtn.textContent = "옵션을 선택해주세요";
+        }
+    }
+
+    cartBtn.addEventListener("click", function () {
+        const isLoggedIn = this.dataset.login === "true";
+
+        if (!isLoggedIn) {
+            alert("로그인 후 장바구니에 담을 수 있습니다.");
+            window.location.href = "/login";
+            return;
+        }
+
+        openOptionDrawer();
+    });
+
+    optionCloseBtn.addEventListener("click", function () {
+    closeOptionDrawer();
+    });
+
+    optionOverlay.addEventListener("click", function () {
+        closeOptionDrawer();
+    });
+
+    qtyMinus.addEventListener("click", function () {
+        if (quantity > 1) {
+            quantity -= 1;
+            optionQty.textContent = quantity;
+            updateTotalPrice();
+        }
+    });
+
+    qtyPlus.addEventListener("click", function () {
+        quantity += 1;
+        optionQty.textContent = quantity;
+        updateTotalPrice();
+    });
+
+    const optionButtons = document.querySelectorAll(".option-group button");
+
+    optionButtons.forEach(function (button) {
+        button.addEventListener("click", function () {
+            const group = this.closest(".option-group");
+            const optionName = group.dataset.option;
+            const optionValue = this.dataset.value;
+
+            group.querySelectorAll("button").forEach(function (btn) {
+                btn.classList.remove("selected");
+            });
+
+            this.classList.add("selected");
+
+            selectedOptions[optionName] = optionValue;
+
+            checkOptionComplete();
+        });
+    });
+
+    optionSubmitBtn.addEventListener("click", async function () {
+    if (optionSubmitBtn.disabled) {
+        return;
+    }
+
+    try {
+        const response = await fetch("/add-to-cart/{{ product['id'] }}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-Token": csrfToken
+            },
+            body: JSON.stringify({
+                quantity: quantity,
+                options: selectedOptions
+            })
+        });
+
+        if (!response.ok) {
+            console.log("장바구니 요청 실패 상태:", response.status);
+
+            if (response.status === 400) {
+                alert("보안 토큰이 맞지 않습니다. 페이지를 새로고침한 뒤 다시 시도해 주세요.");
+                return;
+            }
+
+            if (response.status === 401) {
+                alert("로그인 후 장바구니에 담을 수 있습니다.");
+                window.location.href = "/login";
+                return;
+            }
+
+            alert("장바구니 담기 중 오류가 발생했습니다.");
+            return;
+        }
+
+        const data = await response.json();
+
+        if (!data.success) {
+            alert(data.message || "장바구니 담기 중 오류가 발생했습니다.");
+
+            if (data.require_login) {
+                window.location.href = data.redirect_url || "/login";
+            }
+
+            return;
+        }
+
+        closeOptionDrawer();
+
+        toast.classList.add("show");
+
+        setTimeout(function () {
+            toast.classList.remove("show");
+        }, 1800);
+
+        const cartCounts = document.querySelectorAll(".cart-count");
+
+        cartCounts.forEach(function (cartCount) {
+            cartCount.textContent = data.count;
+        });
+
+    } catch (error) {
+        console.log("장바구니 담기 오류:", error);
+        alert("장바구니 담기 중 오류가 발생했습니다.");
+    }
+});
+
+</script>
+
+</body>
+</html>

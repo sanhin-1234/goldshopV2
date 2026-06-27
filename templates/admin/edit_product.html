@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>상품 수정 | GY JEWELRY ADMIN</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<main class="admin-page">
+    <div class="admin-container">
+
+        <div class="admin-header">
+            <div>
+                <p class="admin-label">GY JEWELRY</p>
+                <h1 class="admin-title">EDIT PRODUCT</h1>
+            </div>
+        </div>
+
+        <nav class="admin-nav">
+            <a href="/">홈</a>
+            <a href="/shop">쇼핑몰</a>
+            <a href="/admin">상품관리</a>
+            <a href="/admin/orders">주문관리</a>
+        </nav>
+
+        <section class="admin-section">
+
+            {% if error %}
+                <div class="admin-form-error">
+                    {{ error }}
+                </div>
+            {% endif %}
+
+            <div class="admin-section-header">
+                <h2>상품 수정</h2>
+                <p>등록된 상품의 기본 정보, 상품 이미지, NEW/Season 페이지 노출 이미지를 수정할 수 있습니다.</p>
+            </div>
+
+            <div class="admin-form-layout">
+
+                <!-- LEFT FORM -->
+                <form
+                    method="POST"
+                    action="{{ url_for('admin.update_product', product_id=product['id']) }}"
+                    enctype="multipart/form-data"
+                    class="admin-form admin-product-form admin-edit-clean-form"
+                >
+
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+
+                    <!-- BASIC INFO -->
+                    <div class="admin-edit-block">
+                        <div class="admin-edit-block-head">
+                            <h3>기본 정보</h3>
+                            <p>상품명, 가격, 카테고리, Featured, 소재 정보를 수정합니다.</p>
+                        </div>
+
+                        <div class="admin-field">
+                            <label>상품명</label>
+                            <input
+                                type="text"
+                                name="name"
+                                value="{{ product['name'] }}"
+                                required
+                            >
+                        </div>
+
+                        <div class="admin-field">
+                            <label>가격</label>
+                            <input
+                                type="number"
+                                name="price"
+                                value="{{ product['price'] }}"
+                                required
+                            >
+                        </div>
+
+                        <div class="admin-field">
+                            <label>컬렉션</label>
+                            <select name="collection" required>
+                                <option value="RING" {% if product['collection'] == 'RING' %}selected{% endif %}>Ring</option>
+                                <option value="NECKLACE" {% if product['collection'] == 'NECKLACE' %}selected{% endif %}>Necklace</option>
+                                <option value="EARRINGS" {% if product['collection'] == 'EARRINGS' %}selected{% endif %}>Earrings</option>
+                                <option value="BRACELET" {% if product['collection'] == 'BRACELET' %}selected{% endif %}>Bracelet</option>
+                                <option value="ANKLET" {% if product['collection'] == 'ANKLET' %}selected{% endif %}>Anklet</option>
+                            </select>
+                        </div>
+
+                        <div class="admin-field">
+                            <label>노출 페이지 설정</label>
+                            <select name="tag">
+                                <option value="" {% if not product['tag'] %}selected{% endif %}>일반 상품</option>
+
+                                <option value="NEW" {% if product['tag'] == 'NEW' %}selected{% endif %}>
+                                    NEW 페이지 노출
+                                </option>
+
+                                <option value="SEASON" {% if product['tag'] == 'SEASON' %}selected{% endif %}>
+                                    SEASON 페이지 노출
+                                </option>
+
+                                <option value="BEST" {% if product['tag'] == 'BEST' %}selected{% endif %}>
+                                    BEST 페이지 노출
+                                </option>
+                            </select>
+
+                            <small>
+                                선택한 값에 따라 NEW, SEASON, BEST 전용 페이지에 상품이 노출됩니다.
+                            </small>
+                        </div>
+
+                        <div class="admin-field">
+                            <label>Metal</label>
+                            <select name="material">
+                                <option value="" {% if not product['material'] %}selected{% endif %}>소재 없음</option>
+                                <option value="DIAMOND" {% if product['material'] == 'DIAMOND' %}selected{% endif %}>Diamond</option>
+                                <option value="GOLDBAR" {% if product['material'] == 'GOLDBAR' %}selected{% endif %}>Gold Bar</option>
+                                <option value="24K" {% if product['material'] == '24K' %}selected{% endif %}>24K</option>
+                                <option value="18K" {% if product['material'] == '18K' %}selected{% endif %}>18K</option>
+                                <option value="14K" {% if product['material'] == '14K' %}selected{% endif %}>14K</option>
+                                <option value="SILVER" {% if product['material'] == 'SILVER' %}selected{% endif %}>Silver</option>
+                            </select>
+                        </div>
+
+                        <div class="admin-field">
+                            <label>상품 설명</label>
+                            <textarea name="description">{{ product['description'] or '' }}</textarea>
+                        </div>
+                    </div>
+
+                    <!-- PRODUCT IMAGE -->
+                    <div class="admin-edit-block">
+                        <div class="admin-edit-block-head">
+                            <h3>상품 기본 이미지</h3>
+                            <p>쇼핑 목록과 상품 상세 페이지에 사용되는 기본 이미지를 변경합니다.</p>
+                        </div>
+
+                        <div class="admin-field">
+                            <label>상품 이미지 변경</label>
+                            <input type="file" name="image" accept="image/*">
+                            <small>새 이미지를 선택하지 않으면 기존 이미지가 유지됩니다.</small>
+                        </div>
+                    </div>
+
+                    <!-- NEW PAGE SETTINGS -->
+                    <div class="admin-edit-block">
+                        <div class="admin-edit-block-head">
+                            <h3>NEW 페이지 설정</h3>
+                            <p>NEW 캠페인 페이지에서 사용할 가로 배너와 중간 광고 이미지/영상을 설정합니다.</p>
+                        </div>
+
+                        <div class="admin-field">
+                            <label>NEW 페이지 가로 배너 이미지 변경</label>
+                            <input
+                                type="file"
+                                name="season_between_media"
+                                accept="image/*,video/mp4,video/webm,video/quicktime"
+                            >
+                            <small>NEW 페이지의 상품별 가로형 캠페인 배너에 사용됩니다.</small>
+                        </div>
+
+                        <div class="admin-field">
+                            <label>NEW 상품 사이 광고 이미지 / 영상 변경</label>
+                            <input
+                                type="file"
+                                name="new_between_media"
+                                accept="image/*,video/mp4,video/webm,video/quicktime"
+                            >
+                            <small>NEW 상품 사이에 삽입되는 이미지 또는 영상입니다.</small>
+                        </div>
+                    </div>
+
+                    <!-- SEASON PAGE SETTINGS -->
+                    <div class="admin-edit-block season-admin-block">
+                        <div class="admin-edit-block-head">
+                            <h3>Season Item 설정</h3>
+                            <p>Season 페이지에서 사용할 배너 이미지와 중간 광고 이미지/영상을 설정합니다.</p>
+                        </div>
+
+                        <div class="admin-season-guide">
+                            Season 페이지에 노출하려면 위의 <strong>노출 페이지 설정</strong>에서
+                            <strong>SEASON 페이지 노출</strong>을 선택하세요.
+                        </div>
+
+                        <div class="admin-field">
+                            <label>시즌 배너 이미지 변경</label>
+                            <input type="file" name="season_banner_image" accept="image/*">
+                            <small>Season 페이지의 큰 배너 또는 캠페인 영역에 사용됩니다.</small>
+
+                            {% if product['season_banner_image'] %}
+                                <div class="admin-current-media">
+                                    <img
+                                        src="/uploads/{{ product['season_banner_image'] }}"
+                                        alt="시즌 배너 이미지"
+                                    >
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="admin-field">
+                            <label>시즌 중간 광고 이미지 / 영상 변경</label>
+                            <input type="file" name="season_between_media" accept="image/*,video/*">
+                            <small>Season 상품 사이에 들어가는 이미지 또는 영상입니다.</small>
+
+                            {% if product['season_between_media'] %}
+                                <div class="admin-current-media">
+                                    {% if product['season_between_media_type'] == "video" %}
+                                        <video controls>
+                                            <source src="/uploads/{{ product['season_between_media'] }}">
+                                        </video>
+                                    {% else %}
+                                        <img
+                                            src="/uploads/{{ product['season_between_media'] }}"
+                                            alt="시즌 중간 광고"
+                                        >
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- ACTIONS -->
+                    <div class="admin-form-actions admin-edit-actions">
+                        <button type="submit" class="admin-add-btn">
+                            수정하기
+                        </button>
+
+                        <a href="{{ url_for('admin.admin_home') }}" class="admin-btn">
+                            취소
+                        </a>
+                    </div>
+
+                </form>
+
+                <!-- RIGHT PREVIEW -->
+                <aside class="admin-form-guide edit-preview-card admin-edit-preview-card">
+
+                    <h3>PRODUCT PREVIEW</h3>
+
+                    <div class="edit-preview-group">
+                        <p>PRODUCT IMAGE</p>
+
+                        <div class="edit-preview-image">
+                            {% if product['image'] %}
+                                <img src="/uploads/{{ product['image'] }}" alt="{{ product['name'] }}">
+                            {% else %}
+                                <div class="admin-no-image">
+                                    상품 이미지 없음
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="edit-preview-group">
+                        <p>NEW BANNER</p>
+
+                        <div class="edit-preview-image wide">
+                            {% if product['new_banner_image'] %}
+                                <img src="/uploads/{{ product['new_banner_image'] }}" alt="NEW 배너 이미지">
+                            {% else %}
+                                <div class="admin-no-image">
+                                    NEW 배너 이미지 없음
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="edit-preview-group">
+                        <p>NEW BETWEEN MEDIA</p>
+
+                        <div class="edit-preview-image wide">
+                            {% if product['new_between_media'] %}
+                                {% if product['new_between_media_type'] == 'video' %}
+                                    <video controls muted>
+                                        <source src="/uploads/{{ product['new_between_media'] }}">
+                                    </video>
+                                {% else %}
+                                    <img src="/uploads/{{ product['new_between_media'] }}" alt="NEW 중간 광고 이미지">
+                                {% endif %}
+                            {% else %}
+                                <div class="admin-no-image">
+                                    NEW 중간 광고 없음
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="edit-preview-group">
+                        <p>SEASON BANNER</p>
+
+                        <div class="edit-preview-image wide">
+                            {% if product['season_banner_image'] %}
+                                <img src="/uploads/{{ product['season_banner_image'] }}" alt="Season 배너 이미지">
+                            {% else %}
+                                <div class="admin-no-image">
+                                    Season 배너 이미지 없음
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="edit-preview-group">
+                        <p>SEASON BETWEEN MEDIA</p>
+
+                        <div class="edit-preview-image wide">
+                            {% if product['season_between_media'] %}
+                                {% if product['season_between_media_type'] == 'video' %}
+                                    <video controls muted>
+                                        <source src="/uploads/{{ product['season_between_media'] }}">
+                                    </video>
+                                {% else %}
+                                    <img src="/uploads/{{ product['season_between_media'] }}" alt="Season 중간 광고 이미지">
+                                {% endif %}
+                            {% else %}
+                                <div class="admin-no-image">
+                                    Season 중간 광고 없음
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="edit-preview-info">
+                        <p class="preview-collection">
+                            {{ product['collection'] or 'GENERAL' }}
+                        </p>
+
+                        <h4>
+                            {{ product['name'] }}
+                        </h4>
+
+                        <p class="preview-price">
+                            {{ "{:,}".format(product['price']|int) }}원
+                        </p>
+
+                        {% if product['tag'] %}
+                            <p class="preview-tag">
+                                Featured : {{ product['tag'] }}
+                            </p>
+                        {% endif %}
+
+                        {% if product['material'] %}
+                            <p class="preview-tag">
+                                Metal : {{ product['material'] }}
+                            </p>
+                        {% endif %}
+
+                        {% if product['description'] %}
+                            <p class="preview-desc">
+                                {{ product['description'] }}
+                            </p>
+                        {% endif %}
+                    </div>
+
+                    <p class="edit-preview-note">
+                        기본 상품 이미지, NEW 캠페인 이미지, Season 캠페인 이미지를 한 번에 확인할 수 있습니다.
+                    </p>
+
+                </aside>
+
+            </div>
+
+        </section>
+
+    </div>
+</main>
+
+</body>
+</html>

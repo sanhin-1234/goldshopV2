@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GY JEWELRY</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body class="home-page">
+
+{% include "shop/header.html" %}
+
+<main>
+
+    <!-- 첫 화면: 오직 GY1~GY5 슬라이드만 보이게 -->
+    <section class="home-main-slider" aria-label="GY JEWELRY 메인 슬라이드">
+
+        <div class="main-slider-window">
+            <div class="main-slider-track" id="mainSliderTrack">
+
+                {% for media in hero_media %}
+                <div class="main-slide">
+
+                    {% if media and media.filename %}
+                        {% if media.media_type == "video" %}
+                            <video class="main-slide-media" src="/uploads/{{ media.filename }}" autoplay muted loop playsinline></video>
+                        {% else %}
+                            <img class="main-slide-media" src="/uploads/{{ media.filename }}" alt="{{ media.title or 'GY JEWELRY' }}">
+                        {% endif %}
+                    {% else %}
+                        <div class="main-media-placeholder">&lt;GY{{ loop.index }}&gt;</div>
+                    {% endif %}
+
+                </div>
+                {% endfor %}
+
+            </div>
+        </div>
+
+        <div class="main-slider-dots" id="mainSliderDots">
+            <button class="main-dot active" type="button" data-index="0" aria-label="1번 슬라이드"></button>
+            <button class="main-dot" type="button" data-index="1" aria-label="2번 슬라이드"></button>
+            <button class="main-dot" type="button" data-index="2" aria-label="3번 슬라이드"></button>
+            <button class="main-dot" type="button" data-index="3" aria-label="4번 슬라이드"></button>
+            <button class="main-dot" type="button" data-index="4" aria-label="5번 슬라이드"></button>
+        </div>
+
+        <div class="main-slider-arrows">
+            <button class="main-arrow main-prev" id="mainPrevBtn" type="button" aria-label="이전 슬라이드">
+                ←
+            </button>
+
+            <button class="main-arrow main-next" id="mainNextBtn" type="button" aria-label="다음 슬라이드">
+                →
+            </button>
+        </div>
+
+    </section>
+
+    <!-- YEON CARD CAROUSEL -->
+    <section class="yeon-carousel-section home-reveal">
+
+        <div class="yeon-carousel-header">
+            <p>THE LINES OF YEON</p>
+            <h2>서로 다른 결이 이어지는 순간</h2>
+            <span>
+                GY JEWELRY가 담아내는 관계와 기억의 여덟 가지 이야기
+            </span>
+        </div>
+
+        <div class="yeon-carousel-shell">
+
+            <button class="yeon-carousel-btn yeon-carousel-prev" type="button" aria-label="이전 카드">
+                ←
+            </button>
+
+            <div class="yeon-carousel-viewport">
+
+                <div class="yeon-carousel-track">
+
+                    <a href="/story/yeon" class="yeon-carousel-card">
+                        <span class="yeon-card-num">01</span>
+                        <h3>결 ; 연</h3>
+                        <p>서로 다른 시간이 만나 하나의 인연으로 이어지는 이야기.</p>
+                    </a>
+
+                    <a href="/story/sum" class="yeon-carousel-card">
+                        <span class="yeon-card-num">02</span>
+                        <h3>숨 ; 결</h3>
+                        <p>말하지 않아도 남아 있는 감정의 깊이를 담았습니다.</p>
+                    </a>
+
+                    <a href="/story/go" class="yeon-carousel-card">
+                        <span class="yeon-card-num">03</span>
+                        <h3>고 ; 결</h3>
+                        <p>오래 간직하고 싶은 마음의 형태를 표현합니다.</p>
+                    </a>
+
+                    <a href="/story/gan" class="yeon-carousel-card">
+                        <span class="yeon-card-num">04</span>
+                        <h3>간 ; 결</h3>
+                        <p>사이와 사이에 머무는 조용한 균형을 담았습니다.</p>
+                    </a>
+
+                    <a href="/story/bit" class="yeon-carousel-card">
+                        <span class="yeon-card-num">05</span>
+                        <h3>빛 ; 결</h3>
+                        <p>가장 은은한 순간에도 사라지지 않는 빛의 결.</p>
+                    </a>
+
+                    <a href="/story/hon" class="yeon-carousel-card">
+                        <span class="yeon-card-num">06</span>
+                        <h3>흔 ; 결</h3>
+                        <p>시간이 지나도 몸에 남는 흔적과 기억의 이야기.</p>
+                    </a>
+
+                    <a href="/story/sok" class="yeon-carousel-card">
+                        <span class="yeon-card-num">07</span>
+                        <h3>결 ; 속</h3>
+                        <p>겉으로 드러나지 않는 내면의 감정을 조용히 담습니다.</p>
+                    </a>
+
+                    <a href="/story/chae" class="yeon-carousel-card">
+                        <span class="yeon-card-num">08</span>
+                        <h3>결 ; 채</h3>
+                        <p>색과 감정이 겹쳐져 하나의 장면으로 남는 순간.</p>
+                    </a>
+
+                </div>
+
+            </div>
+
+            <div class="yeon-carousel-dots"></div>
+
+            <button class="yeon-carousel-btn yeon-carousel-next" type="button" aria-label="다음 카드">
+                →
+            </button>
+
+        </div>
+
+    </section>
+
+    <!-- HOME PRODUCT CATEGORY SECTION -->
+    <section class="home-category-section home-reveal">
+
+        <div class="home-section-head">
+            <p class="home-section-eyebrow">SHOP BY CATEGORY</p>
+            <h2>Find Your Jewelry</h2>
+            <span>
+                GY JEWELRY의 카테고리별 주얼리를 만나보세요.
+            </span>
+        </div>
+
+        <div class="home-category-grid">
+
+            <a href="/shop" class="home-category-card home-reveal-stagger">
+                <div class="home-category-circle">
+                    {% set media = home_media.get("home_category_all") %}
+
+                    {% if media and media.filename %}
+                        {% if media.media_type == "video" %}
+                            <video src="/uploads/{{ media.filename }}" autoplay muted loop playsinline></video>
+                        {% else %}
+                            <img src="/uploads/{{ media.filename }}" alt="ALL">
+                        {% endif %}
+                    {% else %}
+                        <span>ALL</span>
+                    {% endif %}
+                </div>
+                <strong>ALL</strong>
+            </a>
+
+            <a href="/shop?category=RING" class="home-category-card home-reveal-stagger">
+                <div class="home-category-circle">
+                    {% set media = home_media.get("home_category_ring") %}
+
+                    {% if media and media.filename %}
+                        {% if media.media_type == "video" %}
+                            <video src="/uploads/{{ media.filename }}" autoplay muted loop playsinline></video>
+                        {% else %}
+                            <img src="/uploads/{{ media.filename }}" alt="RING">
+                        {% endif %}
+                    {% else %}
+                        <span>RING</span>
+                    {% endif %}
+                </div>
+                <strong>RING</strong>
+            </a>
+
+            <a href="/shop?category=NECKLACE" class="home-category-card home-reveal-stagger">
+                <div class="home-category-circle">
+                    {% set media = home_media.get("home_category_necklace") %}
+
+                    {% if media and media.filename %}
+                        {% if media.media_type == "video" %}
+                            <video src="/uploads/{{ media.filename }}" autoplay muted loop playsinline></video>
+                        {% else %}
+                            <img src="/uploads/{{ media.filename }}" alt="NECKLACE">
+                        {% endif %}
+                    {% else %}
+                        <span>NECKLACE</span>
+                    {% endif %}
+                </div>
+                <strong>NECKLACE</strong>
+            </a>
+
+            <a href="/shop?category=EARRINGS" class="home-category-card home-reveal-stagger">
+                <div class="home-category-circle">
+                    {% set media = home_media.get("home_category_earrings") %}
+
+                    {% if media and media.filename %}
+                        {% if media.media_type == "video" %}
+                            <video src="/uploads/{{ media.filename }}" autoplay muted loop playsinline></video>
+                        {% else %}
+                            <img src="/uploads/{{ media.filename }}" alt="EARRINGS">
+                        {% endif %}
+                    {% else %}
+                        <span>EARRINGS</span>
+                    {% endif %}
+                </div>
+                <strong>EARRINGS</strong>
+            </a>
+
+            <a href="/shop?category=BRACELET" class="home-category-card home-reveal-stagger">
+                <div class="home-category-circle">
+                    {% set media = home_media.get("home_category_bracelet") %}
+
+                    {% if media and media.filename %}
+                        {% if media.media_type == "video" %}
+                            <video src="/uploads/{{ media.filename }}" autoplay muted loop playsinline></video>
+                        {% else %}
+                            <img src="/uploads/{{ media.filename }}" alt="BRACELET">
+                        {% endif %}
+                    {% else %}
+                        <span>BRACELET</span>
+                    {% endif %}
+                </div>
+                <strong>BRACELET</strong>
+            </a>
+
+            <a href="/shop?category=ANKLET" class="home-category-card home-reveal-stagger">
+                <div class="home-category-circle">
+                    {% set media = home_media.get("home_category_anklet") %}
+
+                    {% if media and media.filename %}
+                        {% if media.media_type == "video" %}
+                            <video src="/uploads/{{ media.filename }}" autoplay muted loop playsinline></video>
+                        {% else %}
+                            <img src="/uploads/{{ media.filename }}" alt="ANKLET">
+                        {% endif %}
+                    {% else %}
+                        <span>ANKLET</span>
+                    {% endif %}
+                </div>
+                <strong>ANKLET</strong>
+            </a>
+
+        </div>
+
+    </section>
+
+    <section class="home-yeon-large-section">
+
+        <article class="yeon-large-card home-reveal">
+            <h2 class="yeon-large-card-title">
+                <span>01</span>
+                결 ; 연
+            </h2>
+
+            <div class="yeon-large-box">
+                <div class="yeon-large-visual">
+                    <div class="yeon-large-img">
+                        {% set media = home_media.get("home_yeon_01") %}
+
+                        {% if media and media.filename %}
+                            {% if media.media_type == "video" %}
+                                <video src="/uploads/{{ media.filename }}" autoplay muted loop playsinline></video>
+                            {% else %}
+                                <img src="/uploads/{{ media.filename }}" alt="결 ; 연">
+                            {% endif %}
+                        {% else %}
+                            &lt;IMAGE&gt;
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="yeon-large-text">
+
+                    <h3 class="yeon-inner-title">
+                        “우리가 이어지는 방식, 결;연.”
+                    </h3>
+
+                    <p>
+                        세상 모든 관계에는 보이지 않는 결이 있습니다.
+                        또한 우리 모두 보이지 않는 결로 누군가와 연결되어 있습니다. 
+						결;연은 그 결들을 ‘연’으로 묶는 주얼리입니다.
+						보이지 않는 실로, 마음의 결로. ‘결;연’은 그 인연의 아름다움을 담아냅니다. 
+                    </p>
+                    <a href="/story/yeon">VIEW STORY</a>
+                </div>
+            </div>
+        </article>
+
+
+        <article class="yeon-large-card reverse home-reveal">
+
+            <h2 class="yeon-large-card-title">
+                <span>02</span>
+                숨 ; 결
+            </h2>
+
+            <div class="yeon-large-box">
+                <div class="yeon-large-visual">
+                    <div class="yeon-large-img">
+                        {% set media = home_media.get("home_yeon_02") %}
+
+                        {% if media and media.filename %}
+                            {% if media.media_type == "video" %}
+                                <video src="/uploads/{{ media.filename }}" autoplay muted loop playsinline></video>
+                            {% else %}
+                                <img src="/uploads/{{ media.filename }}" alt="숨 ; 결">
+                            {% endif %}
+                        {% else %}
+                            &lt;IMAGE&gt;
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="yeon-large-text">
+
+                    <h3 class="yeon-inner-title">
+                        "지금의 숨결이, 내일의 이야기가 됩니다.”
+                    </h3>
+
+                    <p>
+                        숨;결은 순간의 감정이 아니라, 
+                        그것이 시간이 지나 결로 완성되는 여정을 담습니다.
+                        사랑했던 사람, 함께한 반려동물, 감사했던 인연… 
+                        그 모든 마음을 주얼리라는 형태에 심어두면, 
+                        그 마음은 금속의 결처럼 사라지지 않고 남습니다.
+                        우리는 그 결을 매만지며, 다시 숨을 쉬고, 그 마음을 이어갑니다.
+                    </p>
+                    <a href="/story/sum">VIEW STORY</a>
+                </div>
+            </div>
+        </article>
+
+
+        <article class="yeon-large-card home-reveal">
+            <h2 class="yeon-large-card-title">
+                <span>03</span>
+                고 ; 결
+            </h2>
+
+            <div class="yeon-large-box">
+                <div class="yeon-large-visual">
+                    <div class="yeon-large-img">
+                        {% set media = home_media.get("home_yeon_03") %}
+
+                        {% if media and media.filename %}
+                            {% if media.media_type == "video" %}
+                                <video src="/uploads/{{ media.filename }}" autoplay muted loop playsinline></video>
+                            {% else %}
+                                <img src="/uploads/{{ media.filename }}" alt="고 ; 결">
+                            {% endif %}
+                        {% else %}
+                            &lt;IMAGE&gt;
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="yeon-large-text">
+
+                    <h3 class="yeon-inner-title">
+                        "고;결 — 세월이 만드는 품격"
+                    </h3>
+
+                    <p>
+                        어느 고성(古城)의 돌담 사이로 햇빛이 스며들 듯, 
+                        고;결은 오래된 전통 위로 현대적 영감을 비춥니다. 
+					    금빛 선들이 장인의 손끝에서 유연한 결을 그리며, 
+                        시간을 관통한 이야기를 흘려보냅니다. 
+                        각 조각은 그 자체로 완결된 예술이며, 
+                        착용하는 순간 새로운 페이지를 써 내려가는 여정을 약속합니다.
+                    </p>
+                    <a href="/story/go">VIEW STORY</a>
+                </div>
+            </div>
+        </article>
+
+
+        <article class="yeon-large-card reverse home-reveal">
+            <h2 class="yeon-large-card-title">
+                <span>04</span>
+                간 ; 결
+            </h2>
+
+            <div class="yeon-large-box">
+
+                <div class="yeon-large-visual">
+                    <div class="yeon-large-img">
+                        {% set media = home_media.get("home_yeon_04") %}
+
+                        {% if media and media.filename %}
+                            {% if media.media_type == "video" %}
+                                <video src="/uploads/{{ media.filename }}" autoplay muted loop playsinline></video>
+                            {% else %}
+                                <img src="/uploads/{{ media.filename }}" alt="간 ; 결">
+                            {% endif %}
+                        {% else %}
+                            &lt;IMAGE&gt;
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="yeon-large-text">
+
+                    <h3 class="yeon-inner-title">
+                        "하나의 선이 곧 하나의 이야기"
+                    </h3>
+
+                    <p>
+                        고요한 공백 위에 그어낸 한 줄의 선이 이야기가 되듯,
+					    간;결은 단 한 가지 요소로도 충분한 품격을 말합니다.
+					    모든 디테일은 이유가 있고,
+                        불필요한 것은 과감히 덜어냅니다.
+					    그래서 매 순간이 간결하면서도 완결된 아름다움으로 기억됩니다.
+                    </p>
+                    <a href="/story/gan">VIEW STORY</a>
+                </div>
+            </div>
+        </article>
+
+
+        <article class="yeon-large-card home-reveal">
+            <h2 class="yeon-large-card-title">
+                <span>05</span>
+                빛 ; 결
+            </h2>
+
+            <div class="yeon-large-box">
+
+                <div class="yeon-large-visual">
+                    <div class="yeon-large-img">
+                        {% set media = home_media.get("home_yeon_05") %}
+
+                        {% if media and media.filename %}
+                            {% if media.media_type == "video" %}
+                                <video src="/uploads/{{ media.filename }}" autoplay muted loop playsinline></video>
+                            {% else %}
+                                <img src="/uploads/{{ media.filename }}" alt="빛 ; 결">
+                            {% endif %}
+                        {% else %}
+                            &lt;IMAGE&gt;
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="yeon-large-text">
+
+                    <h3 class="yeon-inner-title">
+                        “당신의 빛이 나는 마음, 그 빛의 결을 기록합니다”
+                    </h3>
+
+                    <p>
+                        우리는 반짝임 자체보다 반짝임이 남기는 감정의 결에 집중합니다. 
+					    아침 햇살이 잔잔한 커튼에 그리는 무늬, 
+                        미소가 얼굴에 드리우는 후광, 
+                        저녁 노을이 금빛으로 번지는 순간들. 
+					    빛;결은 이 순간의 결을 금속·보석·에나멜로 고정해, 
+                        하루를 살짝 더 따뜻하게 만듭니다.
+                    </p>
+                    <a href="/story/bit">VIEW STORY</a>
+                </div>
+            </div>
+        </article>
+
+
+        <article class="yeon-large-card reverse home-reveal">
+            <h2 class="yeon-large-card-title">
+                <span>06</span>
+                흔 ; 결
+            </h2>
+
+            <div class="yeon-large-box">
+
+                <div class="yeon-large-visual">
+                    <div class="yeon-large-img">
+                        {% set media = home_media.get("home_yeon_06") %}
+
+                        {% if media and media.filename %}
+                            {% if media.media_type == "video" %}
+                                <video src="/uploads/{{ media.filename }}" autoplay muted loop playsinline></video>
+                            {% else %}
+                                <img src="/uploads/{{ media.filename }}" alt="흔 ; 결">
+                            {% endif %}
+                        {% else %}
+                            &lt;IMAGE&gt;
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="yeon-large-text">
+
+                    <h3 class="yeon-inner-title">
+                        “추억은 사라지지 않습니다, 결이 되어 영원히”
+                    </h3>
+
+                    <p>
+                        흔;결은 지나간 기억의 조각들을 한 올의 실로 엮어냅니다.
+					    우리가 지나온 모든 순간은 특별하며, 
+                        그 조각들은 형태를 달리해 우리 곁에 머뭅니다.
+					    각 제품은 당신만의 흔적을 메탈과 보석에 새겨, 
+                        시간이 지나도 사라지지 않는 연결고리가 되어 줍니다.
+                    </p>
+                    <a href="/story/hon">VIEW STORY</a>
+                </div>
+            </div>
+        </article>
+
+
+        <article class="yeon-large-card home-reveal">
+            <h2 class="yeon-large-card-title">
+                <span>07</span>
+                결 ; 속
+            </h2>
+
+            <div class="yeon-large-box">
+                <div class="yeon-large-visual">
+                    <div class="yeon-large-img">
+                        {% set media = home_media.get("home_yeon_07") %}
+
+                        {% if media and media.filename %}
+                            {% if media.media_type == "video" %}
+                                <video src="/uploads/{{ media.filename }}" autoplay muted loop playsinline></video>
+                            {% else %}
+                                <img src="/uploads/{{ media.filename }}" alt="결 ; 속">
+                            {% endif %}
+                        {% else %}
+                            &lt;IMAGE&gt;
+                        {% endif %}
+                    </div>  
+                </div>
+
+                <div class="yeon-large-text">
+
+                    <h3 class="yeon-inner-title">
+                        “우리가 이어지는 방식, 결;속”
+                    </h3>
+
+                    <p>
+                        깊린 시절 친구와의 첫 우정 매듭, 
+                        가족과의 굳건한 결속, 
+                        동료와 함께 쌓아온 시간까지.
+					    ‘결;속’은 삶의 모든 순간에 피어난 관계의 매듭을 주얼리로 기록합니다.
+                        당신의 하루, 당신의 기록, 
+                        당신의 ‘우리’를 이어가는 이야기입니다.
+                    </p>
+                    <a href="/story/sok">VIEW STORY</a>
+                </div>
+            </div>
+        </article>
+
+
+        <article class="yeon-large-card reverse home-reveal">
+            <h2 class="yeon-large-card-title">
+                <span>08</span>
+                결 ; 채
+            </h2>
+
+            <div class="yeon-large-box">
+                <div class="yeon-large-visual">
+                    <div class="yeon-large-img">
+                        {% set media = home_media.get("home_yeon_08") %}
+
+                        {% if media and media.filename %}
+                            {% if media.media_type == "video" %}
+                                <video src="/uploads/{{ media.filename }}" autoplay muted loop playsinline></video>
+                            {% else %}
+                                <img src="/uploads/{{ media.filename }}" alt="결 ; 채">
+                            {% endif %}
+                        {% else %}
+                            &lt;IMAGE&gt;
+                        {% endif %}
+                    </div>  
+                </div>
+
+                <div class="yeon-large-text">
+
+                    <h3 class="yeon-inner-title">
+                        “축하의 결을 채우다, 결;채.”
+                    </h3>
+
+                    <p>
+                        누군가의 첫날과 마침에, 
+                        우리는 늘 “축하해”라고 말합니다. 
+					    결;채는 말로 끝나던 축하를 손에 남기는 작은 의식으로 바꿉니다. 
+                        색과 빛의 점들이 모여 하나의 결을 이루듯,
+                        당신의 박수·미소·기원도 여기에 채워집니다.
+                    </p>
+                    <a href="/story/chae">VIEW STORY</a>
+                </div>
+            </div>
+        </article>
+
+    </section>
+
+    <!-- COMPANY STORY LINE -->
+    <section class="company-story-section home-reveal">
+
+        <div class="company-story-visual">
+
+            <!-- 나중에 이미지 넣을 자리 -->
+            {% set media = home_media.get("company_story_main") %}
+
+            {% if media and media.filename %}
+                {% if media.media_type == "video" %}
+                    <video class="company-story-video" src="/uploads/{{ media.filename }}" autoplay muted loop playsinline></video>
+                {% else %}
+                    <img class="company-story-image" src="/uploads/{{ media.filename }}" alt="GY JEWELRY STORY">
+                {% endif %}
+            {% else %}
+                <div class="company-story-main-placeholder">
+                    <span>GY JEWELRY STORY IMAGE / VIDEO</span>
+                </div>
+            {% endif %}
+
+        </div>
+
+        <div class="company-story-content">
+
+            <p class="company-story-label">OUR STORY</p>
+
+            <h2>
+                시간이 지나도 변하지 않는<br>
+                하나의 결을 만듭니다
+            </h2>
+
+            <p class="company-story-text">
+                GY JEWELRY는 단순한 장신구를 넘어, 사람과 사람 사이에 남는 감정,
+                약속, 기억의 결을 주얼리 안에 담아냅니다.
+            </p>
+
+        </div>
+
+        <div class="company-story-boxes">
+
+            <article class="company-story-box home-reveal-stagger">
+                <div class="company-story-box-media">
+                    {% set media = home_media.get("company_story_box_1") %}
+                    {% if media and media.filename %}
+                        {% if media.media_type == "video" %}
+                            <video src="/uploads/{{ media.filename }}" autoplay muted loop playsinline></video>
+                        {% else %}
+                            <img src="/uploads/{{ media.filename }}" alt="브랜드 철학">
+                        {% endif %}
+                    {% else %}
+                        <span>IMAGE / VIDEO 01</span>
+                    {% endif %}
+                </div>
+                <div class="company-story-box-text">
+                    <p>PHILOSOPHY</p>
+                    <h3>브랜드 철학</h3>
+                    <span>
+                        우리는 반짝임보다 오래 남는 의미를 먼저 생각합니다.
+                    </span>
+                </div>
+            </article>
+
+            <article class="company-story-box">
+                <div class="company-story-box-media">
+                    {% set media = home_media.get("company_story_box_2") %}
+                    {% if media and media.filename %}
+                        {% if media.media_type == "video" %}
+                            <video src="/uploads/{{ media.filename }}" autoplay muted loop playsinline></video>
+                        {% else %}
+                            <img src="/uploads/{{ media.filename }}" alt="제작의 결">
+                        {% endif %}
+                    {% else %}
+                        <span>IMAGE / VIDEO 02</span>
+                    {% endif %}
+                </div>
+                <div class="company-story-box-text">
+                    <p>CRAFT</p>
+                    <h3>제작의 결</h3>
+                    <span>
+                        작은 디테일과 균형을 통해 매일 착용할 수 있는 아름다움을 만듭니다.
+                    </span>
+                </div>
+            </article>
+
+            <article class="company-story-box">
+                <div class="company-story-box-media">
+                    {% set media = home_media.get("company_story_box_3") %}
+                    {% if media and media.filename %}
+                        {% if media.media_type == "video" %}
+                            <video src="/uploads/{{ media.filename }}" autoplay muted loop playsinline></video>
+                        {% else %}
+                            <img src="/uploads/{{ media.filename }}" alt="기억의 순간">
+                        {% endif %}
+                    {% else %}
+                        <span>IMAGE / VIDEO 03</span>
+                    {% endif %}
+                </div>
+                <div class="company-story-box-text">
+                    <p>MOMENT</p>
+                    <h3>기억의 순간</h3>
+                    <span>
+                        특별한 날뿐 아니라 평범한 하루에도 남는 주얼리를 제안합니다.
+                    </span>
+                </div>
+            </article>
+
+        </div>
+
+    </section>
+
+    <!-- HOME SERVICE GUIDE -->
+    <section class="home-service home-reveal" aria-label="GY JEWELRY 서비스 안내">
+
+        <div class="home-reveal-stagger">
+            <strong>GIFT PACKAGING</strong>
+            <span>GY JEWELRY의 무드를 담은 시그니처 패키지로 준비됩니다.</span>
+        </div>
+
+        <div class="home-reveal-stagger">
+            <strong>PRIVATE CONSULTING</strong>
+            <span>선물, 기념일, 취향에 맞춘 주얼리 선택을 도와드립니다.</span>
+        </div>
+
+        <div class="home-reveal-stagger">
+            <strong>JEWELRY CARE</strong>
+            <span>오래도록 아름답게 착용할 수 있도록 기본 케어를 안내합니다.</span>
+        </div>
+
+    </section>
+
+</main>
+
+{% include "shop/footer.html" %}
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const mainTrack = document.getElementById("mainSliderTrack");
+    const mainDots = document.querySelectorAll("#mainSliderDots .main-dot");
+    const mainPrevBtn = document.getElementById("mainPrevBtn");
+    const mainNextBtn = document.getElementById("mainNextBtn");
+
+    if (!mainTrack || mainDots.length === 0) {
+        return;
+    }
+
+    let mainIndex = 0;
+    let mainTimer = null;
+
+    function moveMainSlider(index) {
+        mainIndex = index;
+        mainTrack.style.transform = `translateX(-${mainIndex * 100}%)`;
+
+        mainDots.forEach(function (dot) {
+            dot.classList.remove("active");
+        });
+
+        mainDots[mainIndex].classList.add("active");
+    }
+
+    function startMainSlider() {
+        clearInterval(mainTimer);
+
+        mainTimer = setInterval(function () {
+            const nextIndex = (mainIndex + 1) % mainDots.length;
+            moveMainSlider(nextIndex);
+        }, 4500);
+    }
+
+    function resetMainSliderTimer() {
+        startMainSlider();
+    }
+
+    mainDots.forEach(function (dot) {
+        dot.addEventListener("click", function () {
+            const index = Number(dot.dataset.index);
+            moveMainSlider(index);
+            resetMainSliderTimer();
+        });
+    });
+
+    if (mainPrevBtn) {
+        mainPrevBtn.addEventListener("click", function () {
+            const prevIndex = (mainIndex - 1 + mainDots.length) % mainDots.length;
+            moveMainSlider(prevIndex);
+            resetMainSliderTimer();
+        });
+    }
+
+    if (mainNextBtn) {
+        mainNextBtn.addEventListener("click", function () {
+            const nextIndex = (mainIndex + 1) % mainDots.length;
+            moveMainSlider(nextIndex);
+            resetMainSliderTimer();
+        });
+    }
+
+    moveMainSlider(0);
+    startMainSlider();
+});
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const track = document.querySelector(".yeon-carousel-track");
+    const viewport = document.querySelector(".yeon-carousel-viewport");
+    const cards = Array.from(document.querySelectorAll(".yeon-carousel-card"));
+    const prevBtn = document.querySelector(".yeon-carousel-prev");
+    const nextBtn = document.querySelector(".yeon-carousel-next");
+    const dotsWrap = document.querySelector(".yeon-carousel-dots");
+
+    if (!track || !viewport || cards.length === 0 || !prevBtn || !nextBtn || !dotsWrap) {
+        return;
+    }
+
+    let activeIndex = 0;
+    let autoTimer = null;
+    let resumeTimer = null;
+    let isPaused = false;
+
+    dotsWrap.innerHTML = "";
+
+    cards.forEach(function (_, index) {
+        const dot = document.createElement("button");
+        dot.type = "button";
+        dot.className = "yeon-carousel-dot";
+        dot.setAttribute("aria-label", `${index + 1}번 카드 보기`);
+
+        dot.addEventListener("click", function () {
+            activeIndex = index;
+            updateCarousel();
+            restartAutoSlide();
+        });
+
+        dotsWrap.appendChild(dot);
+    });
+
+    const dots = Array.from(document.querySelectorAll(".yeon-carousel-dot"));
+
+    function getCenterMoveValue() {
+        const activeCard = cards[activeIndex];
+
+        const viewportWidth = viewport.getBoundingClientRect().width;
+        const cardWidth = activeCard.getBoundingClientRect().width;
+
+        const cardCenter = activeCard.offsetLeft + cardWidth / 2;
+        const viewportCenter = viewportWidth / 2;
+
+        return viewportCenter - cardCenter;
+    }
+
+    function moveTrack() {
+        const moveValue = getCenterMoveValue();
+        track.style.transform = `translateX(${moveValue}px)`;
+    }
+
+    function updateActiveCard() {
+        cards.forEach(function (card, index) {
+            card.classList.toggle("is-active", index === activeIndex);
+        });
+    }
+
+    function updateActiveDot() {
+        dots.forEach(function (dot, index) {
+            dot.classList.toggle("is-active", index === activeIndex);
+        });
+    }
+
+    function updateCarousel() {
+        updateActiveCard();
+        updateActiveDot();
+        moveTrack();
+    }
+
+    function goNext() {
+        if (activeIndex >= cards.length - 1) {
+            activeIndex = 0;
+        } else {
+            activeIndex += 1;
+        }
+
+        updateCarousel();
+    }
+
+    function goPrev() {
+        if (activeIndex <= 0) {
+            activeIndex = cards.length - 1;
+        } else {
+            activeIndex -= 1;
+        }
+
+        updateCarousel();
+    }
+
+    function clearTimers() {
+        if (autoTimer) {
+            clearInterval(autoTimer);
+            autoTimer = null;
+        }
+
+        if (resumeTimer) {
+            clearTimeout(resumeTimer);
+            resumeTimer = null;
+        }
+    }
+
+    function startAutoSlide() {
+        clearTimers();
+
+        autoTimer = setInterval(function () {
+            if (!isPaused) {
+                goNext();
+            }
+        }, 3000);
+    }
+
+    function stopAutoSlide() {
+        isPaused = true;
+        clearTimers();
+    }
+
+    function resumeAutoSlideSoon() {
+        isPaused = false;
+        clearTimers();
+
+        resumeTimer = setTimeout(function () {
+            goNext();
+            startAutoSlide();
+        }, 1000);
+    }
+
+    function restartAutoSlide() {
+        isPaused = false;
+        startAutoSlide();
+    }
+
+    nextBtn.addEventListener("click", function () {
+        goNext();
+        restartAutoSlide();
+    });
+
+    prevBtn.addEventListener("click", function () {
+        goPrev();
+        restartAutoSlide();
+    });
+
+    /*
+        중요:
+        section 전체가 아니라 실제 카드가 보이는 viewport에만 hover 정지 적용.
+        그래서 카드 영역에서 마우스를 빼면 더 빨리 자동 슬라이드로 돌아옴.
+    */
+    viewport.addEventListener("mouseenter", stopAutoSlide);
+    viewport.addEventListener("mouseleave", resumeAutoSlideSoon);
+
+    window.addEventListener("resize", function () {
+        updateCarousel();
+    });
+
+    updateCarousel();
+    startAutoSlide();
+});
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const revealItems = document.querySelectorAll(".home-reveal, .home-reveal-stagger");
+
+    if (revealItems.length === 0) {
+        return;
+    }
+
+    const observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+                entry.target.classList.add("is-visible");
+                observer.unobserve(entry.target);
+            }
+        });
+    }, {
+        threshold: 0.16,
+        rootMargin: "0px 0px -70px 0px"
+    });
+
+    revealItems.forEach(function (item, index) {
+        if (item.classList.contains("home-reveal-stagger")) {
+            item.style.transitionDelay = `${Math.min(index * 0.06, 0.36)}s`;
+        }
+
+        observer.observe(item);
+    });
+});
+</script>
+
+</body>
+</html>

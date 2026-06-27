@@ -1,0 +1,316 @@
+/* ================================
+   결 ; 속 전용 스타일
+   겉보다 깊은 곳에 간직된 이야기
+================================ */
+
+.sok-story-page {
+    min-height: 100vh;
+    background: #eeeeec;
+    color: #171716;
+    overflow-x: hidden;
+}
+
+/* 첫 화면 */
+.sok-hero {
+    min-height: 92vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    padding: 120px 24px 80px;
+    text-align: center;
+
+    background:
+        radial-gradient(circle at center, rgba(119, 113, 92, 0.16), transparent 34%),
+        linear-gradient(180deg, #f8f8f5 0%, #eeeeec 100%);
+}
+
+.sok-label {
+    font-size: 12px;
+    letter-spacing: 0.32em;
+    color: #77715c;
+    margin-bottom: 26px;
+}
+
+.sok-hero h1 {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(56px, 9vw, 118px);
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    margin-bottom: 26px;
+}
+
+.sok-hero-text {
+    font-size: 18px;
+    color: #66665f;
+    letter-spacing: 0.04em;
+}
+
+/* 상징 비주얼 */
+.sok-visual-section {
+    min-height: 90vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 80px;
+
+    padding: 120px 8vw;
+    background: #fbfbf8;
+}
+
+.sok-visual-mark {
+    position: relative;
+    width: min(440px, 76vw);
+    aspect-ratio: 1 / 1;
+    margin: 0 auto;
+}
+
+/* 속의 결: 겉 원 안에 숨은 중심 */
+.sok-visual-mark span {
+    position: absolute;
+    border-radius: 50%;
+}
+
+.sok-visual-mark span:nth-child(1) {
+    width: 78%;
+    height: 78%;
+    top: 11%;
+    left: 11%;
+    border: 1px solid rgba(119, 113, 92, 0.34);
+}
+
+.sok-visual-mark span:nth-child(2) {
+    width: 46%;
+    height: 46%;
+    top: 27%;
+    left: 27%;
+    border: 1px dashed rgba(119, 113, 92, 0.42);
+    background: rgba(119, 113, 92, 0.04);
+}
+
+.sok-visual-mark span:nth-child(3) {
+    width: 16%;
+    height: 16%;
+    top: 42%;
+    left: 42%;
+    background: rgba(119, 113, 92, 0.2);
+}
+
+.sok-visual-mark::before {
+    content: "";
+    position: absolute;
+    width: 1px;
+    height: 82%;
+    top: 9%;
+    left: 50%;
+    background: linear-gradient(
+        180deg,
+        transparent,
+        rgba(119, 113, 92, 0.32),
+        transparent
+    );
+}
+
+.sok-visual-mark::after {
+    content: "";
+    position: absolute;
+    width: 82%;
+    height: 1px;
+    top: 50%;
+    left: 9%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(119, 113, 92, 0.32),
+        transparent
+    );
+}
+
+.sok-visual-text h2 {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(34px, 4.6vw, 64px);
+    font-weight: 400;
+    line-height: 1.35;
+    color: #171716;
+}
+
+/* 회고록 텍스트 */
+.sok-text-section {
+    min-height: 78vh;
+    display: grid;
+    grid-template-columns: 0.7fr 1.3fr;
+    align-items: center;
+    gap: 80px;
+
+    padding: 130px 10vw;
+    background: #eeeeec;
+}
+
+.sok-text-section.reverse {
+    grid-template-columns: 1.3fr 0.7fr;
+    background: #d9d9d4;
+}
+
+.sok-text-section.reverse .sok-section-number {
+    order: 2;
+}
+
+.sok-text-section.reverse .sok-copy {
+    order: 1;
+}
+
+.sok-section-number {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(90px, 13vw, 190px);
+    color: rgba(119, 113, 92, 0.2);
+    line-height: 1;
+}
+
+.sok-copy {
+    max-width: 620px;
+}
+
+.sok-small {
+    font-size: 13px;
+    letter-spacing: 0.22em;
+    color: #77715c;
+    margin-bottom: 24px;
+}
+
+.sok-copy h2 {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(34px, 4vw, 56px);
+    font-weight: 400;
+    line-height: 1.35;
+    margin-bottom: 34px;
+    color: #171716;
+}
+
+.sok-copy p {
+    font-size: 17px;
+    line-height: 2.1;
+    color: #4b4b45;
+}
+
+/* 철학 섹션 */
+.sok-philosophy {
+    padding: 170px 24px;
+    text-align: center;
+    background: #171716;
+    color: #eeeeec;
+}
+
+.sok-philosophy h2 {
+    max-width: 980px;
+    margin: 0 auto 34px;
+
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(30px, 4vw, 56px);
+    font-weight: 400;
+    line-height: 1.55;
+}
+
+.sok-philosophy p {
+    max-width: 720px;
+    margin: 0 auto;
+    color: rgba(238, 238, 236, 0.72);
+    font-size: 17px;
+    line-height: 2;
+}
+
+/* 대표 상품 */
+.sok-products {
+    padding: 150px 6vw 170px;
+    background: #fbfbf8;
+    text-align: center;
+}
+
+.sok-products h2 {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(34px, 4vw, 54px);
+    font-weight: 400;
+    margin-bottom: 70px;
+}
+
+.sok-product-grid {
+    max-width: 1180px;
+    margin: 0 auto;
+
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+}
+
+.sok-product-card {
+    text-decoration: none;
+    color: #171716;
+    background: #ffffff;
+    padding: 24px 24px 30px;
+    transition: transform 0.45s ease, box-shadow 0.45s ease;
+}
+
+.sok-product-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 22px 45px rgba(23, 23, 22, 0.08);
+}
+
+.sok-product-card img {
+    width: 100%;
+    aspect-ratio: 1 / 1.08;
+    object-fit: cover;
+    margin-bottom: 22px;
+}
+
+.sok-product-card h3 {
+    font-size: 15px;
+    font-weight: 400;
+    margin-bottom: 8px;
+}
+
+.sok-product-card p {
+    font-size: 14px;
+    color: #66665f;
+}
+
+.story-bottom-nav {
+    background: #fbfbf8;
+}
+
+/* 반응형 */
+@media (max-width: 900px) {
+    .sok-visual-section,
+    .sok-text-section,
+    .sok-text-section.reverse {
+        grid-template-columns: 1fr;
+        gap: 50px;
+    }
+
+    .sok-text-section.reverse .sok-section-number,
+    .sok-text-section.reverse .sok-copy {
+        order: initial;
+    }
+
+    .sok-product-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .sok-section-number {
+        font-size: 88px;
+    }
+}
+
+@media (max-width: 600px) {
+    .sok-hero {
+        min-height: 80vh;
+    }
+
+    .sok-visual-section,
+    .sok-text-section {
+        padding: 100px 24px;
+    }
+
+    .sok-product-grid {
+        grid-template-columns: 1fr;
+    }
+}

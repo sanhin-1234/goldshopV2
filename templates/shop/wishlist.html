@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wishlist | GY JEWELRY</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+{% include "shop/header.html" %}
+
+<main class="shop-page wishlist-page">
+
+    <div class="wishlist-top-actions">
+        <a href="/mypage" class="wishlist-back-link">
+            ← My Page
+        </a>
+    </div>
+
+    <section class="shop-header">
+
+        <p class="shop-subtitle">MY WISHLIST</p>
+        <h1 class="shop-title">WISHLIST</h1>
+        <p class="shop-subtitle">
+            하트로 저장한 주얼리를 모아볼 수 있습니다.
+        </p>
+    </section>
+
+    {% if products %}
+
+        <section class="product-grid wishlist-grid">
+
+            {% for p in products %}
+
+                <article class="product-card">
+
+                    {% set back_url = request.full_path if request.query_string else request.path %}
+
+                    <button
+                        type="button"
+                        class="wishlist-btn active"
+                        data-product-id="{{ p['id'] }}"
+                        aria-label="위시리스트 해제"
+                    >
+                        ♥
+                    </button>
+
+                    <a href="/product/{{ p['id'] }}?back={{ back_url|urlencode }}">
+
+                        {% if p['image'] %}
+                            <img src="/uploads/{{ p['image'] }}"
+                                 alt="{{ p['name'] }}"
+                                 class="product-image">
+                        {% else %}
+                            <div class="product-no-image">
+                                이미지 없음
+                            </div>
+                        {% endif %}
+
+                        <h2 class="product-name">
+                            {{ p['name'] }}
+                        </h2>
+
+                        <p class="product-price">
+                            {{ "{:,}".format(p['price']) }}원
+                        </p>
+
+                        {% if p['description'] %}
+                            <p class="product-description">
+                                {{ p['description'][:22] }}...
+                            </p>
+                        {% endif %}
+
+                        <div class="product-rating">
+                            ★★★★★ <span>(4.8)</span>
+                        </div>
+
+                    </a>
+
+                </article>
+
+            {% endfor %}
+
+        </section>
+
+    {% else %}
+
+        <section class="empty-result wishlist-empty">
+            <h2>아직 찜한 상품이 없습니다</h2>
+            <p>마음에 드는 주얼리를 하트로 저장해보세요.</p>
+
+            <div class="wishlist-empty-actions">
+                <a href="/mypage">My Page로 돌아가기</a>
+                <a href="/shop">쇼핑하러 가기</a>
+            </div>
+        </section>
+
+    {% endif %}
+
+</main>
+
+<script>
+document.querySelectorAll(".wishlist-btn").forEach(function (button) {
+    button.addEventListener("click", function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const productId = button.dataset.productId;
+
+        fetch(`/wishlist/toggle/${productId}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+        .then(function (response) {
+            if (response.status === 401) {
+                window.location.href = "/login";
+                return null;
+            }
+
+            return response.json();
+        })
+        .then(function (data) {
+            if (!data) return;
+
+            if (!data.wished) {
+                const card = button.closest(".product-card");
+
+                if (card) {
+                    card.remove();
+                }
+
+                const remainingCards = document.querySelectorAll(".product-card");
+
+                if (remainingCards.length === 0) {
+                    window.location.reload();
+                }
+            }
+        })
+        .catch(function (error) {
+            console.error("Wishlist error:", error);
+        });
+    });
+});
+</script>
+
+</body>
+</html>

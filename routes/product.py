@@ -1,0 +1,656 @@
+from flask import Blueprint, render_template, request, redirect, url_for, session
+from models.db import get_db
+
+ # 소비자 페이지
+ 
+product_bp = Blueprint("product", __name__)
+
+def get_product_rating(db, product_id):
+    rating_row = db.execute("""
+        SELECT 
+            COUNT(id) AS review_count,
+            COALESCE(AVG(rating), 0) AS avg_rating
+        FROM product_reviews
+        WHERE product_id = ?
+    """, (product_id,)).fetchone()
+
+    return {
+        "review_count": rating_row["review_count"] if rating_row else 0,
+        "avg_rating": float(rating_row["avg_rating"] or 0)
+    }
+
+
+def attach_rating_to_products(db, products):
+    rated_products = []
+
+    for product in products:
+        item = dict(product)
+
+        rating = get_product_rating(db, item["id"])
+
+        item["review_count"] = rating["review_count"]
+        item["avg_rating"] = rating["avg_rating"]
+
+        rated_products.append(item)
+
+    return rated_products
+
+def ensure_home_media_table(cur):
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS home_media (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            slot_key TEXT UNIQUE NOT NULL,
+            slot_name TEXT NOT NULL,
+            media_type TEXT DEFAULT 'image',
+            filename TEXT,
+            title TEXT,
+            subtitle TEXT,
+            link_url TEXT,
+            is_active INTEGER DEFAULT 1,
+            sort_order INTEGER DEFAULT 0,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+
+    slots = [
+        ("home_hero_1", "홈 메인 슬라이드 1", "image", 1),
+        ("home_hero_2", "홈 메인 슬라이드 2", "image", 2),
+        ("home_hero_3", "홈 메인 슬라이드 3", "image", 3),
+        ("home_hero_4", "홈 메인 슬라이드 4", "image", 4),
+        ("home_hero_5", "홈 메인 슬라이드 5", "image", 5),
+
+        ("home_yeon_01", "홈 큰 연 이미지 01 - 결 ; 연", "image", 11),
+        ("home_yeon_02", "홈 큰 연 이미지 02 - 숨 ; 결", "image", 12),
+        ("home_yeon_03", "홈 큰 연 이미지 03 - 고 ; 결", "image", 13),
+        ("home_yeon_04", "홈 큰 연 이미지 04 - 간 ; 결", "image", 14),
+        ("home_yeon_05", "홈 큰 연 이미지 05 - 빛 ; 결", "image", 15),
+        ("home_yeon_06", "홈 큰 연 이미지 06 - 흔 ; 결", "image", 16),
+        ("home_yeon_07", "홈 큰 연 이미지 07 - 결 ; 속", "image", 17),
+        ("home_yeon_08", "홈 큰 연 이미지 08 - 결 ; 채", "image", 18),
+
+        ("company_story_main", "회사 스토리 메인 이미지", "image", 30),
+        ("company_story_box_1", "회사 스토리 하단 이미지 1", "image", 31),
+        ("company_story_box_2", "회사 스토리 하단 이미지 2", "image", 32),
+        ("company_story_box_3", "회사 스토리 하단 이미지 3", "image", 33),
+    ]
+
+    for slot_key, slot_name, media_type, sort_order in slots:
+        cur.execute("""
+            INSERT OR IGNORE INTO home_media
+            (slot_key, slot_name, media_type, sort_order)
+            VALUES (?, ?, ?, ?)
+        """, (slot_key, slot_name, media_type, sort_order))
+
+@product_bp.route("/")
+def home():
+
+    search = request.args.get("search", "")
+    collection = request.args.get("collection", "")
+    sort = request.args.get("sort", "latest")
+
+    conn = get_db()
+    cur = conn.cursor()
+
+    ensure_home_media_table(cur)
+    conn.commit()
+
+    # =========================
+    # 상품 데이터
+    # =========================
+    query = "SELECT * FROM products"
+    params = []
+
+    conditions = []
+
+    if search:
+        conditions.append("name LIKE ?")
+        params.append('%' + search + '%')
+
+    if collection:
+        conditions.append("collection = ?")
+        params.append(collection)
+
+    if conditions:
+        query += " WHERE " + " AND ".join(conditions)
+
+    if sort == "latest":
+        query += " ORDER BY id DESC"
+
+    elif sort == "oldest":
+        query += " ORDER BY id ASC"
+
+    elif sort == "price_low":
+        query += " ORDER BY price ASC"
+
+    elif sort == "price_high":
+        query += " ORDER BY price DESC"
+
+    elif sort == "name":
+        query += " ORDER BY name ASC"
+
+    cur.execute(query, params)
+    products = cur.fetchall()
+
+    # =========================
+    # 홈 이미지 데이터
+    # =========================
+    cur.execute("""
+        SELECT *
+        FROM home_media
+        WHERE is_active = 1
+        ORDER BY sort_order ASC, id ASC
+    """)
+
+    home_media_rows = cur.fetchall()
+
+    home_media = {
+        row["slot_key"]: row
+        for row in home_media_rows
+    }
+
+    hero_media = [
+        home_media.get("home_hero_1"),
+        home_media.get("home_hero_2"),
+        home_media.get("home_hero_3"),
+        home_media.get("home_hero_4"),
+        home_media.get("home_hero_5"),
+    ]
+
+    story_media = {
+        "main": home_media.get("home_story_main"),
+        "sub_1": home_media.get("home_story_sub_1"),
+        "sub_2": home_media.get("home_story_sub_2"),
+        "sub_3": home_media.get("home_story_sub_3"),
+    }
+
+    conn.close()
+
+    return render_template(
+        "shop/home.html",
+        products=products,
+        search=search,
+        sort=sort,
+        collection=collection,
+        hero_media=hero_media,
+        home_media=home_media,
+        story_media=story_media
+    )
+
+@product_bp.route("/shop")
+def shop():
+    db = get_db()
+
+    search = request.args.get("search", "").strip()
+    sort = request.args.get("sort", "latest").strip()
+    category = request.args.get("category", "").strip().upper()
+    price_range = request.args.get("price_range", "").strip()
+    tag = request.args.get("tag", "").strip().upper()
+    material = request.args.get("material", "").strip().upper()
+
+    valid_categories = {
+        "RING": "Ring",
+        "NECKLACE": "Necklace",
+        "EARRINGS": "Earrings",
+        "BRACELET": "Bracelet",
+        "ANKLET": "Anklet"
+    }
+
+    valid_tags = {
+        "NEW": "New",
+        "SEASON": "Season Item",
+        "BEST": "Best"
+    }
+
+    valid_materials = {
+        "DIAMOND": "Diamond",
+        "GOLDBAR": "Gold Bar",
+        "24K": "24K",
+        "18K": "18K",
+        "14K": "14K",
+        "SILVER": "Silver"
+    }
+
+    # NEW 전용 기획전 페이지
+    if tag == "NEW":
+        products = db.execute(
+            """
+            SELECT *
+            FROM products
+            WHERE tag = ?
+            ORDER BY id DESC
+            """,
+            ("NEW",)
+        ).fetchall()
+
+        products = attach_rating_to_products(db, products)
+
+        wished_product_ids = []
+
+        if session.get("username"):
+            wished_rows = db.execute(
+                """
+                SELECT product_id
+                FROM wishlists
+                WHERE username = ?
+                """,
+                (session.get("username"),)
+            ).fetchall()
+
+            wished_product_ids = [row["product_id"] for row in wished_rows]
+
+        return render_template(
+            "shop/new.html",
+            products=products,
+            wished_product_ids=wished_product_ids
+        )
+
+    query = "SELECT * FROM products WHERE 1=1"
+    params = []
+
+    # 검색
+    if search:
+        query += " AND name LIKE ?"
+        params.append(f"%{search}%")
+
+    # 카테고리 필터
+    if category in valid_categories:
+        query += " AND collection = ?"
+        params.append(category)
+
+    # 가격대 필터
+    if price_range == "0_50":
+        query += " AND price >= ? AND price < ?"
+        params.extend([0, 500000])
+
+    elif price_range == "50_100":
+        query += " AND price >= ? AND price < ?"
+        params.extend([500000, 1000000])
+
+    elif price_range == "100_150":
+        query += " AND price >= ? AND price < ?"
+        params.extend([1000000, 1500000])
+
+    elif price_range == "150_200":
+        query += " AND price >= ? AND price < ?"
+        params.extend([1500000, 2000000])
+
+    elif price_range == "200_up":
+        query += " AND price >= ?"
+        params.append(2000000)
+
+    # 정렬
+    if sort == "price_low":
+        query += " ORDER BY price ASC"
+    elif sort == "price_high":
+        query += " ORDER BY price DESC"
+    elif sort == "name":
+        query += " ORDER BY name ASC"
+    elif sort == "oldest":
+        query += " ORDER BY id ASC"
+    else:
+        query += " ORDER BY id DESC"
+
+    products = db.execute(query, params).fetchall()
+    products = attach_rating_to_products(db, products)
+
+    # 로그인한 사용자의 위시리스트 상품 id 목록
+    wished_product_ids = []
+
+    if session.get("username"):
+        wished_rows = db.execute(
+            """
+            SELECT product_id
+            FROM wishlists
+            WHERE username = ?
+            """,
+            (session.get("username"),)
+        ).fetchall()
+
+        wished_product_ids = [row["product_id"] for row in wished_rows]
+
+    product_count = len(products)
+    category_label = valid_categories.get(category, "All Jewelry")
+
+    return render_template(
+        "shop/index.html",
+        products=products,
+        search=search,
+        sort=sort,
+        category=category,
+        category_label=category_label,
+        product_count=product_count,
+        price_range=price_range,
+        wished_product_ids=wished_product_ids
+    )
+
+@product_bp.route("/product/<int:product_id>/review", methods=["POST"])
+def add_review(product_id):
+    # 로그인 안 했으면 로그인 페이지로 이동
+    if "username" not in session:
+        return redirect(url_for("auth.login"))
+
+    rating = request.form.get("rating", "5")
+    content = request.form.get("content") or request.form.get("review_text") or ""
+
+    content = content.strip()
+
+    if not content:
+        return redirect(url_for("product.product_detail", product_id=product_id) + "#reviews")
+
+    try:
+        rating = int(rating)
+    except ValueError:
+        rating = 5
+
+    if rating < 1:
+        rating = 1
+    if rating > 5:
+        rating = 5
+
+    db = get_db()
+
+    db.execute("""
+        INSERT INTO product_reviews (
+            product_id,
+            username,
+            rating,
+            content
+        )
+        VALUES (?, ?, ?, ?)
+    """, (
+        product_id,
+        session.get("username"),
+        rating,
+        content
+    ))
+
+    db.commit()
+
+    return redirect(request.referrer or url_for("product.home"))
+
+@product_bp.route("/product/<int:product_id>")
+def product_detail(product_id):
+    db = get_db()
+
+    product = db.execute(
+        "SELECT * FROM products WHERE id = ?",
+        (product_id,)
+    ).fetchone()
+
+    if product is None:
+        return redirect("/shop")
+
+    # 리뷰 목록
+    reviews = db.execute("""
+        SELECT *
+        FROM product_reviews
+        WHERE product_id = ?
+        ORDER BY id DESC
+    """, (product_id,)).fetchall()
+
+    # 실제 리뷰 기준 평균 평점 / 리뷰 개수
+    rating_summary = get_product_rating(db, product_id)
+    review_count = rating_summary["review_count"]
+    avg_rating = rating_summary["avg_rating"]
+
+    # 비슷한 상품 추천
+    related_products = db.execute("""
+        SELECT *
+        FROM products
+        WHERE id != ?
+          AND (
+                collection = ?
+                OR material = ?
+          )
+        ORDER BY
+            CASE
+                WHEN collection = ? THEN 0
+                ELSE 1
+            END,
+            id DESC
+        LIMIT 4
+    """, (
+        product_id,
+        product["collection"],
+        product["material"],
+        product["collection"]
+    )).fetchall()
+
+    # 비슷한 상품에도 실제 평점 붙이기
+    related_products = attach_rating_to_products(db, related_products)
+
+    # 큰 이미지 + 작은 썸네일 이미지들
+    detail_images = []
+
+    for image_col in ["image", "detail_image_1", "detail_image_2", "detail_image_3"]:
+        if image_col in product.keys() and product[image_col]:
+            detail_images.append(product[image_col])
+
+    back_url = request.args.get("back", "/shop")
+
+    # 이상한 외부 주소 방지
+    if not back_url.startswith("/") or back_url.startswith("//"):
+        back_url = "/shop"
+
+    return render_template(
+        "shop/detail.html",
+        product=product,
+        reviews=reviews,
+        review_count=review_count,
+        avg_rating=avg_rating,
+        related_products=related_products,
+        detail_images=detail_images,
+        back_url=back_url
+    )
+
+STORY_CATEGORIES = {
+    "gyeol-yeon": {
+        "title": "결 ; 연",
+        "subtitle": "인연의 시작",
+        "keyword": "Connection",
+        "description":"우연이라 부르기엔 너무도 정교한, 당신과 나의 결이 만난 찰나를 기록합니다.",
+        "message": "당신의 결이, 우리의 연이 됩니다."
+    },
+    "sum-gyeol": {
+        "title": "숨 ; 결",
+        "subtitle": "'탄생과 이별'",
+        "keyword": "Breath",
+        "description": "당신의 하루를 감싸는, 고요한 숨결.",
+        "message": "숨;결’은 그 고요한 흔적을 주얼리에 담아, 당신의 기억을 지켜드립니다."
+    },
+    "sim-gyeol": {
+        "title": "심 ; 결",
+        "subtitle": "마음의 감정",
+        "keyword": "Heart",
+        "description": "당신의 마음이 누군가의 심장에 닿는 순간.",
+        "message": "마음이 남기는 무늬, 심;결."
+    },
+    "go-gyeol": {
+        "title": "고 ; 결",
+        "subtitle": "고귀함과 전통",
+        "keyword": "Nobility",
+        "description": "겹의 미학, 시대를 초월한 고귀함.",
+        "message": "고;결 — 세월이 만드는 품격."
+    },
+    "gan-gyeol": {
+        "title": "간 ; 결",
+        "subtitle": "미니멀리즘",
+        "keyword": "Minimal",
+        "description": "Balance.",
+        "message": "본질로의 회귀, 비움이 만든 여유."
+    },
+    "bit-gyeol": {
+        "title": "빛 ; 결",
+        "subtitle": "행복, 기쁜, 온기",
+        "keyword": "Light",
+        "description": "빛의 온기.",
+        "message": "당신의 빛이 나는 마음, 그 빛의 결을 기록합니다."
+    },
+    "gyeol-yak": {
+        "title": "결 ; 약",
+        "subtitle": "약혹, 약속, 영원",
+        "keyword": "Promise",
+        "description": "서로를 이어주는 매듭, 평생을 지켜갈 약속.",
+        "message": "우리가 만든 작은 선서, 영원까지 이어집니다."
+    },
+    "hon-gyeol": {
+        "title": "혼 ; 결",
+        "subtitle": "기억, 추억, 그리움",
+        "keyword": "Marriage",
+        "description": "흔적의 조각을 이어주는 선(結).",
+        "message": "추억은 사라지지 않습니다, 결이 되어 영원히."
+    },
+    "gyeol-sok": {
+        "title": "결 ; 속",
+        "subtitle": "가족, 모임, 우정",
+        "keyword": "Continuity",
+        "description": "펄스 오브 어스(Pulse of Us).",
+        "message": "쌓이는 날만큼 깊어지는 결."
+    },
+    "gyeol-chae": {
+        "title": "결 ; 채",
+        "subtitle": "축제, 축하, 환영",
+        "keyword": "Color",
+        "description": "Ribbon Knot(리본 매듭).",
+        "message": "축하의 결을 채우다, 결;채."
+    }
+}
+
+
+@product_bp.route("/story")
+def story():
+    return render_template(
+        "shop/story.html",
+        stories=STORY_CATEGORIES
+    )
+
+
+@product_bp.route("/story/<slug>")
+def story_detail(slug):
+    story_pages = {
+        "yeon": {
+            "template": "shop/stories/yeon.html",
+            "collection": "GOLD"
+        },
+        "sum": {
+            "template": "shop/stories/sum.html",
+            "collection": "SILVER"
+        },
+        "sim": {
+            "template": "shop/stories/sim.html",
+            "collection": "DIAMOND"
+        },
+        "go": {
+            "template": "shop/stories/go.html",
+            "collection": "GOLD"
+        },
+        "gan": {
+            "template": "shop/stories/gan.html",
+            "collection": "SILVER"
+        },
+        "bit": {
+            "template": "shop/stories/bit.html",
+            "collection": "DIAMOND"
+        },
+        "yak": {
+            "template": "shop/stories/yak.html",
+            "collection": "SPECIAL"
+        },
+        "hon": {
+            "template": "shop/stories/hon.html",
+            "collection": "GOLD"
+        },
+        "sok": {
+            "template": "shop/stories/sok.html",
+            "collection": "SILVER"
+        },
+        "chae": {
+            "template": "shop/stories/chae.html",
+            "collection": "SPECIAL"
+        }
+    }
+
+    story_page = story_pages.get(slug)
+
+    if story_page is None:
+        return "존재하지 않는 스토리입니다.", 404
+
+    db = get_db()
+    products = db.execute(
+        "SELECT * FROM products WHERE collection = ? ORDER BY id DESC LIMIT 4",
+        (story_page["collection"],)
+    ).fetchall()
+
+    return render_template(
+        story_page["template"],
+        products=products
+    )
+
+@product_bp.route("/season")
+def season():
+    db = get_db()
+
+    products = db.execute("""
+        SELECT *
+        FROM products
+        WHERE UPPER(COALESCE(tag, '')) = 'SEASON'
+        ORDER BY id DESC
+    """).fetchall()
+
+    products = attach_rating_to_products(db, products)
+
+    wished_product_ids = []
+
+    if session.get("username"):
+        wished_rows = db.execute("""
+            SELECT product_id
+            FROM wishlists
+            WHERE username = ?
+        """, (session.get("username"),)).fetchall()
+
+        wished_product_ids = [row["product_id"] for row in wished_rows]
+
+    return render_template(
+        "shop/season.html",
+        products=products,
+        season_products=products,
+        product_count=len(products),
+        wished_product_ids=wished_product_ids
+    )
+
+@product_bp.route("/best")
+def best():
+    db = get_db()
+
+    products = db.execute("""
+        SELECT *
+        FROM products
+        WHERE UPPER(COALESCE(tag, '')) = 'BEST'
+        ORDER BY id DESC
+    """).fetchall()
+
+    products = attach_rating_to_products(db, products)
+
+    return render_template("shop/best.html", products=products)
+
+@product_bp.route("/brand-story")
+def brand_story():
+    return render_template("shop/brand_story.html")
+
+@product_bp.route("/cs")
+def customer_service():
+    return render_template("shop/customer_service.html")
+
+@product_bp.route("/faq")
+def faq():
+    db = get_db()
+
+    faqs = db.execute("""
+        SELECT *
+        FROM faqs
+        WHERE is_active = 1
+        ORDER BY sort_order ASC, id DESC
+    """).fetchall()
+
+    return render_template("shop/faq.html", faqs=faqs)

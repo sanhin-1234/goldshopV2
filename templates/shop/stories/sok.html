@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>결 ; 속 | GY JEWELRY</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/stories/sok.css') }}">
+</head>
+
+<body class="sok-story-body">
+
+{% include "shop/header.html" %}
+
+<main class="sok-story-page story-theme-sok">
+
+    <a href="/story" class="story-back-btn">
+        ← 연으로 돌아가기
+    </a>
+
+    <!-- 첫 화면 -->
+    <section class="sok-hero reveal">
+        <p class="sok-label">GY JEWELRY STORY 01</p>
+        <h1>결 ; 속</h1>
+        <p class="sok-hero-text">
+            서로 다른 시간이 하나의 인연으로 묶이는 순간
+        </p>
+    </section>
+
+    <!-- 상징 이미지 느낌의 섹션 -->
+    <section class="sok-visual-section reveal">
+        <div class="sok-visual-mark">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+
+        <div class="sok-visual-text">
+            <p class="sok-label">ABOUT THIS sok</p>
+            <h2>
+                우연처럼 다가와<br>
+                오래도록 남는 것
+            </h2>
+        </div>
+    </section>
+
+    <!-- 회고록 1 -->
+    <section class="sok-text-section reveal">
+        <div class="sok-section-number">01</div>
+
+        <div class="sok-copy">
+            <p class="sok-small">첫 번째 기억</p>
+            <h2>처음 마주한 빛</h2>
+            <p>
+                처음부터 특별했던 것은 아니었다.<br>
+                아주 작고 조용한 순간이었다.<br>
+                하지만 시간이 지나고 나서야 알게 되었다.<br>
+                그날의 떨림이 하나의 시작이었다는 것을.
+            </p>
+        </div>
+    </section>
+
+    <!-- 회고록 2 -->
+    <section class="sok-text-section reverse reveal">
+        <div class="sok-section-number">02</div>
+
+        <div class="sok-copy">
+            <p class="sok-small">두 번째 기억</p>
+            <h2>이어지는 마음</h2>
+            <p>
+                인연은 언제나 화려하게 다가오지 않는다.<br>
+                때로는 말없이 곁에 머물고,<br>
+                때로는 긴 침묵 속에서 더 깊어진다.<br>
+                그래서 우리는 그것을 쉽게 놓지 못한다.
+            </p>
+        </div>
+    </section>
+
+    <!-- 회고록 3 -->
+    <section class="sok-text-section reveal">
+        <div class="sok-section-number">03</div>
+
+        <div class="sok-copy">
+            <p class="sok-small">세 번째 기억</p>
+            <h2>남겨지는 약속</h2>
+            <p>
+                결국 인연이란 서로를 기억하는 방식이다.<br>
+                같은 시간을 지나왔다는 증거,<br>
+                그리고 앞으로도 이어지고 싶다는 조용한 약속이다.
+            </p>
+        </div>
+    </section>
+
+    <!-- 브랜드 철학 느낌 섹션 -->
+    <section class="sok-philosophy reveal">
+        <p class="sok-label">THE MEANING OF sok</p>
+        <h2>
+            결 ; 연은 만남을 장식하는 것이 아니라,<br>
+            만남이 남긴 시간을 간직하는 방식입니다.
+        </h2>
+        <p>
+            누군가와 이어졌다는 감각,  
+            그리고 그 연결을 오래 기억하고 싶은 마음.  
+            GY JEWELRY는 그 마음의 결을 하나의 형태로 남깁니다.
+        </p>
+    </section>
+
+    <!-- 대표 상품 -->
+    <section class="sok-products reveal">
+        <p class="sok-label">REPRESENTED BY</p>
+        <h2>이 연을 닮은 상품</h2>
+
+        <div class="sok-product-grid">
+            {% for p in products %}
+            <a href="/product/{{ p['id'] }}" class="sok-product-card">
+                {% if p['image'] %}
+                    <img src="/uploads/{{ p['image'] }}" alt="{{ p['name'] }}">
+                {% endif %}
+
+                <h3>{{ p['name'] }}</h3>
+                <p>{{ "{:,}".format(p['price']) }}원</p>
+            </a>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="story-bottom-nav reveal">
+        <a href="/story" class="story-bottom-back">
+            다른 연 둘러보기
+        </a>
+    </section>
+
+</main>
+
+<script>
+const revealElements = document.querySelectorAll(".reveal");
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add("show");
+        }
+    });
+}, {
+    threshold: 0.18
+});
+
+revealElements.forEach((el) => observer.observe(el));
+</script>
+
+</body>
+</html>

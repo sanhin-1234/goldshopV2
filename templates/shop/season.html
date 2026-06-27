@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Season Item | GY JEWELRY</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body class="season-page">
+
+{% include "shop/header.html" %}
+
+<main class="season-main">
+
+    <!-- SEASON HERO -->
+    <section class="season-hero">
+
+        <div class="season-hero-media">
+            <span>SEASON IMAGE / VIDEO</span>
+        </div>
+
+        <div class="season-hero-text">
+            <p>SEASON ITEM</p>
+            <h1>
+                A Moment of<br>
+                Seasonal Light
+            </h1>
+            <span>
+                계절의 온도와 빛을 담은 GY JEWELRY의 시즌 아이템을 만나보세요.
+            </span>
+
+            <a href="/shop?tag=SEASON">VIEW ITEMS</a>
+        </div>
+
+    </section>
+
+    <!-- SEASON INTRO -->
+    <section class="season-intro">
+
+        <p class="season-label">THIS SEASON</p>
+
+        <h2>
+            지금의 계절에 가장 자연스럽게 어울리는 주얼리
+        </h2>
+
+        <p>
+            따뜻한 햇살, 가벼운 옷차림, 은은한 움직임 속에서  
+            GY JEWELRY의 시즌 아이템은 일상에 조용한 반짝임을 더합니다.
+        </p>
+
+    </section>
+
+    <!-- SEASON FULL BANNER 01 -->
+    <section class="season-wide-banner">
+
+        <div class="season-wide-media">
+            <span>SEASON BANNER 01</span>
+        </div>
+
+        <div class="season-wide-copy">
+            <p>SUMMER SPECIAL</p>
+            <h2>Soft shine for every day</h2>
+            <span>
+                매일 착용하기 좋은 가벼운 실루엣과 은은한 광택.
+            </span>
+        </div>
+
+    </section>
+
+    <!-- SEASON PRODUCT CAMPAIGN -->
+    <section class="season-product-section">
+
+        <div class="season-section-head">
+            <p>SELECTED ITEMS</p>
+            <h2>Season Picks</h2>
+        </div>
+
+        <div class="season-product-grid">
+
+            <a href="/shop?category=RING&tag=SEASON" class="season-product-card">
+                <div class="season-product-image">
+                    <span>RING IMAGE</span>
+                </div>
+                <div class="season-product-text">
+                    <p>RING</p>
+                    <h3>Light Ring Selection</h3>
+                    <span>손끝에 가볍게 머무는 계절의 빛.</span>
+                </div>
+            </a>
+
+            <a href="/shop?category=NECKLACE&tag=SEASON" class="season-product-card">
+                <div class="season-product-image">
+                    <span>NECKLACE IMAGE</span>
+                </div>
+                <div class="season-product-text">
+                    <p>NECKLACE</p>
+                    <h3>Season Necklace</h3>
+                    <span>목선을 따라 은은하게 흐르는 포인트.</span>
+                </div>
+            </a>
+
+            <a href="/shop?category=EARRINGS&tag=SEASON" class="season-product-card">
+                <div class="season-product-image">
+                    <span>EARRINGS IMAGE</span>
+                </div>
+                <div class="season-product-text">
+                    <p>EARRINGS</p>
+                    <h3>Daily Earrings</h3>
+                    <span>얼굴 가까이에서 자연스럽게 반짝이는 균형.</span>
+                </div>
+            </a>
+
+        </div>
+
+    </section>
+
+    <!-- SEASON FULL BANNER 02 -->
+    <section class="season-final-banner">
+
+        <div class="season-final-media">
+            <span>SEASON BANNER 02</span>
+        </div>
+
+        <div class="season-final-text">
+            <p>GY JEWELRY SEASON</p>
+            <h2>
+                계절이 지나도 남는<br>
+                하나의 장면
+            </h2>
+            <a href="/shop?tag=SEASON">SHOP SEASON ITEMS</a>
+        </div>
+
+    </section>
+
+</main>
+
+{% include "shop/footer.html" %}
+
+</body>
+</html>

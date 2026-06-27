@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Best | GY JEWELRY</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body class="best-page-body header-dynamic">
+
+{% include "shop/header.html" %}
+
+<main class="best-page">
+
+    <!-- HERO -->
+    <section class="best-hero" data-header-theme="dark">
+        <div class="best-hero-inner">
+            <p class="best-eyebrow">GY JEWELRY BEST SELECTION</p>
+            <h1>Best Pieces</h1>
+            <p>
+                가장 많은 시선이 머문 GY JEWELRY의 대표 아이템.
+                매일의 순간에 자연스럽게 스며드는 아름다움을 선별했습니다.
+            </p>
+        </div>
+    </section>
+
+    {% if products %}
+
+        {% set featured = products[0] %}
+
+        <!-- BEST 01 FEATURED -->
+        <section class="best-featured-section" data-header-theme="light">
+
+            <div class="best-section-head">
+                <p>NO. 01</p>
+                <h2>Most Loved Piece</h2>
+                <span>GY JEWELRY에서 가장 먼저 소개하는 베스트 아이템입니다.</span>
+            </div>
+
+            <article class="best-featured-card">
+
+                <a href="{{ url_for('product.product_detail', product_id=featured['id']) }}" class="best-featured-link">
+
+                    <div class="best-featured-image">
+                        {% if featured['image'] %}
+                            <img src="/uploads/{{ featured['image'] }}" alt="{{ featured['name'] }}">
+                        {% else %}
+                            <div class="best-image-placeholder">
+                                &lt;BEST 01 IMAGE&gt;
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="best-featured-info">
+                        <p class="best-rank-label">BEST 01</p>
+
+                        <p class="best-category">
+                            {{ featured['collection'] or 'GY JEWELRY' }}
+                        </p>
+
+                        <h3>{{ featured['name'] }}</h3>
+
+                        {% if featured['description'] %}
+                            <p class="best-desc">
+                                {{ featured['description'] }}
+                            </p>
+                        {% else %}
+                            <p class="best-desc">
+                                GY JEWELRY가 제안하는 가장 사랑받는 베스트 셀렉션입니다.
+                            </p>
+                        {% endif %}
+
+                        <p class="best-price">
+                            {{ "{:,}".format(featured['price']|int) }}원
+                        </p>
+
+                        <span class="best-view-btn">View Detail</span>
+                    </div>
+
+                </a>
+
+            </article>
+
+        </section>
+
+        <!-- BEST LIST -->
+        <section class="best-ranking-section" data-header-theme="light">
+
+            <div class="best-section-head compact">
+                <p>BEST RANKING</p>
+                <h2>Loved by GY</h2>
+                <span>고객들이 가장 많이 선택한 베스트 아이템을 만나보세요.</span>
+            </div>
+
+            {% if products|length > 1 %}
+
+                <div class="best-ranking-grid">
+
+                    {% for product in products[1:] %}
+
+                    <article class="best-ranking-card">
+
+                        <a href="{{ url_for('product.product_detail', product_id=product['id']) }}" class="best-ranking-link">
+
+                            <div class="best-ranking-number">
+                                {{ "%02d"|format(loop.index + 1) }}
+                            </div>
+
+                            <div class="best-ranking-image">
+                                {% if product['image'] %}
+                                    <img src="/uploads/{{ product['image'] }}" alt="{{ product['name'] }}">
+                                {% else %}
+                                    <div class="best-image-placeholder small">
+                                        &lt;BEST IMAGE&gt;
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="best-ranking-info">
+                                <p>{{ product['collection'] or 'GY JEWELRY' }}</p>
+
+                                <h3>{{ product['name'] }}</h3>
+
+                                <span>
+                                    {{ "{:,}".format(product['price']|int) }}원
+                                </span>
+                            </div>
+
+                        </a>
+
+                    </article>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <div class="best-empty small">
+                    <p>아직 BEST 02 이후 상품은 없습니다.</p>
+                </div>
+
+            {% endif %}
+
+        </section>
+
+    {% else %}
+
+        <section class="best-empty-section" data-header-theme="light">
+            <div class="best-empty">
+                <p class="best-empty-title">아직 등록된 Best 상품이 없습니다.</p>
+                <p>
+                    관리자 페이지에서 Featured 값을 <strong>Best</strong>로 선택하면 이곳에 표시됩니다.
+                </p>
+            </div>
+        </section>
+
+    {% endif %}
+
+</main>
+
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>홈 이미지 관리 | GY JEWELRY Admin</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body class="admin-page">
+
+    <main class="admin-home-media-page">
+
+        <div class="admin-page-header">
+            <h1>홈 이미지 관리</h1>
+            <p>홈 화면에 들어가는 슬라이드, 스토리 이미지, 배너 이미지를 관리합니다.</p>
+            <a href="/admin" class="admin-back-link">관리자 홈으로</a>
+        </div>
+
+        <section class="home-media-admin-list">
+
+            {% for media in media_slots %}
+            <article class="home-media-admin-card" id="media-{{ media.id }}">
+
+                <div class="home-media-preview">
+                    {% if media.filename %}
+                        {% if media.media_type == "video" %}
+                            <video src="/uploads/{{ media.filename }}" controls muted></video>
+                        {% else %}
+                            <img src="/uploads/{{ media.filename }}" alt="{{ media.slot_name }}">
+                        {% endif %}
+                    {% else %}
+                        <div class="home-media-empty">
+                            이미지 없음
+                        </div>
+                    {% endif %}
+                </div>
+
+                <form
+                    action="{{ url_for('admin.update_home_media', media_id=media.id) }}"
+                    method="POST"
+                    enctype="multipart/form-data"
+                    class="home-media-form"
+                >
+                    {% if csrf_token %}
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                    {% endif %}
+
+                    <h2>{{ media.slot_name }}</h2>
+                    <p class="slot-key">{{ media.slot_key }}</p>
+
+                    <label>
+                        이미지 / 영상 업로드
+                        <input type="file" name="media_file" accept="image/*,video/*">
+                    </label>
+
+                    <label>
+                        미디어 타입
+                        <select name="media_type">
+                            <option value="image" {% if media.media_type == "image" %}selected{% endif %}>이미지</option>
+                            <option value="video" {% if media.media_type == "video" %}selected{% endif %}>영상</option>
+                        </select>
+                    </label>
+
+                    <label class="checkbox-label">
+                        <input type="checkbox" name="is_active" {% if media.is_active %}checked{% endif %}>
+                        홈에 표시
+                    </label>
+
+                    <button type="submit">저장</button>
+                </form>
+
+            </article>
+            {% endfor %}
+
+        </section>
+
+    </main>
+
+</body>
+</html>

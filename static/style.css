@@ -1,0 +1,19 @@
+/* ===============================
+   GY JEWELRY - CSS LOADER
+   =============================== */
+/* 앞으로 하나씩 분리할 CSS */
+@import url("./css/base.css");
+@import url("./css/header.css");
+@import url("./css/home.css");
+@import url("./css/shop.css");
+@import url("./css/detail.css");
+@import url("./css/auth.css");
+@import url("./css/cart.css");
+@import url("./css/admin.css");
+@import url("./css/story.css");
+@import url("./css/mypage.css");
+@import url("./css/new.css");
+@import url("./css/season.css");
+@import url("./css/monochrome.css");
+@import url("./css/best.css");
+@import url("./css/footer.css");

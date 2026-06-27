@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Page | GY JEWELRY</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body class="mypage-page-body">
+
+{% include "shop/header.html" %}
+
+<main class="mypage-wrap">
+
+    <section class="mypage-hero">
+        <p class="eyebrow">MY PAGE</p>
+        <h1>{{ session.get("name") or "고객" }}님</h1>
+        <p class="mypage-sub">
+            회원 정보, 찜한 상품, 주문 내역을 확인할 수 있습니다.
+        </p>
+    </section>
+
+    <section class="mypage-info">
+        <div class="info-card">
+            <span>아이디</span>
+            <strong>{{ session.get("username") }}</strong>
+        </div>
+
+        <div class="info-card">
+            <span>이름</span>
+            <strong>{{ session.get("name") or "고객" }}</strong>
+        </div>
+
+        <div class="info-card">
+            <span>위시리스트</span>
+            <strong>
+                <a href="/wishlist">찜한 상품 보기</a>
+            </strong>
+        </div>
+
+    </section>
+
+    <section class="mypage-orders">
+        <h2>주문 내역</h2>
+
+        {% if orders %}
+            <div class="order-list">
+                {% for order in orders %}
+                    <div class="order-card">
+                        <div>
+                            <p class="order-number">ORDER #{{ order["id"] }}</p>
+                            <p class="order-date">{{ order["created_at"] }}</p>
+                        </div>
+
+                        <div>
+                            <p class="order-price">{{ "{:,}".format(order["total_price"]|int) }}원</p>
+                            <p class="order-status">
+                                {{ order["status"] or "배송준비중" }}
+                            </p>
+                        </div>
+
+                        <a href="/mypage/order/{{ order['id'] }}" class="order-detail-link">
+                            상세보기
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-orders">
+                <p>아직 주문 내역이 없습니다.</p>
+                <a href="/shop">쇼핑하러 가기</a>
+            </div>
+        {% endif %}
+    </section>
+
+</main>
+
+</body>
+</html>

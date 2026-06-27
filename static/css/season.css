@@ -1,0 +1,342 @@
+/* =========================================================
+   SEASON ITEM PAGE
+========================================================= */
+
+body.season-page {
+    padding-top: 0 !important;
+    background: #f7f4ef;
+    color: #171717;
+}
+
+.season-main {
+    width: 100%;
+    overflow: hidden;
+}
+
+/* HERO */
+.season-hero {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.season-hero-media {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background:
+        radial-gradient(circle at 50% 42%, rgba(255,255,255,0.28), transparent 34%),
+        linear-gradient(135deg, #d2c0a5 0%, #efe5d5 48%, #ad9674 100%);
+
+    color: rgba(61, 45, 26, 0.46);
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(42px, 8vw, 120px);
+    letter-spacing: 0.16em;
+}
+
+.season-hero-media img,
+.season-hero-media video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* 히어로 위 텍스트 */
+.season-hero-text {
+    position: absolute;
+    left: 7vw;
+    bottom: 12vh;
+    z-index: 3;
+
+    max-width: 620px;
+    color: #171717;
+}
+
+.season-hero-text p {
+    margin: 0 0 22px;
+    font-size: 11px;
+    letter-spacing: 0.38em;
+    color: #000000;
+}
+
+.season-hero-text h1 {
+    margin: 0;
+
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(48px, 6.5vw, 96px);
+    font-weight: 400;
+    line-height: 1.02;
+    letter-spacing: 0.04em;
+}
+
+.season-hero-text span {
+    display: block;
+    max-width: 480px;
+    margin-top: 28px;
+
+    font-size: 15px;
+    line-height: 1.85;
+    color: rgba(23, 23, 23, 0.68);
+    word-break: keep-all;
+}
+
+.season-hero-text a {
+    display: inline-block;
+    margin-top: 38px;
+
+    color: #171717;
+    text-decoration: none;
+
+    font-size: 12px;
+    letter-spacing: 0.24em;
+
+    border-bottom: 1px solid rgba(23, 23, 23, 0.58);
+    padding-bottom: 9px;
+}
+
+/* INTRO */
+.season-intro {
+    padding: 150px 6vw 130px;
+    text-align: center;
+    background: #f8f1e7;
+}
+
+.season-label,
+.season-section-head p,
+.season-wide-copy p,
+.season-final-text p,
+.season-product-text p {
+    margin: 0 0 20px;
+
+    font-size: 11px;
+    letter-spacing: 0.36em;
+    color: #201f1d;
+    font-weight: 500;
+}
+
+.season-intro h2 {
+    max-width: 840px;
+    margin: 0 auto;
+
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(38px, 4.6vw, 72px);
+    font-weight: 400;
+    line-height: 1.18;
+    letter-spacing: -0.04em;
+}
+
+.season-intro > p:last-child {
+    max-width: 680px;
+    margin: 34px auto 0;
+
+    font-size: 16px;
+    line-height: 2;
+    color: rgba(23, 23, 23, 0.64);
+    word-break: keep-all;
+}
+
+/* WIDE BANNER */
+.season-wide-banner {
+    position: relative;
+    width: 100%;
+    min-height: 82vh;
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+
+    background: #f3f0ec;
+}
+
+.season-wide-media {
+    min-height: 82vh;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background:
+        radial-gradient(circle at center, rgba(255,255,255,0.28), transparent 34%),
+        linear-gradient(135deg, #c5b08e, #eee3d0);
+
+    color: rgba(54, 40, 24, 0.44);
+    letter-spacing: 0.24em;
+}
+
+.season-wide-copy {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    padding: 7vw;
+    background: #f1eee8;
+}
+
+.season-wide-copy h2 {
+    margin: 0;
+
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(42px, 5vw, 82px);
+    font-weight: 400;
+    line-height: 1.05;
+}
+
+.season-wide-copy span {
+    display: block;
+    margin-top: 28px;
+
+    font-size: 15px;
+    line-height: 1.85;
+    color: rgba(23, 23, 23, 0.62);
+}
+
+/* PRODUCT GRID */
+.season-product-section {
+    padding: 150px 6vw;
+    background: #fdfbf8;
+}
+
+.season-section-head {
+    text-align: center;
+    margin-bottom: 70px;
+}
+
+.season-section-head h2 {
+    margin: 0;
+
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(40px, 5vw, 78px);
+    font-weight: 400;
+}
+
+.season-product-grid {
+    max-width: 1420px;
+    margin: 0 auto;
+
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+}
+
+.season-product-card {
+    color: #171717;
+    text-decoration: none;
+    background: rgba(255, 255, 255, 0.42);
+}
+
+.season-product-image {
+    aspect-ratio: 4 / 5;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background:
+        radial-gradient(circle at center, rgba(255,255,255,0.36), transparent 36%),
+        linear-gradient(135deg, #c8b797, #eadfce);
+
+    color: rgba(61, 45, 26, 0.42);
+    font-size: 12px;
+    letter-spacing: 0.22em;
+}
+
+.season-product-text {
+    padding: 32px 30px 38px;
+}
+
+.season-product-text h3 {
+    margin: 0 0 16px;
+
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 27px;
+    font-weight: 400;
+}
+
+.season-product-text span {
+    font-size: 14px;
+    line-height: 1.75;
+    color: rgba(23, 23, 23, 0.62);
+}
+
+/* FINAL BANNER */
+.season-final-banner {
+    position: relative;
+    height: 92vh;
+    min-height: 640px;
+    overflow: hidden;
+}
+
+.season-final-media {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background:
+        radial-gradient(circle at center, rgba(255,255,255,0.32), transparent 34%),
+        linear-gradient(135deg, #b99b75 0%, #ead7bd 52%, #8e7659 100%);
+
+    color: rgba(45, 32, 18, 0.42);
+    letter-spacing: 0.24em;
+}
+
+.season-final-text {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    z-index: 2;
+
+    width: min(760px, calc(100% - 40px));
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.season-final-text h2 {
+    margin: 0;
+
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(44px, 6vw, 92px);
+    font-weight: 400;
+    line-height: 1.08;
+}
+
+.season-final-text a {
+    display: inline-block;
+    margin-top: 42px;
+
+    color: #171717;
+    text-decoration: none;
+
+    font-size: 12px;
+    letter-spacing: 0.24em;
+
+    border-bottom: 1px solid rgba(23, 23, 23, 0.58);
+    padding-bottom: 9px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+    .season-hero-text {
+        left: 28px;
+        right: 28px;
+        bottom: 10vh;
+    }
+
+    .season-wide-banner {
+        grid-template-columns: 1fr;
+    }
+
+    .season-wide-media {
+        min-height: 58vh;
+    }
+
+    .season-product-grid {
+        grid-template-columns: 1fr;
+    }
+}

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>관리자 페이지 | GY JEWELRY</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body class="admin-page-body">
+
+<main class="admin-page">
+    <div class="admin-container">
+
+        <!-- ADMIN TOP -->
+        <header class="admin-header">
+            <div>
+                <p class="admin-label">GY JEWELRY</p>
+                <h1 class="admin-title">ADMIN</h1>
+                <p class="admin-subtitle">
+                    상품, 주문, FAQ를 관리하는 관리자 공간입니다.
+                </p>
+            </div>
+        </header>
+
+        <!-- ADMIN NAV -->
+        <nav class="admin-nav">
+            <a href="/">홈</a>
+            <a href="/shop">쇼핑몰</a>
+            <a href="/admin" class="active">상품관리</a>
+            <a href="/admin/orders">주문관리</a>
+            <a href="/admin/home-media">홈 이미지 관리</a>
+            <a href="/admin/logout">로그아웃</a>
+        </nav>
+
+        <!-- ADMIN QUICK CARDS -->
+        <section class="admin-card-grid">
+
+            <a href="{{ url_for('admin.add_product') }}" class="admin-card">
+                <span>PRODUCT</span>
+                <h3>상품 등록</h3>
+                <p>새로운 주얼리 상품을 등록합니다.</p>
+            </a>
+
+            <a href="/admin" class="admin-card">
+                <span>MANAGE</span>
+                <h3>상품 관리</h3>
+                <p>등록된 상품을 수정하거나 삭제합니다.</p>
+            </a>
+
+            <a href="/admin/orders" class="admin-card">
+                <span>ORDER</span>
+                <h3>주문 관리</h3>
+                <p>고객 주문과 배송 상태를 확인합니다.</p>
+            </a>
+
+            <a href="/admin/faq" class="admin-card">
+                <span>FAQ</span>
+                <h3>FAQ 관리</h3>
+                <p>자주 묻는 질문을 등록하고 수정합니다.</p>
+            </a>
+
+        </section>
+
+        <!-- PRODUCT LIST -->
+        <section class="admin-section">
+
+            <div class="admin-section-header">
+                <div>
+                    <p class="admin-label small">PRODUCT LIST</p>
+                    <h2>상품 목록</h2>
+                    <p>등록된 상품을 수정하거나 삭제할 수 있습니다.</p>
+                </div>
+            </div>
+
+            {% if products %}
+
+            <div class="admin-product-grid">
+
+                {% for product in products %}
+
+                <article class="admin-product-card">
+
+                    <div class="admin-product-image-box">
+                        {% if product['image'] %}
+                            <img src="/uploads/{{ product['image'] }}" alt="{{ product['name'] }}">
+                        {% else %}
+                            <div class="admin-no-image">
+                                GY
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="admin-product-info">
+                        <p class="admin-product-collection">
+                            {{ product['collection'] or 'GENERAL' }}
+                        </p>
+
+                        <h3>
+                            {{ product['name'] }}
+                        </h3>
+
+                        <p class="admin-product-price">
+                            {{ "{:,}".format(product['price'] | int) }}원
+                        </p>
+
+                        {% if product['description'] %}
+                        <p class="admin-product-desc">
+                            {{ product['description'][:40] }}{% if product['description']|length > 40 %}...{% endif %}
+                        </p>
+                        {% endif %}
+                    </div>
+
+                    <div class="admin-product-actions">
+                        <a href="{{ url_for('admin.edit_product', product_id=product['id']) }}"
+                           class="admin-btn">
+                            수정
+                        </a>
+
+                        <form method="POST"
+                              action="/admin/delete-product/{{ product['id'] }}"
+                              onsubmit="return confirm('정말 이 상품을 삭제하시겠습니까?');">
+
+                            <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+
+                            <button type="submit" class="admin-delete-btn">
+                                삭제
+                            </button>
+                        </form>
+                    </div>
+
+                </article>
+
+                {% endfor %}
+
+            </div>
+
+            {% else %}
+
+            <div class="admin-empty">
+                <h2>등록된 상품이 없습니다.</h2>
+                <p>상품 등록 버튼을 눌러 첫 상품을 추가해보세요.</p>
+            </div>
+
+            {% endif %}
+
+        </section>
+
+    </div>
+</main>
+
+</body>
+</html>

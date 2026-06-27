@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>결 ; 채 | GY JEWELRY</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/stories/chae.css') }}">
+</head>
+
+<body class="chae-story-body">
+
+{% include "shop/header.html" %}
+
+<main class="chae-page">
+
+    <a href="/story" class="chae-back">
+        ← 연으로 돌아가기
+    </a>
+
+    <!-- HERO -->
+    <section class="chae-hero chae-reveal">
+        <p class="chae-kicker">GY JEWELRY STORY</p>
+
+        <h1>결 ; 채</h1>
+
+        <p class="chae-subtitle">
+            마음의 색이 겹쳐 하나의 결이 되는 순간
+        </p>
+    </section>
+
+    <!-- INTRO -->
+    <section class="chae-intro chae-reveal">
+        <p>
+            감정은 언제나 하나의 색으로만 남지 않습니다.<br>
+            기쁨과 그리움, 설렘과 아쉬움이 겹쳐지고,<br>
+            그 모든 빛깔이 모여 나만의 고유한 결이 됩니다.
+        </p>
+    </section>
+
+    <!-- SYMBOL -->
+    <section class="chae-symbol-section chae-reveal">
+        <div class="chae-symbol">
+            <div class="chae-circle chae-circle-one"></div>
+            <div class="chae-circle chae-circle-two"></div>
+            <div class="chae-circle chae-circle-three"></div>
+            <div class="chae-center"></div>
+        </div>
+
+        <div class="chae-symbol-text">
+            <p class="chae-kicker">THE SHAPE OF COLOR</p>
+            <h2>
+                여러 감정의 색이<br>
+                하나의 무늬로 겹쳐집니다.
+            </h2>
+        </div>
+    </section>
+
+    <!-- STORY 01 -->
+    <section class="chae-chapter chae-reveal">
+        <div class="chae-chapter-number">01</div>
+
+        <div class="chae-chapter-text">
+            <p class="chae-small">첫 번째 색</p>
+            <h2>처음 번진 감정</h2>
+            <p>
+                어떤 감정은 아주 작은 색으로 시작됩니다.<br>
+                처음에는 희미하고 조심스럽지만,<br>
+                시간이 지나며 마음의 안쪽으로 천천히 번져<br>
+                잊을 수 없는 빛깔이 됩니다.
+            </p>
+        </div>
+    </section>
+
+    <!-- STORY 02 -->
+    <section class="chae-chapter chae-chapter-warm chae-reveal">
+        <div class="chae-chapter-number">02</div>
+
+        <div class="chae-chapter-text">
+            <p class="chae-small">두 번째 색</p>
+            <h2>겹쳐지는 마음</h2>
+            <p>
+                하나의 마음 안에도 여러 색이 있습니다.<br>
+                사랑 안에는 기다림이 있고,<br>
+                그리움 안에는 따뜻함이 있으며,<br>
+                아쉬움 안에도 오래 간직하고 싶은 빛이 있습니다.
+            </p>
+        </div>
+    </section>
+
+    <!-- STORY 03 -->
+    <section class="chae-chapter chae-reveal">
+        <div class="chae-chapter-number">03</div>
+
+        <div class="chae-chapter-text">
+            <p class="chae-small">세 번째 색</p>
+            <h2>나만의 결</h2>
+            <p>
+                겹쳐진 감정은 결국 하나의 무늬가 됩니다.<br>
+                누구와도 같을 수 없는 색,<br>
+                지나온 시간과 마음이 함께 만든 고유한 결.<br>
+                그것이 결 ; 채입니다.
+            </p>
+        </div>
+    </section>
+
+    <!-- MEANING -->
+    <section class="chae-meaning chae-reveal">
+        <p class="chae-kicker">THE MEANING</p>
+
+        <h2>
+            결 ; 채는 마음에 남은 감정의 색을<br>
+            하나의 아름다운 결로 간직하는 방식입니다.
+        </h2>
+
+        <p>
+            GY JEWELRY는 한 가지로 설명할 수 없는 감정,<br>
+            여러 빛깔로 겹쳐진 마음의 순간을<br>
+            하나의 섬세한 색감으로 남깁니다.
+        </p>
+    </section>
+
+    <!-- PRODUCTS -->
+    <section class="chae-products chae-reveal">
+        <p class="chae-kicker">REPRESENTED BY</p>
+        <h2>이 색을 닮은 상품</h2>
+
+        <div class="chae-product-grid">
+            {% for p in products %}
+            <a href="/product/{{ p['id'] }}" class="chae-product-card">
+                {% if p['image'] %}
+                    <img src="/uploads/{{ p['image'] }}" alt="{{ p['name'] }}">
+                {% else %}
+                    <div class="chae-product-empty">GY</div>
+                {% endif %}
+
+                <h3>{{ p['name'] }}</h3>
+                <p>{{ "{:,}".format(p['price']) }}원</p>
+            </a>
+            {% else %}
+            <p class="chae-no-products">
+                아직 이 연을 닮은 상품이 없습니다.
+            </p>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="chae-bottom">
+        <a href="/story">
+            다른 연 둘러보기
+        </a>
+    </section>
+
+</main>
+
+<script>
+const chaeRevealItems = document.querySelectorAll(".chae-reveal");
+
+const chaeObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+        }
+    });
+}, {
+    threshold: 0.16
+});
+
+chaeRevealItems.forEach((item) => {
+    chaeObserver.observe(item);
+});
+</script>
+
+</body>
+</html>

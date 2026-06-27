@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop | GY JEWELRY</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body class="shop-page-body">
+
+{% include "shop/header.html" %}
+
+{% set current_category = category if category else request.args.get('category', '').upper() %}
+
+{% if current_category == 'RING' %}
+    {% set hero_title = 'RING' %}
+    {% set hero_subtitle = '손끝에 머무는 가장 섬세한 빛' %}
+    {% set hero_label = '<RING IMAGE>' %}
+{% elif current_category == 'NECKLACE' %}
+    {% set hero_title = 'NECKLACE' %}
+    {% set hero_subtitle = '목선을 따라 흐르는 우아한 결' %}
+    {% set hero_label = '<NECKLACE IMAGE>' %}
+{% elif current_category == 'EARRINGS' %}
+    {% set hero_title = 'EARRINGS' %}
+    {% set hero_subtitle = '얼굴의 빛을 완성하는 작은 균형' %}
+    {% set hero_label = '<EARRINGS IMAGE>' %}
+{% elif current_category == 'BRACELET' %}
+    {% set hero_title = 'BRACELET' %}
+    {% set hero_subtitle = '손목 위에 남는 부드러운 존재감' %}
+    {% set hero_label = '<BRACELET IMAGE>' %}
+{% elif current_category == 'ANKLET' %}
+    {% set hero_title = 'ANKLET' %}
+    {% set hero_subtitle = '걸음마다 은은하게 이어지는 아름다움' %}
+    {% set hero_label = '<ANKLET IMAGE>' %}
+{% else %}
+    {% set hero_title = 'SHOP' %}
+    {% set hero_subtitle = 'GY JEWELRY의 모든 주얼리를 만나보세요' %}
+    {% set hero_label = '<SHOP IMAGE>' %}
+{% endif %}
+
+<section class="shop-category-hero">
+
+    <div class="shop-category-hero-visual">
+        <div class="shop-category-hero-placeholder">
+            {{ hero_label }}
+        </div>
+    </div>
+
+    <div class="shop-category-hero-text">
+        <p class="shop-category-eyebrow">GY JEWELRY</p>
+        <h1>{{ hero_title }}</h1>
+        <p>{{ hero_subtitle }}</p>
+    </div>
+
+    <div class="shop-category-tabs">
+        <a href="/shop" class="{% if not current_category %}active{% endif %}">All</a>
+        <a href="/shop?category=RING" class="{% if current_category == 'RING' %}active{% endif %}">Ring</a>
+        <a href="/shop?category=NECKLACE" class="{% if current_category == 'NECKLACE' %}active{% endif %}">Necklace</a>
+        <a href="/shop?category=EARRINGS" class="{% if current_category == 'EARRINGS' %}active{% endif %}">Earrings</a>
+        <a href="/shop?category=BRACELET" class="{% if current_category == 'BRACELET' %}active{% endif %}">Bracelet</a>
+        <a href="/shop?category=ANKLET" class="{% if current_category == 'ANKLET' %}active{% endif %}">Anklet</a>
+    </div>
+
+</section>
+
+<section id="shop-control-anchor" class="shop-info-strip">
+
+    <div class="shop-info-left">
+        <span class="shop-current-category">
+            {{ category_label }}
+        </span>
+
+        <span class="shop-info-divider"></span>
+
+        <span class="shop-product-count">
+            상품 {{ product_count }}개
+        </span>
+    </div>
+
+    <form action="/shop" method="GET" class="shop-control-form">
+
+        {% if search %}
+            <input type="hidden" name="search" value="{{ search }}">
+        {% endif %}
+
+        {% if category %}
+            <input type="hidden" name="category" value="{{ category }}">
+        {% endif %}
+
+        <select name="price_range" onchange="submitShopFilter(this)">
+            <option value="" {% if not price_range %}selected{% endif %}>전체 가격</option>
+            <option value="0_50" {% if price_range == '0_50' %}selected{% endif %}>0 ~ 50만원</option>
+            <option value="50_100" {% if price_range == '50_100' %}selected{% endif %}>50 ~ 100만원</option>
+            <option value="100_150" {% if price_range == '100_150' %}selected{% endif %}>100 ~ 150만원</option>
+            <option value="150_200" {% if price_range == '150_200' %}selected{% endif %}>150 ~ 200만원</option>
+            <option value="200_up" {% if price_range == '200_up' %}selected{% endif %}>200만원 이상</option>
+        </select>
+
+        <select name="sort" onchange="submitShopFilter(this)">
+            <option value="latest" {% if sort == 'latest' %}selected{% endif %}>최신순</option>
+            <option value="oldest" {% if sort == 'oldest' %}selected{% endif %}>오래된순</option>
+            <option value="price_low" {% if sort == 'price_low' %}selected{% endif %}>낮은 가격순</option>
+            <option value="price_high" {% if sort == 'price_high' %}selected{% endif %}>높은 가격순</option>
+            <option value="name" {% if sort == 'name' %}selected{% endif %}>이름순</option>
+        </select>
+
+    </form>
+
+</section>
+
+<main class="shop-page">
+
+    {% if products %}
+
+        <section class="product-grid">
+
+            {% for p in products %}
+
+                <article class="product-card">
+
+                    {% set back_url = request.full_path if request.query_string else request.path %}
+
+                    <button
+                        type="button"
+                        class="wishlist-btn {% if p['id'] in wished_product_ids %}active{% endif %}"
+                        data-product-id="{{ p['id'] }}"
+                        aria-label="위시리스트"
+                    >
+                        {% if p['id'] in wished_product_ids %}
+                            ♥
+                        {% else %}
+                            ♡
+                        {% endif %}
+                    </button>
+
+                    <a href="/product/{{ p['id'] }}?back={{ back_url|urlencode }}">
+
+                        {% if p['image'] %}
+                            <img src="/uploads/{{ p['image'] }}"
+                                 alt="{{ p['name'] }}"
+                                 class="product-image">
+                        {% else %}
+                            <div class="product-no-image">
+                                이미지 없음
+                            </div>
+                        {% endif %}
+
+                        <h2 class="product-name">
+                            {{ p['name'] }}
+                        </h2>
+
+                        <p class="product-price">
+                            {{ "{:,}".format(p['price']) }}원
+                        </p>
+
+                        <div class="product-card-rating">
+                            <span class="product-card-stars">
+                                {% set card_rating = p['avg_rating']|default(0) %}
+
+                                {% for i in range(1, 6) %}
+                                    {% if i <= card_rating|round(0, 'floor') %}
+                                        ★
+                                    {% else %}
+                                        ☆
+                                    {% endif %}
+                                {% endfor %}
+                            </span>
+
+                            <small>
+                                {% if p['review_count']|default(0) > 0 %}
+                                    {{ "%.1f"|format(p['avg_rating']) }} · 리뷰 {{ p['review_count'] }}개
+                                {% else %}
+                                    리뷰 없음
+                                {% endif %}
+                            </small>
+                        </div>
+
+                        {% if p['description'] %}
+                            <p class="product-description">
+                                {{ p['description'][:22] }}...
+                            </p>
+                        {% endif %}
+
+                    </a>
+
+                </article>
+
+            {% endfor %}
+
+        </section>
+
+    {% else %}
+
+        <section class="no-results">
+            <h2>검색 결과가 없습니다</h2>
+            <p>다른 검색어를 입력해보세요.</p>
+        </section>
+
+    {% endif %}
+
+</main>
+
+{% include "shop/footer.html" %}
+
+<script>
+function submitShopFilter(selectElement) {
+    sessionStorage.setItem("shopScrollTarget", "shop-control-anchor");
+    selectElement.form.submit();
+}
+
+window.addEventListener("load", function () {
+    const targetId = sessionStorage.getItem("shopScrollTarget");
+
+    if (!targetId) return;
+
+    const target = document.getElementById(targetId);
+
+    if (target) {
+        target.scrollIntoView({
+            behavior: "auto",
+            block: "start"
+        });
+    }
+
+    sessionStorage.removeItem("shopScrollTarget");
+});
+</script>
+
+<script>
+document.querySelectorAll(".wishlist-btn").forEach(function (button) {
+    button.addEventListener("click", function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const productId = button.dataset.productId;
+
+        fetch(`/wishlist/toggle/${productId}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+        .then(function (response) {
+            if (response.status === 401) {
+                window.location.href = "/login";
+                return null;
+            }
+
+            return response.json();
+        })
+        .then(function (data) {
+            if (!data) return;
+
+            if (data.wished) {
+                button.classList.add("active");
+                button.textContent = "♥";
+            } else {
+                button.classList.remove("active");
+                button.textContent = "♡";
+            }
+        })
+        .catch(function (error) {
+            console.error("Wishlist error:", error);
+        });
+    });
+});
+</script>
+
+</body>
+</html>

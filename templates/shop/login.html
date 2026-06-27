@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로그인 | GY JEWELRY</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body class="auth-page-body">
+
+{% include "shop/header.html" %}
+
+<main class="auth-page">
+
+    <div class="auth-box">
+
+        <p class="auth-label">MEMBER LOGIN</p>
+
+        <h1>LOGIN</h1>
+
+        <p class="auth-desc">
+            GY JEWELRY 회원 계정으로 로그인하세요.
+        </p>
+
+        <form method="POST" class="auth-form">
+
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+
+            <div class="auth-field">
+                <label for="loginUsername">아이디</label>
+                <input
+                    type="text"
+                    id="loginUsername"
+                    name="username"
+                    autocomplete="username"
+                    required
+                >
+            </div>
+
+            <div class="auth-field">
+                <label for="loginPassword">비밀번호</label>
+
+                <div class="password-eye-wrap">
+                    <input
+                        type="password"
+                        id="loginPassword"
+                        name="password"
+                        autocomplete="current-password"
+                        required
+                    >
+
+                    <button
+                        type="button"
+                        class="password-eye-btn"
+                        id="passwordEyeBtn"
+                        aria-label="비밀번호 보기"
+                    >
+                        <svg class="password-eye-icon eye-close" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M4 14.5C6.2 11.8 8.8 10.5 12 10.5C15.2 10.5 17.8 11.8 20 14.5"></path>
+                            <path d="M7 16.5L6 18"></path>
+                            <path d="M12 17V19"></path>
+                            <path d="M17 16.5L18 18"></path>
+                        </svg>
+
+                        <svg class="password-eye-icon eye-open" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M3 12S6.5 6.5 12 6.5S21 12 21 12S17.5 17.5 12 17.5S3 12 3 12Z"></path>
+                            <circle cx="12" cy="12" r="2.8"></circle>
+                        </svg>
+                    </button>
+                </div>
+
+                {% if error %}
+                    <p class="login-error">{{ error }}</p>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="auth-btn">LOGIN</button>
+
+        </form>
+
+        <div class="auth-bottom">
+            아직 계정이 없으신가요?
+            <a href="/signup">회원가입</a>
+        </div>
+
+    </div>
+
+</main>
+
+<script>
+    const loginPassword = document.getElementById("loginPassword");
+    const passwordEyeBtn = document.getElementById("passwordEyeBtn");
+
+    if (loginPassword && passwordEyeBtn) {
+        passwordEyeBtn.addEventListener("click", function () {
+            const isHidden = loginPassword.type === "password";
+
+            loginPassword.type = isHidden ? "text" : "password";
+            passwordEyeBtn.classList.toggle("is-visible", isHidden);
+
+            passwordEyeBtn.setAttribute(
+                "aria-label",
+                isHidden ? "비밀번호 숨기기" : "비밀번호 보기"
+            );
+        });
+    }
+</script>
+
+</body>
+</html>

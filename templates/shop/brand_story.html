@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brand Story | GY JEWELRY</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/brand_story.css') }}">
+</head>
+
+<body class="brand-story-page-body header-dynamic">
+
+{% include "shop/header.html" %}
+
+<main class="brand-story-page">
+
+    <!-- HERO -->
+    <section class="brand-story-hero" data-header-theme="dark">
+
+        <div class="brand-story-hero-bg">
+            <div class="brand-story-hero-placeholder">
+                <span>GY JEWELRY</span>
+            </div>
+        </div>
+
+        <div class="brand-story-hero-overlay"></div>
+
+        <div class="brand-story-hero-content reveal">
+            <p class="brand-story-eyebrow">BRAND STORY</p>
+
+            <h1>
+                빛이 머무는 순간,<br>
+                이야기는 시작됩니다.
+            </h1>
+
+            <p class="brand-story-hero-text">
+                GY JEWELRY는 단순히 장신구를 만드는 브랜드가 아닙니다.
+                한 사람의 시간, 감정, 기억이 조용히 빛나는 순간을 위해 존재합니다.
+            </p>
+        </div>
+
+        <div class="brand-story-scroll">
+            <span></span>
+            SCROLL
+        </div>
+
+    </section>
+
+    <!-- PHILOSOPHY -->
+    <section class="brand-story-philosophy" data-header-theme="light">
+
+        <div class="brand-story-section-head reveal">
+            <p class="brand-story-section-label">PHILOSOPHY</p>
+
+            <h2>
+                GY JEWELRY가<br>
+                지켜가는 세 가지 결
+            </h2>
+        </div>
+
+        <div class="brand-story-philosophy-grid">
+
+            <article class="brand-story-card reveal">
+                <span>01</span>
+                <h3>시간의 결</h3>
+                <p>
+                    오래 지나도 낯설지 않은 디자인.
+                    유행보다 깊고, 계절보다 오래 남는 형태를 고민합니다.
+                </p>
+            </article>
+
+            <article class="brand-story-card reveal">
+                <span>02</span>
+                <h3>감정의 결</h3>
+                <p>
+                    누군가에게 선물하는 마음, 스스로를 아끼는 마음.
+                    그 감정이 가장 아름답게 전해지는 순간을 만듭니다.
+                </p>
+            </article>
+
+            <article class="brand-story-card reveal">
+                <span>03</span>
+                <h3>빛의 결</h3>
+                <p>
+                    과하지 않게, 그러나 분명하게.
+                    빛이 머무는 각도와 여백까지 섬세하게 다듬습니다.
+                </p>
+            </article>
+
+        </div>
+
+    </section>
+
+    <!-- MANIFESTO -->
+    <section class="brand-story-manifesto" data-header-theme="dark">
+
+        <div class="brand-story-manifesto-inner reveal">
+            <p>GY JEWELRY MANIFESTO</p>
+
+            <h2>
+                우리는 반짝임을 파는 것이 아니라,<br>
+                기억될 순간을 만듭니다.
+            </h2>
+
+            <span>
+                작고 섬세한 빛이 한 사람의 분위기가 되고,
+                그 분위기가 다시 누군가의 기억이 되는 것.
+                GY JEWELRY는 그 조용하고 깊은 연결을 믿습니다.
+            </span>
+        </div>
+
+    </section>
+
+    <!-- =========================================================
+        SPLIT STORY SECTION 01
+    ========================================================= -->
+    <section class="brand-story-split-section" data-header-theme="light">
+
+        <div class="brand-story-split-inner">
+
+            <div class="brand-story-split-media reveal from-left">
+                <div class="brand-story-media-placeholder">
+                    <span>BRAND IMAGE 01</span>
+                </div>
+            </div>
+
+            <div class="brand-story-split-text reveal from-right">
+                <p class="brand-story-section-label">OUR BEGINNING</p>
+
+                <h2>
+                    우리는 가장 조용한 아름다움이<br>
+                    가장 오래 남는다고 믿습니다.
+                </h2>
+
+                <p>
+                    빠르게 사라지는 화려함보다, 오래 바라볼수록 깊어지는 결.
+                    GY JEWELRY는 그런 아름다움을 향합니다.
+                    피부 위에 닿는 작은 빛 하나가 누군가의 하루를 바꾸고,
+                    오래된 기억처럼 마음에 남을 수 있도록.
+                </p>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================================================
+        SPLIT STORY SECTION 02 (REVERSE)
+    ========================================================= -->
+    <section class="brand-story-split-section reverse" data-header-theme="light">
+
+        <div class="brand-story-split-inner">
+
+            <div class="brand-story-split-media reveal from-right">
+                <div class="brand-story-media-placeholder">
+                    <span>BRAND IMAGE 02</span>
+                </div>
+            </div>
+
+            <div class="brand-story-split-text reveal from-left">
+                <p class="brand-story-section-label">THE SILENT GLOW</p>
+
+                <h2>
+                    감미로운 빛,<br>
+                    그리고 웅장한 침묵.
+                </h2>
+
+                <p>
+                    주얼리는 크지 않아도 한 사람의 존재를 선명하게 만듭니다.
+                    우리는 그 작은 빛 안에 담긴 무게를 존중합니다.
+                    조용하지만 깊고, 섬세하지만 강한 아름다움.
+                    그것이 GY JEWELRY가 추구하는 방향입니다.
+                </p>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================================================
+        SPLIT STORY SECTION 03
+    ========================================================= -->
+    <section class="brand-story-split-section">
+
+        <div class="brand-story-split-inner">
+
+            <div class="brand-story-split-media reveal from-left">
+                <div class="brand-story-media-placeholder">
+                    <span>DETAIL IMAGE</span>
+                </div>
+            </div>
+
+            <div class="brand-story-split-text reveal from-right">
+                <p class="brand-story-section-label">CRAFT & DETAIL</p>
+
+                <h2>
+                    보이지 않는 곳까지<br>
+                    아름다워야 합니다.
+                </h2>
+
+                <p>
+                    우리는 완성된 모습뿐 아니라 착용되는 순간의 감각까지 생각합니다.
+                    피부에 닿는 무게, 손끝에 남는 질감, 빛을 받는 표면의 각도.
+                    작은 차이가 오래 지속되는 만족을 만든다고 믿습니다.
+                </p>
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- CTA -->
+    <section class="brand-story-ending" data-header-theme="light">
+
+        <div class="brand-story-ending-inner reveal">
+            <p class="brand-story-section-label">A MOMENT OF LIGHT</p>
+
+            <h2>
+                당신의 오늘에<br>
+                오래 남을 빛을 더하세요.
+            </h2>
+
+            <div class="brand-story-actions">
+                <a href="/shop">COLLECTION 보기</a>
+                <a href="/story">연의 스토리 보기</a>
+            </div>
+        </div>
+
+    </section>
+
+</main>
+
+<script>
+    const revealItems = document.querySelectorAll(".reveal");
+
+    const revealObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+                entry.target.classList.add("is-visible");
+            }
+        });
+    }, {
+        threshold: 0.18
+    });
+
+    revealItems.forEach(function (item) {
+        revealObserver.observe(item);
+    });
+</script>
+
+</body>
+</html>

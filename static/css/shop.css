@@ -1,0 +1,967 @@
+/* ===============================
+   SHOP
+   상품 목록 페이지
+   =============================== */
+
+/* 쇼핑 페이지 전체 */
+
+/* 쇼핑 페이지 상단 브랜드 */
+
+.shop-page {
+    width: 100%;
+    min-height: 100vh;
+    padding: 70px 60px 90px;
+    background: #fff;
+}
+
+/* 상단 타이틀 영역 */
+.shop-header {
+    text-align: center;
+    margin-bottom: 48px;
+}
+
+.shop-title {
+    margin: 0 0 12px;
+    font-size: 30px;
+    font-weight: 300;
+    letter-spacing: 4px;
+    color: #111;
+}
+
+.shop-subtitle {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 300;
+    color: #777;
+    letter-spacing: 1px;
+}
+
+/* 검색 결과 문구 */
+.search-result-title {
+    text-align: center;
+    margin: 0 0 36px;
+    font-size: 18px;
+    font-weight: 300;
+    letter-spacing: 1px;
+    color: #111;
+}
+
+/* 정렬 영역 */
+.shop-controls,
+.sort-area,
+.sort-form {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-bottom: 34px;
+}
+
+.sort-form select,
+.shop-controls select {
+    border: none;
+    border-bottom: 1px solid #111;
+    background: transparent;
+    padding: 8px 24px 8px 4px;
+    font-size: 13px;
+    color: #111;
+    outline: none;
+}
+
+/* 상품 그리드 */
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 58px 32px;
+}
+
+/* 상품 카드 */
+.product-card {
+    width: 250px;
+    max-width: 100%;
+    text-align: center;
+    transition: transform 0.25s ease;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+}
+
+.product-card a {
+    display: inline-block;
+    width: 100%;
+    color: inherit;
+    text-decoration: none;
+}
+
+/* 상품 이미지 */
+.product-card img,
+.product-image {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    background: #f5f5f5;
+    margin-bottom: 18px;
+}
+
+/* 이미지 없을 때 */
+.no-image,
+.product-no-image {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background: #f5f5f5;
+    color: #aaa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 18px;
+    font-size: 13px;
+}
+
+/* 상품명 */
+.product-name {
+    margin: 0 0 8px;
+    font-size: 15px;
+    font-weight: 400;
+    color: #111;
+    letter-spacing: 0.5px;
+}
+
+/* 가격 */
+.product-price {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 300;
+    color: #666;
+}
+
+/* 평점 */
+.product-rating {
+    margin-top: 8px;
+    font-size: 13px;
+    color: #111;
+    letter-spacing: 1px;
+}
+
+/* 짧은 설명 */
+.product-desc,
+.product-description {
+    margin-top: 8px;
+    font-size: 13px;
+    color: #888;
+    line-height: 1.5;
+}
+
+/* 검색 결과 없음 */
+.no-results,
+.empty-result {
+    padding: 120px 20px;
+    text-align: center;
+    color: #555;
+}
+
+.no-results h2,
+.empty-result h2 {
+    margin: 0 0 12px;
+    font-size: 22px;
+    font-weight: 300;
+    letter-spacing: 1px;
+}
+
+.no-results p,
+.empty-result p {
+    margin: 0;
+    font-size: 14px;
+    color: #888;
+}
+
+/* 반응형 */
+@media (max-width: 1100px) {
+    .product-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .shop-page {
+        padding: 50px 22px 70px;
+    }
+
+    .shop-title {
+        font-size: 24px;
+        letter-spacing: 3px;
+    }
+
+    .shop-controls,
+    .sort-area,
+    .sort-form {
+        justify-content: center;
+    }
+
+    .product-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, 250px);
+        justify-content: start;
+        gap: 58px 76px;
+    }
+    .product-name {
+        font-size: 14px;
+    }
+
+    .product-price {
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 768px) {
+    .product-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 42px 18px;
+    }
+
+    .product-card {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .product-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .product-card {
+        width: 100%;
+    }
+}
+
+/* ===============================
+   SHOP CATEGORY HERO
+================================ */
+
+.shop-category-hero {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    min-height: 720px;
+
+    margin: 0;
+    overflow: hidden;
+
+    border-radius: 0;
+    background: #111;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-category-hero-visual {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+}
+
+.shop-category-hero-placeholder {
+    width: 100%;
+    height: 100vh;
+    min-height: 720px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: clamp(34px, 6vw, 86px);
+    letter-spacing: 0.12em;
+    font-weight: 300;
+
+    color: rgba(255, 255, 255, 0.72);
+    background:
+        linear-gradient(
+            rgba(0, 0, 0, 0.22),
+            rgba(0, 0, 0, 0.48)
+        ),
+        radial-gradient(circle at center, #c9b38a 0%, #3a3329 42%, #111 100%);
+}
+
+.shop-category-hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+
+    background:
+        linear-gradient(
+            to bottom,
+            rgba(0, 0, 0, 0.08),
+            rgba(0, 0, 0, 0.42)
+        );
+}
+
+.shop-category-hero-text {
+    position: relative;
+    z-index: 3;
+
+    max-width: 760px;
+    padding: 0 28px;
+    text-align: center;
+
+    color: #fff;
+}
+
+.shop-category-eyebrow {
+    margin-bottom: 18px;
+
+    font-size: 12px;
+    letter-spacing: 0.36em;
+    font-weight: 500;
+
+    color: rgba(255, 255, 255, 0.72);
+}
+
+.shop-category-hero-text h1 {
+    margin: 0;
+
+    font-size: clamp(38px, 6vw, 76px);
+    line-height: 1.05;
+    letter-spacing: 0.08em;
+    font-weight: 400;
+}
+
+.shop-category-hero-text p:last-child {
+    margin-top: 22px;
+
+    font-size: clamp(15px, 1.6vw, 19px);
+    line-height: 1.8;
+    font-weight: 300;
+
+    color: rgba(255, 255, 255, 0.82);
+}
+
+
+/* 카테고리별 임시 배경 톤 */
+
+.shop-category-hero-gold .shop-category-hero-placeholder {
+    background:
+        linear-gradient(rgba(0, 0, 0, 0.16), rgba(0, 0, 0, 0.52)),
+        radial-gradient(circle at center, #d8bd7b 0%, #7d6335 42%, #16120b 100%);
+}
+
+.shop-category-hero-silver .shop-category-hero-placeholder {
+    background:
+        linear-gradient(rgba(0, 0, 0, 0.12), rgba(0, 0, 0, 0.5)),
+        radial-gradient(circle at center, #d8d8d8 0%, #777 42%, #151515 100%);
+}
+
+.shop-category-hero-diamond .shop-category-hero-placeholder {
+    background:
+        linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.46)),
+        radial-gradient(circle at center, #f5f7ff 0%, #9da8bd 38%, #111723 100%);
+}
+
+.shop-category-hero-special .shop-category-hero-placeholder {
+    background:
+        linear-gradient(rgba(0, 0, 0, 0.12), rgba(0, 0, 0, 0.52)),
+        radial-gradient(circle at center, #b68a7a 0%, #4f3034 42%, #120b0d 100%);
+}
+
+
+/* 반응형 */
+
+@media (max-width: 768px) {
+    .shop-category-hero {
+        width: 100%;
+        height: 100vh;
+        min-height: 640px;
+        margin: 0;
+        border-radius: 0;
+    }
+
+    .shop-category-hero-placeholder {
+        height: 100vh;
+        min-height: 640px;
+    }
+
+    .shop-category-eyebrow {
+        font-size: 11px;
+        letter-spacing: 0.28em;
+    }
+
+    .shop-category-hero-text h1 {
+        letter-spacing: 0.04em;
+    }
+
+    .shop-category-hero-text p:last-child {
+        font-size: 14px;
+    }
+}
+
+/* ===============================
+   SHOP CATEGORY HERO
+================================ */
+
+.shop-category-hero {
+    position: relative;
+    width: calc(100% - 56px);
+    min-height: 62vh;
+
+    margin: 28px auto 70px;
+    overflow: hidden;
+
+    border-radius: 28px;
+    background: #111;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shop-category-hero-visual {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+}
+
+.shop-category-hero-placeholder {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: clamp(34px, 6vw, 86px);
+    letter-spacing: 0.12em;
+    font-weight: 300;
+
+    color: rgba(255, 255, 255, 0.7);
+
+    background:
+        linear-gradient(
+            rgba(0, 0, 0, 0.18),
+            rgba(0, 0, 0, 0.5)
+        ),
+        radial-gradient(circle at center, #c9b38a 0%, #3a3329 42%, #111 100%);
+}
+
+.shop-category-hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+
+    background:
+        linear-gradient(
+            to bottom,
+            rgba(0, 0, 0, 0.08),
+            rgba(0, 0, 0, 0.42)
+        );
+}
+
+.shop-category-hero-text {
+    position: relative;
+    z-index: 3;
+
+    max-width: 760px;
+    padding: 0 28px;
+    text-align: center;
+
+    color: #fff;
+}
+
+.shop-category-eyebrow {
+    margin-bottom: 18px;
+
+    font-size: 12px;
+    letter-spacing: 0.36em;
+    font-weight: 500;
+
+    color: rgba(255, 255, 255, 0.72);
+}
+
+.shop-category-hero-text h1 {
+    margin: 0;
+
+    font-size: clamp(38px, 6vw, 76px);
+    line-height: 1.05;
+    letter-spacing: 0.08em;
+    font-weight: 400;
+}
+
+.shop-category-hero-text p:last-child {
+    margin-top: 22px;
+
+    font-size: clamp(15px, 1.6vw, 19px);
+    line-height: 1.8;
+    font-weight: 300;
+
+    color: rgba(255, 255, 255, 0.82);
+}
+
+
+/* ===============================
+   SHOP CATEGORY TABS
+================================ */
+
+.shop-category-tabs {
+    width: min(1180px, calc(100% - 40px));
+    margin: 0 auto 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    flex-wrap: wrap;
+}
+
+.shop-category-tabs a {
+    min-width: 96px;
+    padding: 12px 20px;
+
+    border: 1px solid rgba(20, 20, 20, 0.16);
+    border-radius: 999px;
+
+    text-align: center;
+    text-decoration: none;
+
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    color: #222;
+
+    background: rgba(255, 255, 255, 0.52);
+
+    transition: 0.25s ease;
+}
+
+.shop-category-tabs a:hover,
+.shop-category-tabs a.active {
+    background: #111;
+    color: #fff;
+    border-color: #111;
+}
+
+
+/* 반응형 */
+
+@media (max-width: 768px) {
+    .shop-category-hero {
+        width: calc(100% - 28px);
+        min-height: 54vh;
+        margin: 18px auto 50px;
+        border-radius: 20px;
+    }
+
+    .shop-category-eyebrow {
+        font-size: 11px;
+        letter-spacing: 0.28em;
+    }
+
+    .shop-category-hero-text h1 {
+        letter-spacing: 0.04em;
+    }
+
+    .shop-category-hero-text p:last-child {
+        font-size: 14px;
+    }
+
+    .shop-category-tabs {
+        justify-content: flex-start;
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        padding-bottom: 6px;
+    }
+
+    .shop-category-tabs a {
+        flex: 0 0 auto;
+    }
+}
+
+/* ===============================
+   SHOP INFO STRIP
+================================ */
+
+.shop-info-strip {
+    width: calc(100% - 44px);
+    max-width: none;
+
+    margin: -44px auto 54px;
+    padding: 20px 25px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+
+    border-top: 1px solid rgba(20, 20, 20, 0.08);
+    border-bottom: 1px solid rgba(20, 20, 20, 0.08);
+
+    background: #fff;
+}
+
+.shop-info-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    color: #333;
+}
+
+.shop-current-category {
+    font-size: 15px;
+    letter-spacing: 0.12em;
+    font-weight: 500;
+    color: #111;
+    text-transform: uppercase;
+}
+
+.shop-product-count,
+.shop-price-range {
+    color: rgba(20, 20, 20, 0.62);
+}
+
+.shop-info-divider {
+    width: 1px;
+    height: 12px;
+    background: rgba(20, 20, 20, 0.18);
+}
+
+.shop-control-form {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex: 0 0 auto;
+}
+
+.shop-control-form select {
+    min-width: 132px;
+    padding: 8px 28px 8px 4px;
+
+    border: none;
+    border-bottom: 1px solid #111;
+    border-radius: 0;
+
+    background: transparent;
+
+    font-size: 13px;
+    color: #111;
+
+    outline: none;
+    cursor: pointer;
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+    .shop-info-strip {
+        width: calc(100% - 28px);
+        margin: -30px auto 38px;
+        padding: 16px 0;
+
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .shop-info-left {
+        gap: 10px;
+    }
+
+    .shop-info-divider {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .shop-control-form {
+        width: 100%;
+        gap: 12px;
+    }
+
+    .shop-control-form select {
+        width: 50%;
+    }
+}
+
+/* 상품 목록 위 불필요한 공백 제거 */
+.product-grid,
+.shop-product-grid,
+.products-grid {
+    margin-top: 0;
+    padding-top: 0;
+}
+
+/* 예전 정렬 영역이 빈 공간을 만들 경우 */
+.shop-toolbar,
+.shop-filter-bar,
+.shop-sort-area,
+.product-sort-area {
+    margin: 0;
+    padding: 0;
+}
+
+#shop-control-anchor {
+    scroll-margin-top: 120px;
+}
+
+/* ===============================
+   WISHLIST HEART BUTTON
+================================ */
+
+.product-card {
+    position: relative;
+}
+
+.wishlist-btn {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    z-index: 10;
+
+    width: 38px;
+    height: 38px;
+
+    border: 1px solid rgba(20, 20, 20, 0.12);
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.82);
+    backdrop-filter: blur(10px);
+
+    color: #111;
+    font-size: 20px;
+    line-height: 1;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+    transition: 0.25s ease;
+}
+
+.wishlist-btn:hover {
+    transform: scale(1.08);
+    background: #111;
+    color: #fff;
+}
+
+.wishlist-btn.active {
+    background: #111;
+    color: #fff;
+    border-color: #111;
+}
+
+/* ===============================
+   WISHLIST PAGE
+================================ */
+
+.wishlist-page {
+    padding-top: 90px;
+}
+
+.wishlist-header {
+    position: relative;
+    max-width: 1180px;
+    margin: 0 auto 56px;
+    text-align: center;
+}
+
+.wishlist-back-link {
+    position: absolute;
+    left: 0;
+    top: 4px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 10px 18px;
+
+    border: 1px solid rgba(20, 20, 20, 0.18);
+    border-radius: 999px;
+
+    text-decoration: none;
+    color: #111;
+
+    font-size: 13px;
+    letter-spacing: 0.06em;
+
+    background: #fff;
+
+    transition: 0.25s ease;
+}
+
+.wishlist-back-link:hover {
+    background: #111;
+    color: #fff;
+    border-color: #111;
+}
+
+/* 위시리스트 상품 중앙 정렬 */
+.wishlist-grid {
+    width: min(1180px, calc(100% - 40px));
+    margin: 0 auto;
+
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 250px));
+    justify-content: center;
+    gap: 58px 36px;
+}
+
+.wishlist-grid .product-card {
+    width: 250px;
+    justify-self: center;
+}
+
+/* 빈 위시리스트 */
+.wishlist-empty {
+    min-height: 360px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.wishlist-empty-actions {
+    margin-top: 28px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.wishlist-empty-actions a {
+    min-width: 150px;
+    padding: 12px 20px;
+
+    border: 1px solid #111;
+    border-radius: 999px;
+
+    text-decoration: none;
+    text-align: center;
+
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    color: #111;
+
+    background: #fff;
+
+    transition: 0.25s ease;
+}
+
+.wishlist-empty-actions a:hover {
+    background: #111;
+    color: #fff;
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+    .wishlist-header {
+        padding-top: 54px;
+    }
+
+    .wishlist-back-link {
+        left: 50%;
+        transform: translateX(-50%);
+        top: 0;
+    }
+
+    .wishlist-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 42px 18px;
+    }
+
+    .wishlist-grid .product-card {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .wishlist-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ===============================
+   WISHLIST BACK BUTTON FIX
+================================ */
+
+.wishlist-top-actions {
+    width: min(1180px, calc(100% - 40px));
+    margin: 0 auto 34px;
+
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.wishlist-back-link {
+    position: static !important;
+    transform: none !important;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 11px 20px;
+
+    border: 1px solid rgba(20, 20, 20, 0.2);
+    border-radius: 999px;
+
+    text-decoration: none;
+    color: #111;
+
+    font-size: 13px;
+    letter-spacing: 0.06em;
+
+    background: #fff;
+
+    transition: 0.25s ease;
+}
+
+.wishlist-back-link:hover {
+    background: #111;
+    color: #fff;
+    border-color: #111;
+}
+
+@media (max-width: 768px) {
+    .wishlist-top-actions {
+        margin-bottom: 28px;
+    }
+
+    .wishlist-back-link {
+        position: static !important;
+        left: auto !important;
+        top: auto !important;
+        transform: none !important;
+    }
+}
+
+/* ==============================
+   PRODUCT CARD REAL RATING
+============================== */
+
+.product-card-rating {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 20px;
+}
+
+.product-card-stars {
+    color: #b89252;
+    font-size: 13px;
+    letter-spacing: 0.05em;
+    line-height: 1;
+}
+
+.product-card-rating small {
+    color: #8a7a66;
+    font-size: 12px;
+    letter-spacing: 0.02em;
+}

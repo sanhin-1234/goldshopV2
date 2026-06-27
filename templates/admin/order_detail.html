@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>주문 상세 | GY JEWELRY ADMIN</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<main class="admin-page">
+    <div class="admin-container">
+
+        <div class="admin-header">
+            <div>
+                <p class="admin-label">GY JEWELRY</p>
+                <h1 class="admin-title">ORDER DETAIL</h1>
+            </div>
+        </div>
+
+        <nav class="admin-nav">
+            <a href="/">홈</a>
+            <a href="/shop">쇼핑몰</a>
+            <a href="/admin">상품관리</a>
+            <a href="/admin/orders">주문관리</a>
+        </nav>
+
+        <section class="admin-section">
+
+            <div class="admin-section-header">
+                <h2>상세 영수증</h2>
+                <p>주문 정보와 주문 상품을 확인하고 배송 상태를 변경할 수 있습니다.</p>
+            </div>
+
+            <div class="order-detail-layout">
+
+                <article class="order-detail-receipt">
+
+                    <div class="receipt-top">
+                        <p class="receipt-brand">GY JEWELRY</p>
+                        <h3>ORDER RECEIPT</h3>
+                        <span>#{{ order['id'] }}</span>
+                    </div>
+
+                    <div class="receipt-line"></div>
+
+                    <div class="receipt-info">
+
+                        <div class="receipt-row">
+                            <span>고객명</span>
+                            <strong>{{ order['customer_name'] }}</strong>
+                        </div>
+
+                        <div class="receipt-row">
+                            <span>연락처</span>
+                            <strong>{{ order['phone'] }}</strong>
+                        </div>
+
+                        <div class="receipt-row address-row">
+                            <span>주소</span>
+                            <strong>{{ order['address'] }}</strong>
+                        </div>
+
+                        <div class="receipt-row">
+                            <span>주문일</span>
+                            <strong>{{ order['created_at'] }}</strong>
+                        </div>
+
+                        <div class="receipt-row">
+                            <span>상태</span>
+                            <strong class="receipt-status">
+                                {{ order['status'] or '상태없음' }}
+                            </strong>
+                        </div>
+
+                    </div>
+
+                    <div class="receipt-dashed"></div>
+
+                    {% for item in items %}
+                    <div class="receipt-item-row">
+
+                        <div>
+                            <strong>{{ item['product_name'] }}</strong>
+
+                            {% if item['option_text'] %}
+                                <em class="receipt-item-option">
+                                    {{ item['option_text'] }}
+                                </em>
+                            {% endif %}
+
+                            <span>
+                                {{ "{:,}".format(item['price']|int) }}원 × {{ item['quantity'] }}
+                            </span>
+                        </div>
+
+                        <p>
+                            {{ "{:,}".format((item['price']|int) * (item['quantity']|int)) }}원
+                        </p>
+
+                    </div>
+                    
+                    {% endfor %}
+
+                    <div class="receipt-dashed"></div>
+
+                    <div class="receipt-total detail-total">
+                        <span>TOTAL</span>
+                        <strong>{{ "{:,}".format(order['total_price']|int) }}원</strong>
+                    </div>
+
+                    <p class="receipt-thanks">
+                        Thank you for your order.
+                    </p>
+
+                </article>
+
+                <aside class="order-status-panel">
+
+                    <h3>배송 상태 변경</h3>
+
+                    <p>
+                        현재 상태:
+                        <strong>{{ order['status'] or '상태없음' }}</strong>
+                    </p>
+
+                    <div class="order-status-buttons">
+
+                        <form method="POST"
+                            action="{{ url_for('admin.update_order_status', order_id=order['id']) }}">
+
+                            <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                            <input type="hidden" name="status" value="배송준비중">
+
+                            <button type="submit" class="admin-btn">
+                                배송준비중
+                            </button>
+                        </form>
+
+                        <form method="POST"
+                            action="{{ url_for('admin.update_order_status', order_id=order['id']) }}">
+
+                            <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                            <input type="hidden" name="status" value="배송중">
+
+                            <button type="submit" class="admin-btn">
+                                배송중
+                            </button>
+                        </form>
+
+                        <form method="POST"
+                            action="{{ url_for('admin.update_order_status', order_id=order['id']) }}">
+
+                            <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                            <input type="hidden" name="status" value="배송완료">
+
+                            <button type="submit" class="admin-btn">
+                                배송완료
+                            </button>
+                        </form>
+
+                    </div>
+
+                    <a href="{{ url_for('admin.admin_orders') }}" class="admin-add-btn status-back-btn">
+                        주문 목록으로
+                    </a>
+
+                </aside>
+
+            </div>
+
+        </section>
+
+    </div>
+</main>
+
+</body>
+</html>

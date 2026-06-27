@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order | GY JEWELRY</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body class="checkout-page-body">
+
+{% include "shop/header.html" %}
+
+<main class="checkout-page">
+
+    <section class="checkout-hero">
+        <p class="checkout-label">CHECKOUT</p>
+        <h1>주문서 작성</h1>
+        <p>
+            소중한 주문 정보를 확인하고 배송 정보를 입력해주세요.
+        </p>
+    </section>
+
+    <form method="POST" class="checkout-layout">
+
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <section class="checkout-form-card">
+
+            <div class="checkout-section-title">
+                <span>01</span>
+                <h2>배송 정보</h2>
+            </div>
+
+            <div class="checkout-field">
+                <label for="name">받는 분</label>
+                <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    placeholder="이름을 입력해주세요"
+                    required
+                >
+            </div>
+
+            <div class="checkout-field">
+                <label for="phone">연락처</label>
+                <input
+                    type="text"
+                    id="phone"
+                    name="phone"
+                    placeholder="010-0000-0000"
+                    required
+                >
+            </div>
+
+            <div class="checkout-field">
+                <label for="address">배송지 주소</label>
+                <textarea
+                    id="address"
+                    name="address"
+                    rows="5"
+                    placeholder="주소를 입력해주세요"
+                    required
+                ></textarea>
+            </div>
+
+            <div class="checkout-notice">
+                <strong>안내</strong>
+                <p>
+                    주문 완료 후 관리자가 배송 상태를 변경하면 마이페이지에서 확인할 수 있습니다.
+                </p>
+            </div>
+
+        </section>
+
+        <aside class="checkout-summary-card">
+
+            <div class="checkout-section-title">
+                <span>02</span>
+                <h2>주문 상품</h2>
+            </div>
+
+            {% set items = cart_items if cart_items is defined else [] %}
+            {% set summary = namespace(total_price=0, total_quantity=0) %}
+
+            {% for item in items %}
+                {% set item_price = item["price"] if item["price"] is defined else 0 %}
+                {% set item_quantity = item["quantity"] if item["quantity"] is defined else 1 %}
+                {% set summary.total_price = summary.total_price + (item_price * item_quantity) %}
+                {% set summary.total_quantity = summary.total_quantity + item_quantity %}
+            {% endfor %}
+
+            {% if items %}
+                <div class="checkout-items">
+
+                    {% for item in items %}
+                        <div class="checkout-item">
+
+                            <div class="checkout-item-image">
+                                {% if item.get("image") %}
+                                    <img src="/uploads/{{ item.get('image') }}" alt="{{ item.get('name', '상품 이미지') }}">
+                                {% else %}
+                                    <span>NO IMAGE</span>
+                                {% endif %}
+                            </div>
+
+                            <div class="checkout-item-info">
+                                <p class="checkout-item-name">
+                                    {{ item["name"] }}
+                                </p>
+
+                                {% if item.get("option_text") %}
+                                    <p class="checkout-option-text">
+                                        {{ item.get("option_text") }}
+                                    </p>
+                                {% endif %}
+
+                                <p class="checkout-item-meta">
+                                    수량 {{ item["quantity"] }}개
+                                </p>
+
+                                {% set item_price = item["price"] if item["price"] is defined else 0 %}
+                                {% set item_quantity = item["quantity"] if item["quantity"] is defined else 1 %}
+
+                                <p class="checkout-item-price">
+                                    {{ "{:,}".format(item_price * item_quantity) }}원
+                                </p>
+                            </div>
+
+                        </div>
+                    {% endfor %}
+
+                </div>
+            {% else %}
+                <div class="checkout-empty">
+                    장바구니 상품 정보가 없습니다.
+                </div>
+            {% endif %}
+
+            <div class="checkout-total-box">
+                <div>
+                    <span>총 상품 수량</span>
+                    <strong>{{ summary.total_quantity }}개</strong>
+                </div>
+
+                <div>
+                    <span>배송비</span>
+                    <strong>무료</strong>
+                </div>
+
+                <div class="checkout-grand-total">
+                    <span>총 결제 금액</span>
+                    <strong>{{ "{:,}".format(summary.total_price) }}원</strong>
+                </div>
+            </div>
+
+            {% if items %}
+                <button type="submit" class="checkout-submit-btn">
+                    주문 완료하기
+                </button>
+            {% else %}
+                <button type="button" class="checkout-submit-btn" disabled>
+                    주문할 상품이 없습니다
+                </button>
+            {% endif %}
+
+            <a href="/cart" class="checkout-back-link">
+                장바구니로 돌아가기
+            </a>
+
+        </aside>
+
+    </form>
+
+</main>
+
+</body>
+</html>

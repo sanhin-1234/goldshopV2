@@ -1,0 +1,417 @@
+/* ================================
+   GY JEWELRY STORY 05
+   간 ; 결
+================================ */
+
+/* 이 페이지에서 내부 스크롤 생성 방지 */
+html,
+body {
+    overflow-x: hidden;
+}
+
+body {
+    overflow-y: auto;
+    background: #f5f3ee;
+}
+
+/* 전체 페이지 */
+.gan-page {
+    width: 100%;
+    min-height: 100vh;
+    background: #f5f3ee;
+    color: #1e1c18;
+    overflow: visible;
+}
+
+/* 돌아가기 */
+.gan-back {
+    position: fixed;
+    top: 96px;
+    left: 36px;
+    z-index: 90;
+
+    text-decoration: none;
+    color: #716d62;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+
+    padding: 10px 15px;
+    border: 1px solid rgba(113, 109, 98, 0.35);
+    border-radius: 999px;
+    background: rgba(245, 243, 238, 0.82);
+    backdrop-filter: blur(10px);
+
+    transition: all 0.3s ease;
+}
+
+.gan-back:hover {
+    color: #1e1c18;
+    background: rgba(255, 255, 255, 0.95);
+    transform: translateX(-4px);
+}
+
+/* 공통 텍스트 */
+.gan-kicker {
+    font-size: 12px;
+    letter-spacing: 0.32em;
+    color: #9b8a63;
+    margin-bottom: 26px;
+}
+
+.gan-small {
+    font-size: 13px;
+    letter-spacing: 0.22em;
+    color: #9b8a63;
+    margin-bottom: 24px;
+}
+
+/* HERO */
+.gan-hero {
+    min-height: 92vh;
+    padding: 130px 24px 90px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+    background:
+        linear-gradient(90deg, rgba(155, 138, 99, 0.08) 1px, transparent 1px),
+        linear-gradient(180deg, #fbfaf6 0%, #f5f3ee 100%);
+    background-size: 72px 72px, auto;
+}
+
+.gan-hero h1 {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(58px, 9vw, 124px);
+    font-weight: 400;
+    letter-spacing: 0.12em;
+    line-height: 1;
+    margin-bottom: 30px;
+}
+
+.gan-subtitle {
+    font-size: 18px;
+    color: #716d62;
+    letter-spacing: 0.04em;
+}
+
+/* INTRO */
+.gan-intro {
+    padding: 150px 24px;
+    text-align: center;
+    background: #f5f3ee;
+}
+
+.gan-intro p {
+    max-width: 860px;
+    margin: 0 auto;
+
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(28px, 3.5vw, 48px);
+    line-height: 1.7;
+    font-weight: 400;
+    color: #2c2923;
+}
+
+/* SYMBOL */
+.gan-symbol-section {
+    min-height: 88vh;
+    padding: 130px 8vw;
+
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 90px;
+    align-items: center;
+
+    background: #fffdf8;
+}
+
+.gan-symbol {
+    position: relative;
+    width: min(430px, 76vw);
+    aspect-ratio: 1 / 1;
+    margin: 0 auto;
+}
+
+/* 사이의 결: 떨어진 두 원과 가운데 여백 */
+.gan-symbol span {
+    position: absolute;
+    border-radius: 50%;
+}
+
+.gan-symbol span:nth-child(1) {
+    width: 30%;
+    height: 30%;
+    top: 35%;
+    left: 8%;
+    border: 1px solid rgba(155, 138, 99, 0.48);
+    background: rgba(155, 138, 99, 0.04);
+}
+
+.gan-symbol span:nth-child(2) {
+    width: 30%;
+    height: 30%;
+    top: 35%;
+    right: 8%;
+    border: 1px solid rgba(155, 138, 99, 0.48);
+    background: rgba(155, 138, 99, 0.04);
+}
+
+.gan-symbol span:nth-child(3) {
+    width: 12%;
+    height: 12%;
+    top: 44%;
+    left: 44%;
+    background: rgba(155, 138, 99, 0.16);
+    border: 1px solid rgba(155, 138, 99, 0.16);
+}
+
+.gan-symbol::before {
+    content: "";
+    position: absolute;
+    width: 46%;
+    height: 1px;
+    top: 50%;
+    left: 27%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(155, 138, 99, 0.45),
+        transparent
+    );
+}
+
+.gan-symbol::after {
+    content: "";
+    position: absolute;
+    width: 78%;
+    height: 78%;
+    top: 11%;
+    left: 11%;
+    border: 1px solid rgba(155, 138, 99, 0.16);
+    border-radius: 50%;
+}
+
+.gan-symbol-text h2 {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(36px, 4.8vw, 68px);
+    font-weight: 400;
+    line-height: 1.35;
+    color: #1e1c18;
+}
+
+/* CHAPTER */
+.gan-chapter {
+    min-height: 78vh;
+    padding: 140px 10vw;
+
+    display: grid;
+    grid-template-columns: 0.7fr 1.3fr;
+    gap: 90px;
+    align-items: center;
+
+    background: #f5f3ee;
+}
+
+.gan-chapter-dark {
+    background: #e5e0d5;
+}
+
+.gan-chapter-num {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(90px, 13vw, 190px);
+    line-height: 1;
+    color: rgba(155, 138, 99, 0.22);
+}
+
+.gan-chapter-text {
+    max-width: 680px;
+}
+
+.gan-chapter-text h2 {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(34px, 4vw, 58px);
+    font-weight: 400;
+    line-height: 1.35;
+    margin-bottom: 34px;
+}
+
+.gan-chapter-text p {
+    font-size: 17px;
+    line-height: 2.15;
+    color: #514e46;
+}
+
+/* MEANING */
+.gan-meaning {
+    padding: 170px 24px;
+    text-align: center;
+    background: #1e1c18;
+    color: #f5f3ee;
+}
+
+.gan-meaning h2 {
+    max-width: 980px;
+    margin: 0 auto 38px;
+
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(32px, 4vw, 58px);
+    font-weight: 400;
+    line-height: 1.55;
+}
+
+.gan-meaning p {
+    max-width: 740px;
+    margin: 0 auto;
+
+    color: rgba(245, 243, 238, 0.72);
+    font-size: 17px;
+    line-height: 2;
+}
+
+/* PRODUCTS */
+.gan-products {
+    padding: 150px 6vw 170px;
+    text-align: center;
+    background: #fffdf8;
+}
+
+.gan-products h2 {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(34px, 4vw, 54px);
+    font-weight: 400;
+    margin-bottom: 70px;
+}
+
+.gan-product-grid {
+    max-width: 1180px;
+    margin: 0 auto;
+
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+}
+
+.gan-product-card {
+    display: block;
+    text-decoration: none;
+    color: #1e1c18;
+    background: #ffffff;
+    padding: 24px 24px 30px;
+
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.gan-product-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 22px 45px rgba(30, 28, 24, 0.08);
+}
+
+.gan-product-card img {
+    width: 100%;
+    aspect-ratio: 1 / 1.08;
+    object-fit: cover;
+    margin-bottom: 22px;
+}
+
+.gan-product-card h3 {
+    font-size: 15px;
+    font-weight: 400;
+    margin-bottom: 8px;
+}
+
+.gan-product-card p {
+    font-size: 14px;
+    color: #716d62;
+}
+
+/* BOTTOM */
+.gan-bottom {
+    padding: 90px 24px 140px;
+    text-align: center;
+    background: #fffdf8;
+}
+
+.gan-bottom a {
+    display: inline-block;
+
+    text-decoration: none;
+    color: #1e1c18;
+    font-size: 14px;
+    letter-spacing: 0.16em;
+
+    padding: 14px 28px;
+    border: 1px solid rgba(30, 28, 24, 0.35);
+    border-radius: 999px;
+
+    transition: all 0.35s ease;
+}
+
+.gan-bottom a:hover {
+    background: #1e1c18;
+    color: #f5f3ee;
+}
+
+/* REVEAL */
+.gan-reveal {
+    opacity: 0;
+    transform: translateY(70px);
+    transition: opacity 1.1s ease, transform 1.1s ease;
+}
+
+.gan-reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+    .gan-symbol-section,
+    .gan-chapter {
+        grid-template-columns: 1fr;
+        gap: 56px;
+    }
+
+    .gan-product-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .gan-chapter-num {
+        font-size: 88px;
+    }
+}
+
+@media (max-width: 600px) {
+    .gan-back {
+        top: 88px;
+        left: 18px;
+        font-size: 12px;
+        padding: 8px 12px;
+    }
+
+    .gan-hero {
+        min-height: 82vh;
+        padding: 120px 22px 80px;
+    }
+
+    .gan-intro,
+    .gan-symbol-section,
+    .gan-chapter,
+    .gan-meaning,
+    .gan-products {
+        padding-left: 24px;
+        padding-right: 24px;
+    }
+
+    .gan-symbol-section,
+    .gan-chapter {
+        padding-top: 110px;
+        padding-bottom: 110px;
+    }
+
+    .gan-product-grid {
+        grid-template-columns: 1fr;
+    }
+}

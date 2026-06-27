@@ -1,0 +1,746 @@
+/* =========================================================
+   CUSTOMER SERVICE PAGE
+   GY JEWELRY
+========================================================= */
+
+.cs-page {
+    background: #ffffff;
+    color: #151515;
+    overflow-x: hidden;
+}
+
+.cs-page * {
+    box-sizing: border-box;
+}
+
+.cs-page a {
+    color: inherit;
+}
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.cs-hero {
+    position: relative;
+    min-height: 560px;
+    padding: 150px 5vw 120px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background:
+        radial-gradient(circle at 50% 25%, rgba(0, 0, 0, 0.045), transparent 34%),
+        linear-gradient(180deg, #ffffff 0%, #f6f6f4 100%);
+
+    overflow: hidden;
+}
+
+.cs-hero::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 70px;
+
+    width: 620px;
+    height: 620px;
+
+    transform: translateX(-50%);
+    border: 1px solid rgba(0, 0, 0, 0.055);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.cs-hero-inner {
+    position: relative;
+    z-index: 1;
+
+    max-width: 980px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.cs-hero-inner p,
+.cs-section-head p,
+.cs-contact-text p,
+.cs-ending p {
+    margin: 0 0 24px;
+
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.42em;
+    color: #927346;
+}
+
+.cs-hero-inner h1 {
+    margin: 0;
+
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(46px, 6vw, 86px);
+    font-weight: 400;
+    line-height: 1.16;
+    letter-spacing: -0.06em;
+
+    color: rgba(21, 21, 21, 0.06);
+    -webkit-text-stroke: 0.45px rgba(21, 21, 21, 0.86);
+}
+
+.cs-hero-inner span {
+    display: block;
+    max-width: 620px;
+    margin: 36px auto 0;
+
+    font-size: 16px;
+    line-height: 1.9;
+    color: rgba(0, 0, 0, 0.62);
+    word-break: keep-all;
+}
+
+/* =========================================================
+   COMMON HEAD
+========================================================= */
+
+.cs-section-head {
+    max-width: 920px;
+    margin: 0 auto 64px;
+    text-align: center;
+}
+
+.cs-section-head h2 {
+    margin: 0;
+
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(34px, 4.8vw, 64px);
+    font-weight: 400;
+    line-height: 1.18;
+    letter-spacing: -0.055em;
+}
+
+/* =========================================================
+   QUICK HELP
+========================================================= */
+
+.cs-quick-section {
+    padding: 135px 5vw 145px;
+    background: #ffffff;
+}
+
+.cs-quick-grid {
+    max-width: 1320px;
+    margin: 0 auto;
+
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 22px;
+}
+
+.cs-quick-card {
+    position: relative;
+    min-height: 360px;
+    padding: 38px 30px 34px;
+
+    background: rgba(255, 255, 255, 0.88);
+    border: 1px solid rgba(0, 0, 0, 0.085);
+    box-shadow: 0 22px 54px rgba(0, 0, 0, 0.045);
+
+    overflow: hidden;
+
+    transition:
+        transform 0.45s ease,
+        box-shadow 0.45s ease,
+        border-color 0.45s ease;
+}
+
+.cs-quick-card::before {
+    content: "";
+    position: absolute;
+    inset: 12px;
+
+    border: 1px solid rgba(0, 0, 0, 0.055);
+    pointer-events: none;
+}
+
+.cs-quick-card::after {
+    content: "";
+    position: absolute;
+    right: -90px;
+    bottom: -90px;
+
+    width: 190px;
+    height: 190px;
+
+    border: 1px solid rgba(0, 0, 0, 0.055);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.cs-quick-card:hover {
+    transform: translateY(-10px);
+    border-color: rgba(0, 0, 0, 0.18);
+    box-shadow: 0 34px 76px rgba(0, 0, 0, 0.1);
+}
+
+.cs-quick-card span {
+    display: block;
+    margin-bottom: 54px;
+
+    font-size: 11px;
+    letter-spacing: 0.28em;
+    color: rgba(0, 0, 0, 0.38);
+}
+
+.cs-quick-card h3 {
+    margin: 0 0 20px;
+
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 28px;
+    font-weight: 400;
+    letter-spacing: -0.04em;
+}
+
+.cs-quick-card p {
+    margin: 0 0 34px;
+
+    font-size: 14px;
+    line-height: 1.85;
+    color: rgba(0, 0, 0, 0.58);
+    word-break: keep-all;
+}
+
+.cs-quick-card a {
+    position: absolute;
+    left: 30px;
+    bottom: 34px;
+
+    text-decoration: none;
+    font-size: 11px;
+    letter-spacing: 0.24em;
+
+    border-bottom: 1px solid rgba(0, 0, 0, 0.58);
+    padding-bottom: 8px;
+
+    transition:
+        opacity 0.3s ease,
+        transform 0.3s ease;
+}
+
+.cs-quick-card a:hover {
+    opacity: 0.55;
+    transform: translateX(4px);
+}
+
+/* =========================================================
+   FAQ
+========================================================= */
+
+.cs-faq-section {
+    padding: 140px 5vw 150px;
+    background:
+        linear-gradient(180deg, #f8f8f6 0%, #ffffff 100%);
+}
+
+.cs-faq-list {
+    max-width: 1040px;
+    margin: 0 auto;
+}
+
+.cs-faq-item {
+    border-top: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.cs-faq-item:last-child {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.cs-faq-item summary {
+    position: relative;
+
+    padding: 30px 54px 30px 0;
+    list-style: none;
+    cursor: pointer;
+
+    font-size: 18px;
+    letter-spacing: -0.02em;
+    color: #151515;
+}
+
+.cs-faq-item summary::-webkit-details-marker {
+    display: none;
+}
+
+.cs-faq-item summary span {
+    position: absolute;
+    top: 50%;
+    right: 8px;
+
+    width: 18px;
+    height: 18px;
+
+    transform: translateY(-50%);
+}
+
+.cs-faq-item summary span::before,
+.cs-faq-item summary span::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+
+    width: 18px;
+    height: 1px;
+
+    background: #151515;
+    transform: translate(-50%, -50%);
+}
+
+.cs-faq-item summary span::after {
+    transform: translate(-50%, -50%) rotate(90deg);
+    transition: transform 0.25s ease;
+}
+
+.cs-faq-item[open] summary span::after {
+    transform: translate(-50%, -50%) rotate(0deg);
+}
+
+.cs-faq-item p {
+    max-width: 820px;
+    margin: -6px 0 32px;
+
+    font-size: 15px;
+    line-height: 1.9;
+    color: rgba(0, 0, 0, 0.6);
+    word-break: keep-all;
+}
+
+/* =========================================================
+   CONTACT
+========================================================= */
+
+.cs-contact-section {
+    padding: 150px 5vw;
+    background: #ffffff;
+}
+
+.cs-contact-box {
+    max-width: 1320px;
+    margin: 0 auto;
+
+    display: grid;
+    grid-template-columns: 0.95fr 1.05fr;
+    gap: 6vw;
+    align-items: center;
+
+    padding: 72px 6vw;
+
+    background: #101010;
+    color: #ffffff;
+    box-shadow: 0 34px 84px rgba(0, 0, 0, 0.14);
+}
+
+.cs-contact-text h2 {
+    margin: 0;
+
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(34px, 4.8vw, 64px);
+    font-weight: 400;
+    line-height: 1.18;
+    letter-spacing: -0.055em;
+
+    color: rgba(255, 255, 255, 0.08);
+    -webkit-text-stroke: 0.45px rgba(255, 255, 255, 0.78);
+}
+
+.cs-contact-text span {
+    display: block;
+    max-width: 520px;
+    margin-top: 34px;
+
+    font-size: 15px;
+    line-height: 1.9;
+    color: rgba(255, 255, 255, 0.68);
+    word-break: keep-all;
+}
+
+.cs-contact-info {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+}
+
+.cs-contact-info div {
+    min-height: 150px;
+    padding: 28px 26px;
+
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    background: rgba(255, 255, 255, 0.045);
+}
+
+.cs-contact-info strong {
+    display: block;
+    margin-bottom: 18px;
+
+    font-size: 11px;
+    letter-spacing: 0.26em;
+    color: rgba(191, 157, 102, 0.95);
+}
+
+.cs-contact-info span {
+    display: block;
+
+    font-size: 14px;
+    line-height: 1.8;
+    color: rgba(255, 255, 255, 0.72);
+    word-break: keep-all;
+}
+
+/* =========================================================
+   ENDING
+========================================================= */
+
+.cs-ending {
+    position: relative;
+    padding: 150px 5vw 170px;
+    text-align: center;
+
+    background:
+        radial-gradient(circle at 50% 26%, rgba(0, 0, 0, 0.04), transparent 34%),
+        linear-gradient(180deg, #f8f8f6 0%, #ffffff 100%);
+    overflow: hidden;
+}
+
+.cs-ending::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 70px;
+
+    width: 480px;
+    height: 480px;
+
+    transform: translateX(-50%);
+    border: 1px solid rgba(0, 0, 0, 0.055);
+    border-radius: 50%;
+}
+
+.cs-ending h2 {
+    position: relative;
+    z-index: 1;
+
+    margin: 0;
+
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(36px, 5vw, 72px);
+    font-weight: 400;
+    line-height: 1.18;
+    letter-spacing: -0.06em;
+
+    color: rgba(21, 21, 21, 0.06);
+    -webkit-text-stroke: 0.45px rgba(21, 21, 21, 0.86);
+}
+
+.cs-ending-actions {
+    position: relative;
+    z-index: 1;
+
+    margin-top: 52px;
+
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.cs-ending-actions a {
+    min-width: 180px;
+    padding: 17px 28px;
+
+    text-decoration: none;
+    color: #151515;
+
+    border: 1px solid rgba(0, 0, 0, 0.22);
+    background: transparent;
+
+    font-size: 11px;
+    letter-spacing: 0.24em;
+
+    transition:
+        background 0.3s ease,
+        color 0.3s ease,
+        transform 0.3s ease;
+}
+
+.cs-ending-actions a:hover {
+    background: #151515;
+    color: #ffffff;
+    transform: translateY(-3px);
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1100px) {
+    .cs-quick-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .cs-contact-box {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 700px) {
+    .cs-hero {
+        min-height: 500px;
+        padding: 110px 22px 90px;
+    }
+
+    .cs-quick-section,
+    .cs-faq-section,
+    .cs-contact-section,
+    .cs-ending {
+        padding-left: 22px;
+        padding-right: 22px;
+    }
+
+    .cs-quick-section,
+    .cs-faq-section {
+        padding-top: 100px;
+        padding-bottom: 110px;
+    }
+
+    .cs-quick-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .cs-quick-card {
+        min-height: 320px;
+    }
+
+    .cs-faq-item summary {
+        padding: 26px 42px 26px 0;
+        font-size: 16px;
+    }
+
+    .cs-contact-section {
+        padding-top: 100px;
+        padding-bottom: 100px;
+    }
+
+    .cs-contact-box {
+        padding: 54px 26px;
+    }
+
+    .cs-contact-info {
+        grid-template-columns: 1fr;
+    }
+
+    .cs-ending {
+        padding-top: 110px;
+        padding-bottom: 120px;
+    }
+
+    .cs-ending-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .cs-ending-actions a {
+        width: 100%;
+        max-width: 320px;
+    }
+}
+
+/* ==============================
+   CUSTOMER SERVICE FINAL TONE
+   GY JEWELRY
+============================== */
+
+.cs-page-body {
+    background:
+        radial-gradient(circle at 18% 10%, rgba(214, 190, 145, 0.16), transparent 34%),
+        radial-gradient(circle at 86% 16%, rgba(180, 145, 92, 0.1), transparent 30%),
+        #f8f3ec;
+    color: #17130f;
+}
+
+.cs-page {
+    background: transparent;
+}
+
+/* HERO tone */
+.cs-hero {
+    background:
+        radial-gradient(circle at 50% 22%, rgba(214, 190, 145, 0.22), transparent 34%),
+        linear-gradient(180deg, rgba(255, 252, 246, 0.86) 0%, rgba(248, 243, 236, 0.96) 100%);
+}
+
+.cs-hero::before,
+.cs-ending::before {
+    border-color: rgba(185, 160, 120, 0.2);
+}
+
+.cs-hero-inner p,
+.cs-section-head p,
+.cs-contact-text p,
+.cs-ending p {
+    color: #9b7b4f;
+    font-weight: 600;
+}
+
+.cs-hero-inner h1,
+.cs-ending h2 {
+    color: rgba(23, 19, 15, 0.045);
+    -webkit-text-stroke: 0.45px rgba(23, 19, 15, 0.82);
+}
+
+.cs-hero-inner span {
+    color: #746757;
+}
+
+/* QUICK HELP */
+.cs-quick-section {
+    background: transparent;
+}
+
+.cs-quick-card {
+    background: rgba(255, 252, 246, 0.9);
+    border: 1px solid rgba(185, 160, 120, 0.25);
+    box-shadow: 0 22px 64px rgba(60, 45, 25, 0.06);
+}
+
+.cs-quick-card::before,
+.cs-quick-card::after {
+    border-color: rgba(185, 160, 120, 0.18);
+}
+
+.cs-quick-card:hover {
+    border-color: rgba(184, 146, 82, 0.45);
+    box-shadow: 0 34px 82px rgba(60, 45, 25, 0.12);
+}
+
+.cs-quick-card span {
+    color: #b89252;
+}
+
+.cs-quick-card h3,
+.cs-section-head h2 {
+    color: #17130f;
+}
+
+.cs-quick-card p {
+    color: #6f6257;
+}
+
+.cs-quick-card a {
+    border-color: rgba(23, 19, 15, 0.55);
+}
+
+.cs-quick-card a:hover {
+    color: #9b7b4f;
+    border-color: #9b7b4f;
+    opacity: 1;
+}
+
+/* FAQ */
+.cs-faq-section {
+    background:
+        linear-gradient(180deg, rgba(248, 243, 236, 0.7) 0%, rgba(255, 252, 246, 0.5) 100%);
+}
+
+.cs-faq-item {
+    border-top: 1px solid rgba(185, 160, 120, 0.28);
+}
+
+.cs-faq-item:last-child {
+    border-bottom: 1px solid rgba(185, 160, 120, 0.28);
+}
+
+.cs-faq-item summary {
+    color: #17130f;
+}
+
+.cs-faq-item summary span::before,
+.cs-faq-item summary span::after {
+    background: #9b7b4f;
+}
+
+.cs-faq-item p {
+    color: #6f6257;
+}
+
+.cs-faq-more {
+    max-width: 1040px;
+    margin: 44px auto 0;
+    text-align: center;
+}
+
+.cs-faq-more a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 190px;
+    height: 50px;
+    padding: 0 28px;
+    border: 1px solid #1b1712;
+    background: #1b1712;
+    color: #fffaf2;
+    text-decoration: none;
+    font-size: 12px;
+    letter-spacing: 0.16em;
+    transition: all 0.25s ease;
+}
+
+.cs-faq-more a:hover {
+    background: #b89252;
+    border-color: #b89252;
+    color: #fff;
+    transform: translateY(-3px);
+}
+
+/* CONTACT */
+.cs-contact-section {
+    background: transparent;
+}
+
+.cs-contact-box {
+    background:
+        radial-gradient(circle at 18% 0%, rgba(184, 146, 82, 0.18), transparent 34%),
+        #14100c;
+    border: 1px solid rgba(185, 160, 120, 0.24);
+    box-shadow: 0 34px 90px rgba(40, 28, 16, 0.22);
+}
+
+.cs-contact-text h2 {
+    color: rgba(255, 250, 242, 0.08);
+    -webkit-text-stroke: 0.45px rgba(255, 250, 242, 0.78);
+}
+
+.cs-contact-info div {
+    border-color: rgba(255, 250, 242, 0.16);
+    background: rgba(255, 250, 242, 0.045);
+}
+
+.cs-contact-info strong {
+    color: #c6a66d;
+}
+
+/* ENDING */
+.cs-ending {
+    background:
+        radial-gradient(circle at 50% 26%, rgba(214, 190, 145, 0.2), transparent 34%),
+        linear-gradient(180deg, rgba(248, 243, 236, 0.84) 0%, rgba(255, 252, 246, 0.72) 100%);
+}
+
+.cs-ending-actions a {
+    border-color: rgba(185, 160, 120, 0.45);
+    background: rgba(255, 252, 246, 0.72);
+    color: #17130f;
+}
+
+.cs-ending-actions a:hover {
+    background: #1b1712;
+    border-color: #1b1712;
+    color: #fffaf2;
+}

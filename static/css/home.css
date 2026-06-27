@@ -1,0 +1,2657 @@
+/* =========================================================
+   HOME PAGE FINAL
+   GY JEWELRY home.css 정리본
+========================================================= */
+
+:root {
+    --home-bg: #f7f2e9;
+    --home-bg-light: #fbf8f2;
+    --home-ink: #151515;
+    --home-muted: #655e54;
+    --home-gold: #927346;
+    --home-line: rgba(143, 111, 62, 0.18);
+    --home-card: rgba(255, 255, 255, 0.76);
+}
+
+html,
+body {
+    overflow-x: hidden;
+}
+
+.home-page {
+    background: var(--home-bg);
+    color: var(--home-ink);
+    overflow-x: hidden;
+}
+
+.home-page * {
+    box-sizing: border-box;
+}
+
+.home-page ::selection {
+    background: rgba(143, 111, 62, 0.22);
+    color: #111;
+}
+
+.home-page a {
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* =========================================================
+   FIRST SCREEN MAIN SLIDER
+========================================================= */
+
+.home-main-slider {
+    position: relative;
+    width: 100%;
+    height: calc(100vh - 76px);
+    overflow: hidden;
+    background: #eee7dc;
+}
+
+.home-main-slider::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    background:
+        linear-gradient(
+            180deg,
+            rgba(0, 0, 0, 0.12) 0%,
+            rgba(0, 0, 0, 0.04) 42%,
+            rgba(0, 0, 0, 0.28) 100%
+        ),
+        radial-gradient(
+            circle at center,
+            rgba(255, 255, 255, 0.06) 0%,
+            rgba(0, 0, 0, 0.14) 76%
+        );
+}
+
+.main-slider-window {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.main-slider-track {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.8s ease;
+}
+
+.main-slide {
+    min-width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.main-slide img,
+.main-slide video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.main-media-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(56px, 10vw, 150px);
+    font-weight: 400;
+    letter-spacing: 0.14em;
+    color: rgba(54, 41, 24, 0.72);
+
+    background:
+        radial-gradient(circle at center, rgba(205, 169, 105, 0.28), transparent 38%),
+        linear-gradient(135deg, #efe7d9, #d6c0a2);
+}
+
+/* 메인 슬라이더 화살표 */
+.main-slider-arrows {
+    position: absolute;
+    left: 0;
+    bottom: 62px;
+    z-index: 6;
+
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 18px;
+}
+
+.main-arrow {
+    width: 42px;
+    height: 42px;
+
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.65);
+    background: rgba(255, 255, 255, 0.16);
+    color: rgba(255, 255, 255, 0.95);
+
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+
+    transition:
+        background 0.25s ease,
+        transform 0.25s ease,
+        border-color 0.25s ease;
+}
+
+.main-arrow:hover {
+    background: rgba(255, 255, 255, 0.32);
+    border-color: rgba(255, 255, 255, 0.9);
+    transform: translateY(-2px);
+}
+
+/* 메인 슬라이더 점 */
+.main-slider-dots {
+    position: absolute;
+    left: 0;
+    bottom: 28px;
+    z-index: 6;
+
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 11px;
+}
+
+.main-dot {
+    width: 7px;
+    height: 7px;
+    padding: 0;
+
+    border: none;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.55);
+
+    cursor: pointer;
+    transition:
+        width 0.25s ease,
+        background 0.25s ease;
+}
+
+.main-dot.active {
+    width: 26px;
+    background: rgba(255, 255, 255, 0.95);
+}
+
+/* =========================================================
+   HOME COLLECTION CIRCLE
+   이미지 원형 카테고리
+========================================================= */
+
+.home-collection-section {
+    position: relative;
+    width: 100%;
+    padding: 105px 5vw 115px;
+    overflow: hidden;
+
+    background:
+        radial-gradient(circle at 50% 30%, rgba(174, 134, 70, 0.09), transparent 34%),
+        linear-gradient(180deg, #f8f4ed 0%, #f1eadf 100%);
+}
+
+.home-collection-section::before {
+    content: "";
+    position: absolute;
+    top: 80px;
+    left: 50%;
+
+    width: 560px;
+    height: 560px;
+
+    transform: translateX(-50%);
+    border: 1px solid rgba(143, 111, 62, 0.1);
+    border-radius: 50%;
+
+    pointer-events: none;
+}
+
+.home-collection-inner {
+    position: relative;
+    z-index: 1;
+    max-width: 1320px;
+    margin: 0 auto;
+}
+
+.home-collection-title {
+    max-width: 860px;
+    margin: 0 auto 58px;
+    text-align: center;
+}
+
+.home-collection-title p {
+    margin: 0 0 20px;
+    font-size: 11px;
+    letter-spacing: 0.42em;
+    color: var(--home-gold);
+    font-weight: 500;
+}
+
+.home-collection-title h2 {
+    margin: 0;
+    font-size: clamp(34px, 4vw, 62px);
+    line-height: 1.14;
+    font-weight: 300;
+    letter-spacing: -0.055em;
+    color: var(--home-ink);
+}
+
+.home-collection-title span {
+    display: block;
+    max-width: 620px;
+    margin: 26px auto 0;
+
+    font-size: 15px;
+    line-height: 1.85;
+    color: var(--home-muted);
+    word-break: keep-all;
+}
+
+.home-collection-grid {
+    max-width: 980px;
+    margin: 0 auto;
+
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 34px;
+    align-items: start;
+}
+
+.home-collection-item {
+    display: block;
+    text-align: center;
+    color: var(--home-ink);
+    text-decoration: none;
+}
+
+.home-collection-circle {
+    position: relative;
+
+    width: 100%;
+    max-width: 185px;
+    aspect-ratio: 1 / 1;
+    margin: 0 auto;
+
+    border-radius: 50%;
+    overflow: hidden;
+
+    background:
+        radial-gradient(circle at center, rgba(255, 255, 255, 0.45), transparent 34%),
+        linear-gradient(135deg, #c9baa2, #eee4d6);
+
+    border: 1px solid rgba(143, 111, 62, 0.24);
+    box-shadow:
+        0 22px 52px rgba(0, 0, 0, 0.08),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.48);
+
+    transition:
+        transform 0.45s ease,
+        box-shadow 0.45s ease,
+        border-color 0.45s ease;
+}
+
+.home-collection-circle::before {
+    content: "";
+    position: absolute;
+    inset: 10px;
+    z-index: 2;
+
+    border: 1px solid rgba(255, 255, 255, 0.42);
+    border-radius: 50%;
+
+    pointer-events: none;
+}
+
+.home-collection-circle::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(0, 0, 0, 0.22)),
+        radial-gradient(circle at center, transparent 42%, rgba(0, 0, 0, 0.18));
+
+    pointer-events: none;
+}
+
+.home-collection-circle img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+
+    transform: scale(1.02);
+    transition: transform 0.75s ease;
+}
+
+.home-collection-text {
+    margin-top: 22px;
+}
+
+.home-collection-text h3 {
+    margin: 0;
+
+    font-size: 12px;
+    letter-spacing: 0.32em;
+    font-weight: 500;
+    color: var(--home-ink);
+}
+
+.home-collection-text p {
+    margin: 9px 0 0;
+
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    color: #8a7a66;
+}
+
+.home-collection-item:hover .home-collection-circle {
+    transform: translateY(-7px);
+    border-color: rgba(143, 111, 62, 0.5);
+    box-shadow:
+        0 32px 72px rgba(0, 0, 0, 0.13),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.55);
+}
+
+.home-collection-item:hover .home-collection-circle img {
+    transform: scale(1.09);
+}
+
+.home-collection-item:hover .home-collection-text h3 {
+    color: #8a6f45;
+}
+
+/* =========================================================
+   YEON CARD CAROUSEL
+   8개 카드 자동 슬라이더
+========================================================= */
+
+.yeon-carousel-section {
+    position: relative;
+    width: 100%;
+    padding: 130px 5vw 140px;
+    overflow: hidden;
+
+    background:
+        radial-gradient(circle at 85% 20%, rgba(160, 126, 72, 0.13), transparent 28%),
+        radial-gradient(circle at 12% 82%, rgba(160, 126, 72, 0.09), transparent 30%),
+        linear-gradient(180deg, #f6f1e8 0%, #fbf8f2 100%);
+}
+
+.yeon-carousel-header {
+    max-width: 920px;
+    margin: 0 auto 62px;
+    text-align: center;
+}
+
+.yeon-carousel-header p {
+    margin: 0 0 20px;
+
+    font-size: 11px;
+    letter-spacing: 0.42em;
+    color: var(--home-gold);
+    font-weight: 500;
+}
+
+.yeon-carousel-header h2 {
+    margin: 0;
+
+    font-size: clamp(36px, 4vw, 64px);
+    line-height: 1.12;
+    font-weight: 300;
+    letter-spacing: -0.055em;
+    color: var(--home-ink);
+}
+
+.yeon-carousel-header span {
+    display: block;
+    max-width: 620px;
+    margin: 26px auto 0;
+
+    font-size: 15px;
+    line-height: 1.8;
+    color: var(--home-muted);
+    word-break: keep-all;
+}
+
+.yeon-carousel-shell {
+    position: relative;
+    max-width: 1460px;
+    margin: 0 auto;
+    padding: 0 72px;
+}
+
+.yeon-carousel-viewport {
+    width: 100%;
+    overflow: hidden;
+    padding: 38px 0 36px;
+
+    -webkit-mask-image: linear-gradient(
+        90deg,
+        transparent 0%,
+        #000 12%,
+        #000 88%,
+        transparent 100%
+    );
+    mask-image: linear-gradient(
+        90deg,
+        transparent 0%,
+        #000 12%,
+        #000 88%,
+        transparent 100%
+    );
+}
+
+.yeon-carousel-track {
+    display: flex;
+    align-items: stretch;
+    gap: 26px;
+
+    will-change: transform;
+    transition: transform 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.yeon-carousel-card {
+    position: relative;
+    flex: 0 0 calc((100% - 52px) / 3);
+    min-height: 420px;
+    padding: 38px 34px;
+
+    color: var(--home-ink);
+    text-decoration: none;
+
+    background: var(--home-card);
+    border: 1px solid rgba(93, 72, 40, 0.13);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.045);
+
+    overflow: hidden;
+    opacity: 0.52;
+    transform: translateY(14px) scale(0.94);
+
+    transition:
+        transform 0.45s ease,
+        opacity 0.45s ease,
+        box-shadow 0.45s ease,
+        border-color 0.45s ease,
+        background 0.45s ease;
+}
+
+.yeon-carousel-card::before {
+    content: "";
+    position: absolute;
+    inset: 12px;
+
+    border: 1px solid rgba(143, 111, 62, 0.13);
+    opacity: 0;
+
+    transition: opacity 0.45s ease;
+    pointer-events: none;
+}
+
+.yeon-carousel-card::after {
+    content: "";
+    position: absolute;
+    right: -120px;
+    bottom: -120px;
+
+    width: 260px;
+    height: 260px;
+
+    border: 1px solid rgba(143, 111, 62, 0.11);
+    border-radius: 50%;
+
+    pointer-events: none;
+}
+
+.yeon-carousel-card.is-active {
+    z-index: 2;
+    opacity: 1;
+    transform: translateY(-18px) scale(1);
+
+    background: rgba(255, 255, 255, 0.98);
+    border-color: rgba(143, 111, 62, 0.38);
+    box-shadow: 0 42px 86px rgba(0, 0, 0, 0.13);
+}
+
+.yeon-carousel-card.is-active::before {
+    opacity: 1;
+}
+
+.yeon-carousel-card.is-active:hover {
+    transform: translateY(-22px) scale(1.01);
+}
+
+.yeon-carousel-card:not(.is-active):hover {
+    opacity: 0.72;
+    transform: translateY(6px) scale(0.96);
+}
+
+.yeon-card-num {
+    display: block;
+    margin-bottom: 34px;
+
+    font-size: 12px;
+    letter-spacing: 0.24em;
+    color: #9a7b4f;
+}
+
+.yeon-carousel-card.is-active .yeon-card-num {
+    color: #7b5b2c;
+}
+
+.yeon-carousel-card h3 {
+    margin: 0 0 22px;
+
+    font-size: 36px;
+    line-height: 1.15;
+    font-weight: 300;
+    letter-spacing: -0.05em;
+    color: var(--home-ink);
+}
+
+.yeon-carousel-card p {
+    max-width: 280px;
+    margin: 0;
+
+    font-size: 14px;
+    line-height: 1.85;
+    color: var(--home-muted);
+    word-break: keep-all;
+}
+
+/* 연 카드 버튼 */
+.yeon-carousel-btn {
+    position: absolute;
+    top: 48%;
+    z-index: 5;
+
+    width: 48px;
+    height: 48px;
+
+    transform: translateY(-50%);
+
+    border: 1px solid rgba(21, 21, 21, 0.22);
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.68);
+    color: var(--home-ink);
+
+    font-size: 20px;
+    cursor: pointer;
+
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+
+    transition:
+        background 0.3s ease,
+        color 0.3s ease,
+        border-color 0.3s ease;
+}
+
+.yeon-carousel-btn:hover {
+    background: var(--home-ink);
+    color: #fff;
+    border-color: var(--home-ink);
+}
+
+.yeon-carousel-prev {
+    left: 0;
+}
+
+.yeon-carousel-next {
+    right: 0;
+}
+
+/* 연 카드 점 */
+.yeon-carousel-dots {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 11px;
+
+    margin-top: 18px;
+}
+
+.yeon-carousel-dot {
+    width: 7px;
+    height: 7px;
+    padding: 0;
+
+    border: none;
+    border-radius: 999px;
+    background: rgba(143, 111, 62, 0.28);
+
+    cursor: pointer;
+    transition:
+        width 0.35s ease,
+        background 0.35s ease;
+}
+
+.yeon-carousel-dot.is-active {
+    width: 34px;
+    background: rgba(143, 111, 62, 0.88);
+}
+
+.yeon-carousel-dot:hover {
+    background: rgba(143, 111, 62, 0.65);
+}
+
+/* =========================================================
+   SERVICE
+========================================================= */
+
+.home-service {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+
+    background: #fffaf2;
+    border-top: 1px solid #e4ddd0;
+    border-bottom: 1px solid #e4ddd0;
+}
+
+.home-service div {
+    padding: 42px 30px;
+    text-align: center;
+    border-right: 1px solid #e4ddd0;
+}
+
+.home-service div:last-child {
+    border-right: none;
+}
+
+.home-service strong {
+    display: block;
+    margin-bottom: 12px;
+
+    font-size: 16px;
+    font-weight: 400;
+    letter-spacing: 2px;
+}
+
+.home-service span {
+    font-size: 14px;
+    color: #666;
+}
+
+/* =========================================================
+   COMPANY STORY LINE
+========================================================= */
+
+.company-story-section {
+    position: relative;
+    width: 100%;
+    padding: 140px 5vw 160px;
+    overflow: hidden;
+
+    color: #171717;
+    background:
+        linear-gradient(180deg, #fbf8f2 0%, #f3eee5 48%, #eee6da 100%);
+    border-top: 1px solid rgba(143, 111, 62, 0.13);
+}
+
+.company-story-section::before {
+    content: "";
+    position: absolute;
+    top: 90px;
+    left: 50%;
+
+    width: 720px;
+    height: 720px;
+
+    transform: translateX(-50%);
+    border: 1px solid rgba(143, 111, 62, 0.16);
+    border-radius: 50%;
+
+    pointer-events: none;
+}
+
+.company-story-section::after {
+    content: "";
+    position: absolute;
+    top: 210px;
+    left: 50%;
+
+    width: 480px;
+    height: 480px;
+
+    transform: translateX(-50%);
+    border: 1px solid rgba(143, 111, 62, 0.1);
+    border-radius: 50%;
+
+    pointer-events: none;
+}
+
+.company-story-visual {
+    position: relative;
+    z-index: 1;
+
+    width: 100%;
+    max-width: 1480px;
+    height: 72vh;
+    min-height: 560px;
+    margin: 0 auto;
+
+    overflow: hidden;
+    background: #d9cfbf;
+
+    box-shadow:
+        0 38px 100px rgba(0, 0, 0, 0.14),
+        0 0 0 1px rgba(255, 255, 255, 0.48) inset;
+}
+
+.company-story-visual::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.14) 0%,
+            transparent 24%,
+            transparent 74%,
+            rgba(255, 255, 255, 0.08) 100%
+        );
+
+    pointer-events: none;
+}
+
+.company-story-visual::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+
+    background:
+        linear-gradient(180deg, rgba(0, 0, 0, 0.04), rgba(0, 0, 0, 0.22)),
+        radial-gradient(circle at center, transparent 28%, rgba(0, 0, 0, 0.18) 100%);
+
+    pointer-events: none;
+}
+
+.company-story-main-placeholder {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.22), rgba(0, 0, 0, 0.08)),
+        radial-gradient(circle at center, rgba(255, 255, 255, 0.38), transparent 32%),
+        linear-gradient(135deg, #cdbfaa, #eee5d8 54%, #b9aa91);
+
+    color: rgba(44, 36, 25, 0.48);
+    font-size: 12px;
+    letter-spacing: 0.34em;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.company-story-video,
+.company-story-visual img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* 회사 스토리 텍스트 */
+.company-story-content {
+    position: relative;
+    z-index: 2;
+
+    max-width: 960px;
+    margin: 86px auto 66px;
+    text-align: center;
+}
+
+.company-story-label {
+    position: relative;
+    display: inline-block;
+
+    margin-bottom: 26px;
+    padding-bottom: 16px;
+
+    font-size: 11px;
+    letter-spacing: 0.42em;
+    color: #8a6f45;
+    font-weight: 500;
+}
+
+.company-story-label::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+
+    width: 42px;
+    height: 1px;
+
+    transform: translateX(-50%);
+    background: rgba(138, 111, 69, 0.55);
+}
+
+.company-story-content h2 {
+    margin: 0;
+
+    font-size: clamp(38px, 4.4vw, 72px);
+    line-height: 1.12;
+    font-weight: 300;
+    letter-spacing: -0.055em;
+    color: #161616;
+}
+
+.company-story-text {
+    max-width: 710px;
+    margin: 34px auto 0;
+
+    font-size: 15px;
+    line-height: 2;
+    color: var(--home-muted);
+    word-break: keep-all;
+}
+
+/* 회사 스토리 3개 박스 */
+.company-story-boxes {
+    position: relative;
+    z-index: 2;
+
+    max-width: 1480px;
+    margin: 0 auto;
+
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 26px;
+}
+
+.company-story-box {
+    position: relative;
+
+    background: rgba(255, 255, 255, 0.74);
+    border: 1px solid rgba(98, 78, 45, 0.13);
+    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.045);
+
+    overflow: hidden;
+
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+
+    transition:
+        transform 0.45s ease,
+        box-shadow 0.45s ease,
+        border-color 0.45s ease;
+}
+
+.company-story-box::after {
+    content: "";
+    position: absolute;
+    inset: 12px;
+
+    border: 1px solid rgba(143, 111, 62, 0.13);
+    opacity: 0;
+
+    pointer-events: none;
+    transition: opacity 0.45s ease;
+}
+
+.company-story-box:hover {
+    transform: translateY(-10px);
+    border-color: rgba(143, 111, 62, 0.28);
+    box-shadow: 0 34px 70px rgba(0, 0, 0, 0.11);
+}
+
+.company-story-box:hover::after {
+    opacity: 1;
+}
+
+.company-story-box-media {
+    position: relative;
+
+    width: 100%;
+    aspect-ratio: 4 / 5;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    overflow: hidden;
+
+    background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.22), rgba(0, 0, 0, 0.08)),
+        radial-gradient(circle at center, rgba(255, 255, 255, 0.4), transparent 34%),
+        linear-gradient(135deg, #c7b89e 0%, #eee4d6 48%, #b5a486 100%);
+
+    color: rgba(43, 35, 24, 0.42);
+    font-size: 11px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+}
+
+.company-story-box-media::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+
+    background:
+        linear-gradient(180deg, rgba(0, 0, 0, 0.02), rgba(0, 0, 0, 0.2)),
+        radial-gradient(circle at center, transparent 36%, rgba(0, 0, 0, 0.12));
+
+    pointer-events: none;
+}
+
+.company-story-box-media img,
+.company-story-box-media video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+
+    transition: transform 0.7s ease;
+}
+
+.company-story-box:hover .company-story-box-media img,
+.company-story-box:hover .company-story-box-media video {
+    transform: scale(1.045);
+}
+
+.company-story-box-text {
+    padding: 34px 32px 40px;
+}
+
+.company-story-box-text p {
+    margin: 0 0 16px;
+
+    font-size: 10px;
+    letter-spacing: 0.34em;
+    color: #9a7b4f;
+    font-weight: 500;
+}
+
+.company-story-box-text h3 {
+    margin: 0 0 18px;
+
+    font-size: 26px;
+    font-weight: 300;
+    letter-spacing: -0.04em;
+    color: #171717;
+}
+
+.company-story-box-text span {
+    display: block;
+
+    font-size: 14px;
+    line-height: 1.85;
+    color: var(--home-muted);
+    word-break: keep-all;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1100px) {
+    .yeon-carousel-shell {
+        padding: 0 62px;
+    }
+
+    .yeon-carousel-card {
+        flex-basis: calc((100% - 26px) / 2);
+    }
+
+    .company-story-boxes {
+        gap: 18px;
+    }
+
+    .company-story-box-text {
+        padding: 28px 24px 34px;
+    }
+}
+
+@media (max-width: 1000px) {
+    .home-collection-grid {
+        max-width: 620px;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 44px 28px;
+    }
+
+    .home-collection-circle {
+        max-width: 175px;
+    }
+}
+
+@media (max-width: 900px) {
+    .company-story-section {
+        padding: 90px 20px 110px;
+    }
+
+    .company-story-section::before {
+        width: 420px;
+        height: 420px;
+        top: 80px;
+    }
+
+    .company-story-section::after {
+        width: 280px;
+        height: 280px;
+        top: 170px;
+    }
+
+    .company-story-visual {
+        height: 58vh;
+        min-height: 390px;
+    }
+
+    .company-story-content {
+        margin: 58px auto 46px;
+    }
+
+    .company-story-content h2 {
+        font-size: clamp(32px, 9vw, 48px);
+    }
+
+    .company-story-text {
+        font-size: 14px;
+        line-height: 1.85;
+    }
+
+    .company-story-boxes {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .company-story-box-media {
+        aspect-ratio: 16 / 10;
+    }
+
+    .home-service {
+        grid-template-columns: 1fr;
+    }
+
+    .home-service div {
+        border-right: none;
+        border-bottom: 1px solid #e4ddd0;
+    }
+
+    .home-service div:last-child {
+        border-bottom: none;
+    }
+}
+
+@media (max-width: 700px) {
+    .home-main-slider {
+        height: calc(100vh - 70px);
+    }
+
+    .yeon-carousel-section {
+        padding: 90px 20px 100px;
+    }
+
+    .yeon-carousel-header {
+        margin-bottom: 42px;
+    }
+
+    .yeon-carousel-header h2 {
+        font-size: clamp(31px, 8.6vw, 46px);
+    }
+
+    .yeon-carousel-shell {
+        padding: 0 0 70px;
+    }
+
+    .yeon-carousel-viewport {
+        padding: 30px 0 32px;
+
+        -webkit-mask-image: linear-gradient(
+            90deg,
+            transparent 0%,
+            #000 7%,
+            #000 93%,
+            transparent 100%
+        );
+        mask-image: linear-gradient(
+            90deg,
+            transparent 0%,
+            #000 7%,
+            #000 93%,
+            transparent 100%
+        );
+    }
+
+    .yeon-carousel-card {
+        flex-basis: 100%;
+        min-height: 340px;
+        padding: 32px 28px;
+
+        opacity: 0.55;
+        transform: translateY(10px) scale(0.96);
+    }
+
+    .yeon-carousel-card.is-active {
+        transform: translateY(-14px) scale(1);
+    }
+
+    .yeon-carousel-card.is-active:hover {
+        transform: translateY(-16px) scale(1);
+    }
+
+    .yeon-carousel-card h3 {
+        font-size: 31px;
+    }
+
+    .yeon-carousel-btn {
+        top: auto;
+        bottom: 0;
+        transform: none;
+    }
+
+    .yeon-carousel-prev {
+        left: calc(50% - 58px);
+    }
+
+    .yeon-carousel-next {
+        right: calc(50% - 58px);
+    }
+
+    .yeon-carousel-dots {
+        gap: 9px;
+        margin-top: 18px;
+    }
+
+    .yeon-carousel-dot.is-active {
+        width: 28px;
+    }
+}
+
+@media (max-width: 600px) {
+    .home-collection-section {
+        padding: 86px 20px 96px;
+    }
+
+    .home-collection-title {
+        margin-bottom: 52px;
+    }
+
+    .home-collection-title h2 {
+        font-size: clamp(30px, 8.5vw, 44px);
+    }
+
+    .home-collection-grid {
+        grid-template-columns: 1fr;
+        gap: 46px;
+    }
+
+    .home-collection-circle {
+        max-width: 170px;
+    }
+
+    .home-collection-text {
+        margin-top: 22px;
+    }
+}
+
+/* =========================================================
+   RESTORE - YEON LARGE STORY SECTION
+   홈 하단 8개 큰 연 스토리 박스 복구
+========================================================= */
+
+.home-yeon-large-section {
+    position: relative;
+    width: 100%;
+    padding: 150px 0 170px;
+    background:
+        radial-gradient(circle at 12% 8%, rgba(143, 111, 62, 0.14), transparent 28%),
+        radial-gradient(circle at 88% 42%, rgba(143, 111, 62, 0.09), transparent 30%),
+        linear-gradient(180deg, #f5ead8 0%, #e8d6bd 48%, #d6bea0 100%);
+    overflow: hidden;
+}
+
+/* 섹션 배경 장식 */
+.home-yeon-large-section::before {
+    content: "";
+    position: absolute;
+    top: 120px;
+    left: 50%;
+    width: 760px;
+    height: 760px;
+    transform: translateX(-50%);
+    border: 1px solid rgba(94, 66, 34, 0.12);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.home-yeon-large-section::after {
+    content: "";
+    position: absolute;
+    bottom: 160px;
+    right: -220px;
+    width: 520px;
+    height: 520px;
+    border: 1px solid rgba(94, 66, 34, 0.1);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+/* 각각의 큰 카드 */
+.yeon-large-card {
+    position: relative;
+    z-index: 1;
+    width: min(1560px, calc(100% - 56px));
+    margin: 0 auto 150px;
+}
+
+.yeon-large-card:last-child {
+    margin-bottom: 0;
+}
+
+/* 카드 위 제목 */
+.yeon-large-card-title {
+    position: relative;
+    z-index: 3;
+
+    width: 100%;
+    margin: 0 0 -38px;
+
+    display: flex;
+    justify-content: center;
+    align-items: baseline;
+    gap: 20px;
+
+    text-align: center;
+
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(38px, 5vw, 45px);
+    font-weight: 400;
+    line-height: 1.1;
+    letter-spacing: 0.1em;
+
+    color: #17110a;
+}
+
+.yeon-large-card-title span {
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.32em;
+    color: rgba(91, 62, 30, 0.48);
+}
+
+/* 큰 박스 */
+.yeon-large-box {
+    position: relative;
+
+    min-height: 760px;
+
+    display: grid;
+    grid-template-columns: 1.08fr 0.92fr;
+    align-items: center;
+    gap: 6vw;
+
+    padding: 112px 6vw 96px;
+
+    background:
+        linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.02)),
+        #9f8464;
+
+    border: 1px solid rgba(255, 246, 230, 0.24);
+
+    box-shadow:
+        0 44px 120px rgba(42, 27, 12, 0.28),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+
+    overflow: hidden;
+}
+
+/* 박스 안쪽 얇은 라인 */
+.yeon-large-box::before {
+    content: "";
+    position: absolute;
+    inset: 18px;
+    border: 1px solid rgba(255, 246, 230, 0.16);
+    pointer-events: none;
+}
+
+/* 은은한 원 장식 */
+.yeon-large-box::after {
+    content: "";
+    position: absolute;
+    right: -180px;
+    bottom: -180px;
+    width: 420px;
+    height: 420px;
+    border: 1px solid rgba(255, 246, 230, 0.12);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+/* reverse 카드 */
+.yeon-large-card.reverse .yeon-large-box {
+    grid-template-columns: 0.92fr 1.08fr;
+}
+
+.yeon-large-card.reverse .yeon-large-visual {
+    order: 2;
+}
+
+.yeon-large-card.reverse .yeon-large-text {
+    order: 1;
+}
+
+/* 이미지 영역 */
+.yeon-large-visual {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+}
+
+.yeon-large-img {
+    width: 100%;
+    height: 610px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    overflow: hidden;
+
+    background:
+        radial-gradient(circle at center, rgba(255,255,255,0.12), transparent 38%),
+        linear-gradient(135deg, rgba(255,255,255,0.1), rgba(0,0,0,0.18)),
+        rgba(41, 27, 13, 0.34);
+
+    border: 1px solid rgba(255, 246, 230, 0.16);
+
+    color: rgba(255, 246, 230, 0.36);
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 22px;
+    letter-spacing: 0.18em;
+
+    box-shadow: 0 26px 70px rgba(0, 0, 0, 0.18);
+}
+
+/* 나중에 이미지 넣었을 때 */
+.yeon-large-img img,
+.yeon-large-img video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* 텍스트 영역 */
+.yeon-large-text {
+    position: relative;
+    z-index: 2;
+    max-width: 600px;
+}
+
+/* 내부 제목 */
+.yeon-inner-title {
+    margin: 0 0 34px;
+
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(30px, 3.3vw, 54px);
+    font-weight: 400;
+    line-height: 1.28;
+    letter-spacing: -0.04em;
+
+    color: #000000;
+    word-break: keep-all;
+}
+
+/* 설명 */
+.yeon-large-text p {
+    margin: 0 0 48px;
+
+    font-size: 18px;
+    line-height: 2.05;
+    color: rgba(0, 0, 0, 0.78);
+    word-break: keep-all;
+}
+
+/* VIEW STORY */
+.yeon-large-text a {
+    display: inline-block;
+
+    text-decoration: none;
+    color: #000000;
+
+    font-size: 12px;
+    letter-spacing: 0.24em;
+
+    border-bottom: 1px solid rgba(0, 0, 0, 0.68);
+    padding-bottom: 9px;
+
+    transition:
+        opacity 0.25s ease,
+        transform 0.25s ease;
+}
+
+.yeon-large-text a:hover {
+    opacity: 0.65;
+    transform: translateX(4px);
+}
+
+/* hover */
+.yeon-large-card:hover .yeon-large-box {
+    box-shadow:
+        0 54px 140px rgba(42, 27, 12, 0.34),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+/* =========================================================
+   YEON LARGE STORY RESPONSIVE
+========================================================= */
+
+@media (max-width: 1100px) {
+    .yeon-large-box {
+        grid-template-columns: 1fr;
+        gap: 54px;
+        min-height: auto;
+        padding: 92px 5vw 72px;
+    }
+
+    .yeon-large-card.reverse .yeon-large-box {
+        grid-template-columns: 1fr;
+    }
+
+    .yeon-large-card.reverse .yeon-large-visual,
+    .yeon-large-card.reverse .yeon-large-text {
+        order: initial;
+    }
+
+    .yeon-large-text {
+        max-width: 760px;
+    }
+
+    .yeon-large-img {
+        height: 520px;
+    }
+}
+
+@media (max-width: 700px) {
+    .home-yeon-large-section {
+        padding: 100px 0 120px;
+    }
+
+    .yeon-large-card {
+        width: min(100% - 28px, 760px);
+        margin-bottom: 96px;
+    }
+
+    .yeon-large-card-title {
+        margin-bottom: -24px;
+        gap: 12px;
+        font-size: clamp(32px, 10vw, 52px);
+        letter-spacing: 0.06em;
+    }
+
+    .yeon-large-card-title span {
+        font-size: 10px;
+        letter-spacing: 0.24em;
+    }
+
+    .yeon-large-box {
+        padding: 72px 24px 54px;
+        gap: 40px;
+    }
+
+    .yeon-large-box::before {
+        inset: 12px;
+    }
+
+    .yeon-large-img {
+        height: 360px;
+        font-size: 16px;
+    }
+
+    .yeon-inner-title {
+        margin-bottom: 26px;
+        font-size: clamp(28px, 8vw, 40px);
+    }
+
+    .yeon-large-text p {
+        margin-bottom: 36px;
+        font-size: 15px;
+        line-height: 1.9;
+    }
+}
+
+/* =========================================================
+   YEON LARGE STORY - PREMIUM DETAILS
+   큰 연 스토리 섹션 고급 디테일 추가
+========================================================= */
+
+/* 섹션 전체에 더 깊은 고급 배경 */
+.home-yeon-large-section {
+    background:
+        radial-gradient(circle at 12% 8%, rgba(255, 238, 202, 0.2), transparent 28%),
+        radial-gradient(circle at 88% 42%, rgba(96, 63, 31, 0.18), transparent 34%),
+        linear-gradient(180deg, #faf8ef 0%, #faf8ef 48%, #faf8ef 100%);
+}
+
+/* 각 카드 뒤에 아주 큰 번호 워터마크 */
+.yeon-large-card::before {
+    position: absolute;
+    top: -58px;
+    left: 4vw;
+    z-index: 0;
+
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(110px, 16vw, 260px);
+    line-height: 1;
+    color: rgba(255, 246, 230, 0.16);
+
+    pointer-events: none;
+}
+
+.yeon-large-card:nth-of-type(1)::before { content: "01"; }
+.yeon-large-card:nth-of-type(2)::before { content: "02"; }
+.yeon-large-card:nth-of-type(3)::before { content: "03"; }
+.yeon-large-card:nth-of-type(4)::before { content: "04"; }
+.yeon-large-card:nth-of-type(5)::before { content: "05"; }
+.yeon-large-card:nth-of-type(6)::before { content: "06"; }
+.yeon-large-card:nth-of-type(7)::before { content: "07"; }
+.yeon-large-card:nth-of-type(8)::before { content: "08"; }
+
+/* reverse 카드는 번호를 반대쪽에 */
+.yeon-large-card.reverse::before {
+    left: auto;
+    right: 4vw;
+}
+
+/* 박스 윗부분에 얇은 금속 라인 */
+.yeon-large-box {
+    isolation: isolate;
+}
+
+.yeon-large-box > * {
+    position: relative;
+    z-index: 2;
+}
+
+.yeon-large-box::before {
+    z-index: 1;
+}
+
+/* 박스 상단 빛 라인 */
+.yeon-large-box .yeon-large-visual::before {
+    content: "";
+    position: absolute;
+    top: -54px;
+    left: 0;
+
+    width: 140px;
+    height: 1px;
+
+    background: linear-gradient(
+        90deg,
+        rgba(255, 244, 227, 0.85),
+        rgba(255, 244, 227, 0)
+    );
+}
+
+/* 카드마다 미묘하게 다른 톤 */
+.yeon-large-card:nth-of-type(1) .yeon-large-box {
+    background:
+        linear-gradient(135deg, rgba(255,255,255,0.14), rgba(255,255,255,0.02)),
+        #f5ead8;
+}
+
+.yeon-large-card:nth-of-type(2) .yeon-large-box {
+    background:
+        linear-gradient(135deg, rgba(255,255,255,0.13), rgba(255,255,255,0.015)),
+        #f5ead8;
+}
+
+.yeon-large-card:nth-of-type(3) .yeon-large-box {
+    background:
+        linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.015)),
+        #f5ead8;
+}
+
+.yeon-large-card:nth-of-type(4) .yeon-large-box {
+    background:
+        linear-gradient(135deg, rgba(255,255,255,0.14), rgba(255,255,255,0.018)),
+        #f5ead8;
+}
+
+.yeon-large-card:nth-of-type(5) .yeon-large-box {
+    background:
+        linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.02)),
+        #f5ead8;
+}
+
+.yeon-large-card:nth-of-type(6) .yeon-large-box {
+    background:
+        linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.015)),
+        #f5ead8;
+}
+
+.yeon-large-card:nth-of-type(7) .yeon-large-box {
+    background:
+        linear-gradient(135deg, rgba(255,255,255,0.13), rgba(255,255,255,0.015)),
+        #f5ead8;
+}
+
+.yeon-large-card:nth-of-type(8) .yeon-large-box {
+    background:
+        linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.02)),
+        #f5ead8;
+}
+
+/* 이미지 영역을 더 고급스럽게 */
+.yeon-large-img {
+    position: relative;
+    transform: translateZ(0);
+}
+
+/* 이미지 영역 안쪽 프레임 */
+.yeon-large-img::after {
+    content: "";
+    position: absolute;
+    inset: 16px;
+
+    border: 1px solid rgba(255, 246, 230, 0.16);
+
+    pointer-events: none;
+}
+
+/* 은은한 빛이 지나가는 느낌 */
+.yeon-large-img::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -45%;
+
+    width: 36%;
+    height: 100%;
+
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.16),
+        transparent
+    );
+
+    transform: skewX(-12deg);
+    opacity: 0;
+
+    pointer-events: none;
+    transition: left 0.9s ease, opacity 0.9s ease;
+}
+
+.yeon-large-card:hover .yeon-large-img::before {
+    left: 110%;
+    opacity: 1;
+}
+
+/* 이미지가 들어갔을 때 hover 확대 */
+.yeon-large-img img,
+.yeon-large-img video {
+    transition: transform 1.1s ease;
+}
+
+.yeon-large-card:hover .yeon-large-img img,
+.yeon-large-card:hover .yeon-large-img video {
+    transform: scale(1.045);
+}
+
+/* 제목을 조금 더 명품 잡지처럼 */
+.yeon-large-card-title {
+    text-shadow: 0 12px 36px rgba(70, 42, 18, 0.16);
+}
+
+.yeon-inner-title {
+    max-width: 620px;
+}
+
+/* 문단 첫 줄 느낌 정리 */
+.yeon-large-text p {
+    letter-spacing: -0.02em;
+}
+
+/* VIEW STORY에 화살표 느낌 */
+.yeon-large-text a::after {
+    content: " →";
+    letter-spacing: 0;
+    margin-left: 8px;
+    transition: margin-left 0.25s ease;
+}
+
+.yeon-large-text a:hover::after {
+    margin-left: 14px;
+}
+
+/* 모바일에서는 워터마크를 과하지 않게 */
+@media (max-width: 700px) {
+    .yeon-large-card::before {
+        top: -34px;
+        left: 18px;
+        font-size: 96px;
+    }
+
+    .yeon-large-card.reverse::before {
+        right: 18px;
+    }
+
+    .yeon-large-img::after {
+        inset: 10px;
+    }
+
+    .yeon-large-box .yeon-large-visual::before {
+        display: none;
+    }
+}
+
+/* =========================================================
+   COMPANY STORY - EXTRA LUXURY PATCH
+   회사 스토리 라인 고급화 추가
+========================================================= */
+
+.company-story-section {
+    background:
+        radial-gradient(circle at 50% 8%, rgba(255, 238, 205, 0.26), transparent 30%),
+        radial-gradient(circle at 15% 72%, rgba(120, 87, 45, 0.12), transparent 32%),
+        linear-gradient(180deg, #fbf8f2 0%, #eee4d5 52%, #ded0bc 100%);
+}
+
+.company-story-visual {
+    border-radius: 2px;
+    transform: translateZ(0);
+}
+
+.company-story-visual::before {
+    background:
+        linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.2) 0%,
+            transparent 20%,
+            transparent 78%,
+            rgba(255, 255, 255, 0.12) 100%
+        ),
+        linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.08) 0%,
+            transparent 42%,
+            rgba(0, 0, 0, 0.08) 100%
+        );
+}
+
+.company-story-main-placeholder {
+    position: relative;
+}
+
+.company-story-main-placeholder::before {
+    content: "GY";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+
+    transform: translate(-50%, -50%);
+
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(140px, 22vw, 360px);
+    font-weight: 400;
+    letter-spacing: -0.08em;
+
+    color: rgba(255, 248, 235, 0.16);
+    pointer-events: none;
+}
+
+.company-story-main-placeholder span {
+    position: relative;
+    z-index: 2;
+
+    padding: 16px 28px;
+    border: 1px solid rgba(70, 48, 24, 0.18);
+    background: rgba(255, 255, 255, 0.18);
+
+    backdrop-filter: blur(7px);
+    -webkit-backdrop-filter: blur(7px);
+}
+
+.company-story-content {
+    margin-top: 96px;
+}
+
+.company-story-label {
+    color: #7e623c;
+}
+
+.company-story-content h2 {
+    text-shadow: 0 16px 42px rgba(76, 50, 21, 0.12);
+}
+
+.company-story-text {
+    font-size: 16px;
+    color: rgba(42, 36, 28, 0.68);
+}
+
+.company-story-box {
+    border-radius: 1px;
+}
+
+.company-story-box-media {
+    aspect-ratio: 1 / 1.08;
+}
+
+.company-story-box-text {
+    min-height: 210px;
+}
+
+.company-story-box-text h3 {
+    font-size: 28px;
+}
+
+.company-story-box:hover {
+    transform: translateY(-12px);
+}
+
+/* =========================================================
+   HOME SERVICE - LUXURY PATCH
+   하단 서비스 안내 고급화
+========================================================= */
+
+.home-service {
+    position: relative;
+    z-index: 1;
+
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+
+    background:
+        linear-gradient(180deg, #f7f0e5 0%, #efe4d4 100%);
+    border-top: 1px solid rgba(143, 111, 62, 0.16);
+    border-bottom: 1px solid rgba(143, 111, 62, 0.16);
+}
+
+.home-service div {
+    position: relative;
+
+    min-height: 190px;
+    padding: 54px 34px 48px;
+
+    text-align: center;
+    border-right: 1px solid rgba(143, 111, 62, 0.15);
+
+    overflow: hidden;
+}
+
+.home-service div:last-child {
+    border-right: none;
+}
+
+.home-service div::before {
+    content: "";
+    position: absolute;
+    top: 28px;
+    left: 50%;
+
+    width: 34px;
+    height: 1px;
+
+    transform: translateX(-50%);
+    background: rgba(143, 111, 62, 0.5);
+}
+
+.home-service div::after {
+    content: "";
+    position: absolute;
+    right: -76px;
+    bottom: -76px;
+
+    width: 150px;
+    height: 150px;
+
+    border: 1px solid rgba(143, 111, 62, 0.11);
+    border-radius: 50%;
+
+    pointer-events: none;
+}
+
+.home-service strong {
+    display: block;
+    margin-bottom: 18px;
+
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.28em;
+    color: #7e623c;
+}
+
+.home-service span {
+    display: block;
+    max-width: 280px;
+    margin: 0 auto;
+
+    font-size: 14px;
+    line-height: 1.85;
+    color: rgba(42, 36, 28, 0.68);
+    word-break: keep-all;
+}
+
+@media (max-width: 900px) {
+    .home-service {
+        grid-template-columns: 1fr;
+    }
+
+    .home-service div {
+        min-height: auto;
+        padding: 46px 26px 42px;
+
+        border-right: none;
+        border-bottom: 1px solid rgba(143, 111, 62, 0.15);
+    }
+
+    .home-service div:last-child {
+        border-bottom: none;
+    }
+}
+
+/* ================================
+   HOME PRODUCT CATEGORY - NATURAL
+================================ */
+
+.home-category-section {
+    padding: 145px 6vw 125px;
+    background: #f7f1e8;
+}
+
+.home-section-head {
+    text-align: center;
+    margin-bottom: 72px;
+}
+
+.home-section-eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.28em;
+    color: #9b866f;
+    margin-bottom: 18px;
+}
+
+.home-section-head h2 {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: clamp(34px, 5vw, 58px);
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    color: #1f1b18;
+    margin: 0 0 18px;
+}
+
+.home-section-head span {
+    display: block;
+    font-size: 15px;
+    line-height: 1.8;
+    color: #786d64;
+}
+
+.home-category-grid {
+    max-width: 1160px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 34px;
+}
+
+.home-category-card {
+    text-decoration: none;
+    color: #1f1b18;
+    text-align: center;
+
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.home-category-circle {
+    width: 132px;
+    height: 132px;
+    margin-bottom: 24px;
+    border-radius: 50%;
+
+    border: 1px solid rgba(82, 65, 48, 0.22);
+
+    background:
+        radial-gradient(circle at 34% 28%, rgba(255,255,255,0.9), rgba(255,255,255,0.22) 34%, transparent 58%),
+        linear-gradient(145deg, #f1e6d6, #d7c0a2);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    transition: transform 0.45s ease, box-shadow 0.45s ease, border-color 0.45s ease;
+}
+
+.home-category-circle span {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    color: #3a3028;
+}
+
+.home-category-card strong {
+    display: block;
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 14px;
+    font-weight: 400;
+    letter-spacing: 0.18em;
+    color: #2b241e;
+}
+
+.home-category-card:hover .home-category-circle {
+    transform: translateY(-10px);
+    border-color: rgba(82, 65, 48, 0.42);
+    box-shadow: 0 22px 45px rgba(55, 39, 24, 0.12);
+}
+
+.home-category-card:hover strong {
+    color: #8b6f4f;
+}
+
+@media (max-width: 1200px) {
+    .home-category-grid {
+        grid-template-columns: repeat(3, 1fr);
+        row-gap: 58px;
+    }
+}
+
+@media (max-width: 720px) {
+    .home-category-section {
+        padding: 110px 22px 95px;
+    }
+
+    .home-category-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 44px 22px;
+    }
+
+    .home-category-circle {
+        width: 112px;
+        height: 112px;
+        margin-bottom: 18px;
+    }
+
+    .home-category-circle span {
+        font-size: 10px;
+        letter-spacing: 0.1em;
+    }
+
+    .home-category-card strong {
+        font-size: 12px;
+    }
+}
+
+/* =========================================================
+   COMPANY STORY - HOME TONE MATCH PATCH
+   브랜드 스토리 색감 홈 통일 버전
+========================================================= */
+
+.company-story-section {
+    color: var(--home-ink);
+    background:
+        radial-gradient(circle at 50% 8%, rgba(146, 115, 70, 0.12), transparent 32%),
+        radial-gradient(circle at 14% 72%, rgba(146, 115, 70, 0.08), transparent 34%),
+        linear-gradient(
+            180deg,
+            var(--home-bg-light) 0%,
+            var(--home-bg) 48%,
+            #f1eadf 100%
+        );
+    border-top: 1px solid var(--home-line);
+}
+
+.company-story-section::before {
+    border-color: rgba(143, 111, 62, 0.11);
+}
+
+.company-story-section::after {
+    border-color: rgba(143, 111, 62, 0.08);
+}
+
+/* 메인 비주얼 박스 */
+.company-story-visual {
+    background: #eee5d8;
+    box-shadow:
+        0 38px 90px rgba(58, 42, 24, 0.11),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.56);
+}
+
+.company-story-visual::before {
+    background:
+        linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.22) 0%,
+            transparent 22%,
+            transparent 76%,
+            rgba(255, 255, 255, 0.12) 100%
+        );
+}
+
+.company-story-visual::after {
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(65, 44, 22, 0.12)),
+        radial-gradient(circle at center, transparent 34%, rgba(83, 59, 31, 0.12) 100%);
+}
+
+/* 메인 이미지 없을 때 플레이스홀더 */
+.company-story-main-placeholder {
+    background:
+        radial-gradient(circle at center, rgba(255, 255, 255, 0.42), transparent 34%),
+        linear-gradient(135deg, #efe6d8 0%, #d8c7ac 52%, #f7f2e9 100%);
+
+    color: rgba(75, 55, 31, 0.42);
+}
+
+.company-story-main-placeholder::before {
+    color: rgba(146, 115, 70, 0.12);
+}
+
+.company-story-main-placeholder span {
+    border: 1px solid rgba(143, 111, 62, 0.18);
+    background: rgba(255, 255, 255, 0.24);
+    color: rgba(58, 42, 24, 0.62);
+}
+
+/* 텍스트 영역 */
+.company-story-label {
+    color: var(--home-gold);
+}
+
+.company-story-label::after {
+    background: rgba(146, 115, 70, 0.48);
+}
+
+.company-story-content h2 {
+    color: var(--home-ink);
+    text-shadow: 0 14px 34px rgba(70, 48, 24, 0.09);
+}
+
+.company-story-text {
+    color: var(--home-muted);
+}
+
+/* 하단 3개 박스 */
+.company-story-box {
+    background: rgba(255, 255, 255, 0.72);
+    border: 1px solid rgba(143, 111, 62, 0.14);
+    box-shadow: 0 18px 44px rgba(58, 42, 24, 0.055);
+}
+
+.company-story-box::after {
+    border-color: rgba(143, 111, 62, 0.14);
+}
+
+.company-story-box:hover {
+    border-color: rgba(143, 111, 62, 0.32);
+    box-shadow: 0 32px 68px rgba(58, 42, 24, 0.12);
+}
+
+/* 하단 박스 이미지 영역 */
+.company-story-box-media {
+    background:
+        radial-gradient(circle at center, rgba(255, 255, 255, 0.42), transparent 34%),
+        linear-gradient(135deg, #efe6d8 0%, #d2bea0 48%, #f5efe5 100%);
+
+    color: rgba(75, 55, 31, 0.38);
+}
+
+.company-story-box-media::after {
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(65, 44, 22, 0.13)),
+        radial-gradient(circle at center, transparent 38%, rgba(83, 59, 31, 0.1));
+}
+
+/* 하단 박스 텍스트 */
+.company-story-box-text {
+    background: rgba(255, 255, 255, 0.38);
+}
+
+.company-story-box-text p {
+    color: var(--home-gold);
+}
+
+.company-story-box-text h3 {
+    color: var(--home-ink);
+}
+
+.company-story-box-text span {
+    color: var(--home-muted);
+}
+
+/* =========================================================
+   COMPANY STORY - REMOVE BEIGE TONE
+   브랜드 스토리 베이지 제거 / 화이트톤
+========================================================= */
+
+.company-story-section {
+    background:
+        radial-gradient(circle at 50% 8%, rgba(0, 0, 0, 0.035), transparent 32%),
+        linear-gradient(
+            180deg,
+            #ffffff 0%,
+            #fbfbfa 52%,
+            #f6f6f4 100%
+        );
+    color: #151515;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.company-story-section::before,
+.company-story-section::after {
+    border-color: rgba(0, 0, 0, 0.07);
+}
+
+/* 메인 큰 이미지 영역 */
+.company-story-visual {
+    background: #f3f3f1;
+    box-shadow:
+        0 34px 90px rgba(0, 0, 0, 0.09),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.75);
+}
+
+.company-story-visual::before {
+    background:
+        linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.34) 0%,
+            transparent 24%,
+            transparent 76%,
+            rgba(255, 255, 255, 0.2) 100%
+        );
+}
+
+.company-story-visual::after {
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(0, 0, 0, 0.12)),
+        radial-gradient(circle at center, transparent 36%, rgba(0, 0, 0, 0.1) 100%);
+}
+
+/* 이미지 없을 때 플레이스홀더 */
+.company-story-main-placeholder {
+    background:
+        radial-gradient(circle at center, rgba(255, 255, 255, 0.72), transparent 34%),
+        linear-gradient(135deg, #ffffff 0%, #eeeeec 52%, #fafafa 100%);
+
+    color: rgba(0, 0, 0, 0.34);
+}
+
+.company-story-main-placeholder::before {
+    color: rgba(0, 0, 0, 0.045);
+}
+
+.company-story-main-placeholder span {
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    background: rgba(255, 255, 255, 0.42);
+    color: rgba(0, 0, 0, 0.52);
+}
+
+/* 텍스트 */
+.company-story-label {
+    color: #777;
+}
+
+.company-story-label::after {
+    background: rgba(0, 0, 0, 0.22);
+}
+
+.company-story-content h2 {
+    color: #151515;
+    text-shadow: none;
+}
+
+.company-story-text {
+    color: rgba(0, 0, 0, 0.62);
+}
+
+/* 하단 3개 박스 */
+.company-story-box {
+    background: rgba(255, 255, 255, 0.86);
+    border: 1px solid rgba(0, 0, 0, 0.09);
+    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.045);
+}
+
+.company-story-box::after {
+    border-color: rgba(0, 0, 0, 0.08);
+}
+
+.company-story-box:hover {
+    border-color: rgba(0, 0, 0, 0.18);
+    box-shadow: 0 32px 68px rgba(0, 0, 0, 0.1);
+}
+
+/* 하단 박스 이미지 영역 */
+.company-story-box-media {
+    background:
+        radial-gradient(circle at center, rgba(255, 255, 255, 0.72), transparent 34%),
+        linear-gradient(135deg, #ffffff 0%, #eeeeec 50%, #fafafa 100%);
+
+    color: rgba(0, 0, 0, 0.3);
+}
+
+.company-story-box-media::after {
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(0, 0, 0, 0.11)),
+        radial-gradient(circle at center, transparent 40%, rgba(0, 0, 0, 0.08));
+}
+
+/* 하단 박스 텍스트 */
+.company-story-box-text {
+    background: #ffffff;
+}
+
+.company-story-box-text p {
+    color: #777;
+}
+
+.company-story-box-text h3 {
+    color: #151515;
+}
+
+.company-story-box-text span {
+    color: rgba(0, 0, 0, 0.62);
+}
+
+/* =========================================================
+   YEON LARGE STORY - SPACING & TITLE POSITION FIX
+   큰 연 스토리 카드 간격 / 제목 위치 수정
+========================================================= */
+
+/* 카드 사이 간격 줄이기 */
+.yeon-large-card {
+    margin: 0 auto 86px;
+}
+
+/* 마지막 카드는 여백 제거 유지 */
+.yeon-large-card:last-child {
+    margin-bottom: 0;
+}
+
+/* 제목을 박스 안쪽으로 내리기 */
+.yeon-large-card-title {
+    position: absolute;
+    top: 36px;
+    left: 0;
+    z-index: 5;
+
+    width: 100%;
+    margin: 0;
+
+    transform: none;
+}
+
+/* 제목이 박스 안에 들어가므로 박스 상단 여백 확보 */
+.yeon-large-box {
+    padding-top: 145px;
+}
+
+/* 모바일에서도 간격 줄이기 */
+@media (max-width: 700px) {
+    .yeon-large-card {
+        margin-bottom: 68px;
+    }
+
+    .yeon-large-card-title {
+        top: 28px;
+    }
+
+    .yeon-large-box {
+        padding-top: 108px;
+    }
+}
+
+/* =========================================================
+   YEON CAROUSEL - WHITE TONE MATCH
+   홈 연 카드 슬라이더 색감 통일
+========================================================= */
+
+.yeon-carousel-section {
+    background:
+        radial-gradient(circle at 50% 10%, rgba(0, 0, 0, 0.035), transparent 30%),
+        linear-gradient(
+            180deg,
+            #ffffff 0%,
+            #fbfbfa 52%,
+            #f6f6f4 100%
+        );
+}
+
+/* 섹션 제목 */
+.yeon-carousel-header p {
+    color: #777;
+}
+
+.yeon-carousel-header h2 {
+    color: #151515;
+}
+
+.yeon-carousel-header span {
+    color: rgba(0, 0, 0, 0.62);
+}
+
+/* 카드 기본 톤 */
+.yeon-carousel-card {
+    background: rgba(255, 255, 255, 0.78);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 20px 48px rgba(0, 0, 0, 0.045);
+    color: #151515;
+}
+
+/* 카드 안쪽 라인 */
+.yeon-carousel-card::before {
+    border-color: rgba(0, 0, 0, 0.08);
+}
+
+/* 카드 원 장식 */
+.yeon-carousel-card::after {
+    border-color: rgba(0, 0, 0, 0.055);
+}
+
+/* 선택된 중앙 카드 */
+.yeon-carousel-card.is-active {
+    background: #ffffff;
+    border-color: rgba(0, 0, 0, 0.16);
+    box-shadow: 0 42px 86px rgba(0, 0, 0, 0.105);
+}
+
+/* 번호 */
+.yeon-card-num {
+    color: rgba(0, 0, 0, 0.36);
+}
+
+.yeon-carousel-card.is-active .yeon-card-num {
+    color: rgba(0, 0, 0, 0.58);
+}
+
+/* 카드 제목 */
+.yeon-carousel-card h3 {
+    color: #151515;
+}
+
+/* 카드 설명 */
+.yeon-carousel-card p {
+    color: rgba(0, 0, 0, 0.58);
+}
+
+/* 좌우 화살표 버튼 */
+.yeon-carousel-btn {
+    border: 1px solid rgba(0, 0, 0, 0.16);
+    background: rgba(255, 255, 255, 0.78);
+    color: #151515;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
+}
+
+.yeon-carousel-btn:hover {
+    background: #151515;
+    color: #ffffff;
+    border-color: #151515;
+}
+
+/* 점 indicator */
+.yeon-carousel-dot {
+    background: rgba(0, 0, 0, 0.18);
+}
+
+.yeon-carousel-dot.is-active {
+    background: rgba(0, 0, 0, 0.62);
+}
+
+.yeon-carousel-dot:hover {
+    background: rgba(0, 0, 0, 0.42);
+}
+
+.main-slide-media {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.yeon-large-img img,
+.yeon-large-img video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.company-story-image,
+.company-story-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.company-story-box-media img,
+.company-story-box-media video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* ===============================
+   HOME SCROLL REVEAL EFFECT
+   =============================== */
+
+.home-reveal {
+    opacity: 0;
+    transform: translateY(70px);
+    filter: blur(8px);
+    transition:
+        opacity 1s ease,
+        transform 1s cubic-bezier(0.22, 1, 0.36, 1),
+        filter 1s ease;
+    will-change: opacity, transform, filter;
+}
+
+.home-reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+}
+
+/* 섹션 안의 카드들이 순서대로 올라오는 느낌 */
+.home-reveal-stagger {
+    opacity: 0;
+    transform: translateY(45px);
+    transition:
+        opacity 0.9s ease,
+        transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.home-reveal-stagger.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* 모바일에서는 너무 과한 움직임 줄이기 */
+@media (max-width: 768px) {
+    .home-reveal {
+        transform: translateY(42px);
+        filter: blur(4px);
+    }
+
+    .home-reveal-stagger {
+        transform: translateY(30px);
+    }
+}
+
+.home-category-circle {
+    position: relative;
+    overflow: hidden;
+}
+
+.home-category-circle img,
+.home-category-circle video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* 이미지가 들어갔을 때 살짝 고급스럽게 */
+.home-category-circle::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(circle at 30% 20%, rgba(255,255,255,0.18), transparent 42%);
+    pointer-events: none;
+}
+
+.home-category-card:hover .home-category-circle img,
+.home-category-card:hover .home-category-circle video {
+    transform: scale(1.06);
+}
+
+.home-category-circle img,
+.home-category-circle video {
+    transition: transform 0.45s ease;
+}
+
+/* 홈 큰 연 이미지 - 가벼운 프레임 */
+.yeon-large-visual {
+    border-radius: 20px;
+    padding: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.yeon-large-img {
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid rgba(0, 0, 0, 0.07);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.055);
+}
+
+.yeon-large-img img,
+.yeon-large-img video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-radius: inherit;
+}

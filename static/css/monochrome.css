@@ -1,0 +1,886 @@
+/* =========================================================
+   GY JEWELRY MONOCHROME SOFT GRAY FINAL
+   Light Gray / Soft White / Black
+========================================================= */
+
+:root {
+    --mono-white: #ffffff;
+    --mono-bg: #eeeeee;
+    --mono-section: #f2f2f2;
+    --mono-card: #f8f8f8;
+    --mono-soft: #e5e5e5;
+    --mono-mid: #d2d2d2;
+
+    --mono-ink: #111111;
+    --mono-muted: #555555;
+    --mono-light: #777777;
+
+    --mono-line: rgba(0, 0, 0, 0.14);
+    --mono-line-soft: rgba(0, 0, 0, 0.08);
+
+    --mono-shadow: 0 22px 55px rgba(0, 0, 0, 0.08);
+}
+
+/* ===============================
+   GLOBAL
+================================ */
+
+html,
+body {
+    background: var(--mono-bg) !important;
+    color: var(--mono-ink) !important;
+}
+
+body:not(.home-page):not(.new-page),
+.shop-page,
+.detail-page,
+.cart-page,
+.order-page,
+.auth-page,
+.admin-page,
+.story-page,
+.season-page,
+.mypage-wrap,
+.order-detail-wrap {
+    background: var(--mono-bg) !important;
+    color: var(--mono-ink) !important;
+}
+
+a {
+    color: var(--mono-ink);
+}
+
+p,
+span,
+li,
+.auth-desc,
+.mypage-sub,
+.order-detail-sub,
+.story-hero p,
+.new-intro p,
+.new-product-desc,
+.season-intro p,
+.season-wide-copy span,
+.season-product-text span {
+    color: var(--mono-muted);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.eyebrow,
+.auth-label,
+.admin-label,
+.story-eyebrow,
+.new-intro-label,
+.season-label,
+.guide-label,
+.form-head p,
+.mega-title,
+.mega-column-title,
+.mypage-hero .eyebrow,
+.order-detail-hero .eyebrow {
+    color: var(--mono-ink) !important;
+}
+
+/* ===============================
+   TOP PROMOTION BAR
+================================ */
+
+.top-promo-bar {
+    background: #111111 !important;
+    color: #ffffff !important;
+    border-bottom: none !important;
+}
+
+.top-promo-set a,
+.top-promo-group a,
+.top-promo-group span {
+    color: #ffffff !important;
+}
+
+.top-promo-set a:hover,
+.top-promo-group a:hover {
+    color: #cccccc !important;
+}
+
+/* ===============================
+   HEADER
+================================ */
+
+/* 일반 페이지 헤더 */
+body:not(.home-page):not(.new-page):not(.season-page):not(.best-page-body):not(.story-page-body):not(.yeon-story-body):not(.brand-story-page-body) .site-header {
+    background: #f7f7f7 !important;
+    background-color: #f7f7f7 !important;
+    background-image: none !important;
+
+    border-bottom: 1px solid var(--mono-line-soft) !important;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.04) !important;
+
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+/* 비주얼 / 스토리 페이지 기본 헤더는 투명 */
+body.home-page .site-header,
+body.new-page .site-header,
+body.season-page .site-header,
+body.best-page-body .site-header,
+body.story-page-body .site-header,
+body.yeon-story-body .site-header,
+body.brand-story-page-body .site-header {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+
+    border: none !important;
+    box-shadow: none !important;
+
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+/* 메뉴 열렸을 때 헤더 */
+body.mega-open .site-header,
+body.home-page.mega-open .site-header,
+body.new-page.mega-open .site-header {
+    background: #f7f7f7 !important;
+    background-color: #f7f7f7 !important;
+    background-image: none !important;
+
+    border-bottom: 1px solid var(--mono-line-soft) !important;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.04) !important;
+
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+/* 헤더 내부 박스 제거 */
+.site-header *,
+body.mega-open .site-header * {
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+.brand-logo,
+.menu-btn,
+#megaMenuBtn,
+.header-link,
+.header-right a,
+.site-header a,
+.site-header button {
+    color: var(--mono-ink) !important;
+}
+
+/* 어두운 배경 위의 투명 헤더 */
+body.header-on-dark:not(.mega-open) .brand-logo,
+body.header-on-dark:not(.mega-open) .menu-btn,
+body.header-on-dark:not(.mega-open) #megaMenuBtn,
+body.header-on-dark:not(.mega-open) .header-link,
+body.header-on-dark:not(.mega-open) .header-right a,
+body.header-on-dark:not(.mega-open) .site-header a,
+body.header-on-dark:not(.mega-open) .site-header button {
+    color: #ffffff !important;
+}
+
+body.header-on-dark:not(.mega-open) .site-header .header-search input {
+    color: #ffffff !important;
+    border-bottom-color: rgba(255, 255, 255, 0.62) !important;
+}
+
+body.header-on-dark:not(.mega-open) .site-header .header-search input::placeholder {
+    color: rgba(255, 255, 255, 0.72) !important;
+}
+
+/* 밝은 배경 위의 투명 헤더 */
+body.header-on-light:not(.mega-open) .brand-logo,
+body.header-on-light:not(.mega-open) .menu-btn,
+body.header-on-light:not(.mega-open) #megaMenuBtn,
+body.header-on-light:not(.mega-open) .header-link,
+body.header-on-light:not(.mega-open) .header-right a,
+body.header-on-light:not(.mega-open) .site-header a,
+body.header-on-light:not(.mega-open) .site-header button {
+    color: var(--mono-ink) !important;
+}
+
+body.header-on-light:not(.mega-open) .site-header .header-search input {
+    color: var(--mono-ink) !important;
+    border-bottom-color: rgba(17, 17, 17, 0.35) !important;
+}
+
+body.header-on-light:not(.mega-open) .site-header .header-search input::placeholder {
+    color: rgba(17, 17, 17, 0.55) !important;
+}
+
+body.best-page-body:not(.mega-open) .brand-logo,
+body.best-page-body:not(.mega-open) .menu-btn,
+body.best-page-body:not(.mega-open) #megaMenuBtn,
+body.best-page-body:not(.mega-open) .header-link,
+body.best-page-body:not(.mega-open) .header-right a,
+body.best-page-body:not(.mega-open) .site-header a,
+body.best-page-body:not(.mega-open) .site-header button {
+    color: #ffffff !important;
+}
+
+body.best-page-body:not(.mega-open) .site-header .header-search input {
+    color: #ffffff !important;
+    border-bottom-color: rgba(255, 255, 255, 0.62) !important;
+}
+
+body.best-page-body:not(.mega-open) .site-header .header-search input::placeholder {
+    color: rgba(255, 255, 255, 0.72) !important;
+}
+
+/* 검색창 */
+.site-header .header-search input {
+    background: transparent !important;
+    background-color: transparent !important;
+
+    color: var(--mono-ink) !important;
+
+    border: none !important;
+    border-bottom: 1px solid rgba(17, 17, 17, 0.35) !important;
+
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+.site-header .header-search input::placeholder {
+    color: rgba(17, 17, 17, 0.55) !important;
+}
+
+/* ===============================
+   MEGA MENU
+================================ */
+
+#megaMenu,
+#megaMenu.horizontal-mega-menu,
+.mega-menu,
+.horizontal-mega-menu {
+    background: #f7f7f7 !important;
+    background-color: #f7f7f7 !important;
+    background-image: none !important;
+
+    border-top: 1px solid var(--mono-line-soft) !important;
+    border-bottom: 1px solid var(--mono-line-soft) !important;
+
+    box-shadow: 0 24px 55px rgba(0, 0, 0, 0.08) !important;
+
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+#megaMenu .horizontal-menu-inner,
+#megaMenu .horizontal-menu-list {
+    background: #f7f7f7 !important;
+}
+
+.horizontal-menu-title {
+    color: var(--mono-ink) !important;
+    background: transparent !important;
+}
+
+.horizontal-menu-item:hover .horizontal-menu-title {
+    background: #e9e9e9 !important;
+    color: var(--mono-ink) !important;
+}
+
+/* 세부 메뉴 */
+.horizontal-submenu,
+#megaMenu .horizontal-submenu {
+    background: #f2f2f2 !important;
+    background-color: #f2f2f2 !important;
+    background-image: none !important;
+
+    border: 1px solid var(--mono-line-soft) !important;
+    box-shadow: 0 22px 50px rgba(0, 0, 0, 0.09) !important;
+}
+
+.horizontal-submenu a,
+#megaMenu a,
+.mega-links a {
+    color: var(--mono-ink) !important;
+    background: transparent !important;
+}
+
+.horizontal-submenu a:hover,
+#megaMenu a:hover,
+.mega-links a:hover {
+    color: var(--mono-ink) !important;
+    background: #e5e5e5 !important;
+}
+
+/* 메뉴 안 원형 이미지 */
+.submenu-photo {
+    background:
+        radial-gradient(circle at 35% 28%, rgba(255, 255, 255, 0.7), transparent 34%),
+        linear-gradient(135deg, #f9f9f9 0%, #e7e7e7 55%, #cfcfcf 100%) !important;
+
+    border: 1px solid var(--mono-line) !important;
+    box-shadow: none !important;
+    color: rgba(0, 0, 0, 0.42) !important;
+}
+
+.submenu-label {
+    color: var(--mono-ink) !important;
+}
+
+/* ===============================
+   COMMON PAGE SECTIONS
+================================ */
+
+.home-yeon-section,
+.home-category-section,
+.home-signature-collection,
+.home-service,
+.home-company-story,
+.home-yeon-large-section,
+.new-page,
+.new-promo-products,
+.season-main,
+.season-intro,
+.season-product-section,
+.story-main,
+.story-bottom-nav,
+.shop-main,
+.detail-main,
+.cart-main,
+.order-main,
+.auth-main,
+.admin-main {
+    background: var(--mono-bg) !important;
+    color: var(--mono-ink) !important;
+}
+
+/* 살짝 다른 섹션 느낌 */
+.home-category-section,
+.home-service,
+.season-intro,
+.story-bottom-nav {
+    background: var(--mono-section) !important;
+}
+
+/* ===============================
+   COMMON CARDS / BOXES
+================================ */
+
+.product-card,
+.shop-product-card,
+.cart-item,
+.order-summary,
+.order-form-box,
+.auth-box,
+.info-card,
+.order-card,
+.order-detail-card,
+.order-items-list,
+.delivery-progress-card,
+.admin-product-card,
+.admin-empty,
+.admin-form-guide,
+.order-status-panel,
+.add-product-form-card,
+.product-guide-card,
+.admin-login-card,
+.admin-edit-block,
+.story-card,
+.new-product-row,
+.new-empty,
+.season-product-card,
+.home-yeon-card,
+.home-category-card,
+.home-signature-card,
+.service-item,
+.yeon-large-box {
+    background: var(--mono-card) !important;
+    border: 1px solid var(--mono-line-soft) !important;
+    color: var(--mono-ink) !important;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.045) !important;
+}
+
+.product-card:hover,
+.shop-product-card:hover,
+.story-card:hover,
+.new-product-row:hover,
+.admin-product-card:hover,
+.home-signature-card:hover,
+.service-item:hover {
+    background: #ffffff !important;
+    box-shadow: var(--mono-shadow) !important;
+    border-color: rgba(0, 0, 0, 0.18) !important;
+}
+
+/* ===============================
+   BUTTONS
+================================ */
+
+.auth-btn,
+.cart-checkout-btn,
+.order-submit-btn,
+.admin-submit-btn,
+.receipt-detail-btn,
+.admin-login-form button,
+.add-cart-btn,
+.buy-btn,
+.checkout-btn {
+    background: var(--mono-ink) !important;
+    color: #ffffff !important;
+    border: 1px solid var(--mono-ink) !important;
+}
+
+.auth-btn:hover,
+.cart-checkout-btn:hover,
+.order-submit-btn:hover,
+.admin-submit-btn:hover,
+.receipt-detail-btn:hover,
+.admin-login-form button:hover,
+.add-cart-btn:hover,
+.buy-btn:hover,
+.checkout-btn:hover {
+    background: #f2f2f2 !important;
+    color: var(--mono-ink) !important;
+}
+
+.admin-cancel-btn,
+.admin-delete-btn,
+.status-back-btn,
+.new-detail-link,
+.new-empty a,
+.story-bottom-back,
+.back-mypage-link,
+.order-detail-link,
+.continue-shopping-btn {
+    background: transparent !important;
+    color: var(--mono-ink) !important;
+    border: 1px solid var(--mono-ink) !important;
+}
+
+.admin-cancel-btn:hover,
+.admin-delete-btn:hover,
+.status-back-btn:hover,
+.new-detail-link:hover,
+.new-empty a:hover,
+.story-bottom-back:hover,
+.continue-shopping-btn:hover {
+    background: var(--mono-ink) !important;
+    color: #ffffff !important;
+}
+
+/* ===============================
+   FORMS
+================================ */
+
+.auth-field input,
+.form-field input,
+.form-field select,
+.form-field textarea,
+.admin-login-field input,
+.order-form input,
+.order-form textarea,
+.order-form select,
+input,
+select,
+textarea {
+    background: #f7f7f7 !important;
+    color: var(--mono-ink) !important;
+    border: 1px solid var(--mono-line) !important;
+}
+
+.auth-field input:focus,
+.form-field input:focus,
+.form-field select:focus,
+.form-field textarea:focus,
+.admin-login-field input:focus,
+.order-form input:focus,
+.order-form textarea:focus,
+.order-form select:focus,
+input:focus,
+select:focus,
+textarea:focus {
+    background: #ffffff !important;
+    border-color: var(--mono-ink) !important;
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.045) !important;
+    outline: none !important;
+}
+
+/* 헤더 검색창은 폼 디자인에서 제외 */
+.site-header .header-search input {
+    background: transparent !important;
+    background-color: transparent !important;
+
+    border: none !important;
+    border-bottom: 1px solid rgba(17, 17, 17, 0.35) !important;
+
+    box-shadow: none !important;
+}
+
+/* ===============================
+   IMAGE PLACEHOLDERS
+================================ */
+
+.product-image,
+.shop-product-image,
+.detail-image-box,
+.option-image,
+.admin-product-image-box,
+.edit-preview-image,
+.home-main-slide,
+.hero-slide-placeholder,
+.home-category-circle,
+.yeon-large-img,
+.new-hero-placeholder,
+.new-product-no-image,
+.new-promo-no-image,
+.season-hero-media,
+.season-wide-media,
+.season-final-media,
+.season-product-image {
+    background:
+        radial-gradient(circle at center, rgba(255, 255, 255, 0.65), transparent 36%),
+        linear-gradient(135deg, #f7f7f7 0%, #dddddd 55%, #c8c8c8 100%) !important;
+
+    color: rgba(0, 0, 0, 0.38) !important;
+}
+
+/* 실제 이미지가 있는 경우 배경색 방해 줄이기 */
+img {
+    background: transparent;
+}
+
+/* ===============================
+   HOME
+================================ */
+
+.home-hero,
+.home-main-hero,
+.home-slider-section {
+    background: #e9e9e9 !important;
+}
+
+.home-yeon-section {
+    background: #eeeeee !important;
+}
+
+.home-category-circle {
+    border: 1px solid var(--mono-line-soft) !important;
+    box-shadow: 0 14px 36px rgba(0, 0, 0, 0.06) !important;
+}
+
+.yeon-large-box {
+    background: #f6f6f6 !important;
+}
+
+.yeon-large-card-title,
+.yeon-inner-title,
+.home-section-title,
+.home-signature-title {
+    color: var(--mono-ink) !important;
+}
+
+/* ===============================
+   SHOP / DETAIL
+================================ */
+
+.shop-hero,
+.detail-hero,
+.cart-hero,
+.order-hero,
+.auth-hero,
+.admin-hero,
+.mypage-hero,
+.order-detail-hero {
+    background: #e9e9e9 !important;
+    color: var(--mono-ink) !important;
+}
+
+.product-price,
+.shop-product-price,
+.detail-price,
+.cart-price,
+.order-price {
+    color: var(--mono-ink) !important;
+}
+
+.product-meta,
+.shop-product-meta,
+.detail-desc,
+.cart-option,
+.order-option {
+    color: var(--mono-muted) !important;
+}
+
+/* ===============================
+   NEW / SEASON
+================================ */
+
+.new-page,
+.season-page {
+    background: var(--mono-bg) !important;
+}
+
+.new-intro,
+.season-intro {
+    background: #eeeeee !important;
+}
+
+.new-product-row,
+.season-product-card {
+    background: #f7f7f7 !important;
+}
+
+/* 이미지 위 텍스트는 흰색 유지 */
+.new-hero-campaign,
+.new-hero-campaign p,
+.new-hero-campaign h1,
+.new-hero-campaign span,
+.new-promo-overlay,
+.new-promo-label,
+.new-promo-overlay h3,
+.new-promo-price,
+.new-promo-desc,
+.season-hero-copy,
+.season-hero-copy p,
+.season-hero-copy h1,
+.season-hero-copy span {
+    color: #ffffff !important;
+}
+
+/* ===============================
+   ADMIN / AUTH / ORDER
+================================ */
+
+.admin-page,
+.auth-page,
+.order-page,
+.cart-page,
+.mypage-page {
+    background: var(--mono-bg) !important;
+}
+
+.admin-table,
+.admin-list,
+.admin-section,
+.auth-panel,
+.order-panel {
+    background: #f7f7f7 !important;
+    border-color: var(--mono-line-soft) !important;
+}
+
+.order-status,
+.receipt-status,
+.status-badge {
+    background: #e5e5e5 !important;
+    color: var(--mono-ink) !important;
+    border: 1px solid var(--mono-line-soft) !important;
+}
+
+.delivery-progress-message {
+    background: #e5e5e5 !important;
+    color: var(--mono-muted) !important;
+}
+
+.admin-login-error,
+.admin-form-error,
+.login-error {
+    background: #eeeeee !important;
+    border: 1px solid var(--mono-line) !important;
+    color: #b00020 !important;
+}
+
+/* ===============================
+   FOOTER
+================================ */
+
+.footer,
+.site-footer {
+    background: #111111 !important;
+    color: #ffffff !important;
+}
+
+.footer a,
+.site-footer a,
+.footer p,
+.site-footer p,
+.footer span,
+.site-footer span {
+    color: #dddddd !important;
+}
+
+/* ===============================
+   MOBILE
+================================ */
+
+@media (max-width: 900px) {
+    body,
+    .new-page,
+    .season-page,
+    .story-page,
+    .admin-page {
+        background: var(--mono-bg) !important;
+    }
+
+    body:not(.home-page):not(.new-page):not(.season-page):not(.best-page-body):not(.story-page-body):not(.yeon-story-body):not(.brand-story-page-body) .site-header {
+        background: #f7f7f7 !important;
+        background-color: #f7f7f7 !important;
+        border-bottom: 1px solid var(--mono-line-soft) !important;
+    }
+
+    body.home-page .site-header,
+    body.new-page .site-header,
+    body.season-page .site-header,
+    body.best-page-body .site-header,
+    body.story-page-body .site-header,
+    body.yeon-story-body .site-header,
+    body.brand-story-page-body .site-header {
+        background: transparent !important;
+        background-color: transparent !important;
+        border-bottom: none !important;
+        box-shadow: none !important;
+    }
+}
+
+/* =========================================================
+   HOME FINAL FIX
+   홈 주황빛 제거 + 원형 카테고리 네모 박스 제거
+========================================================= */
+
+/* 홈 전체 주황/베이지 제거 */
+body.home-page,
+body.home-page main,
+.home-main,
+.home-page .home-main,
+.home-page .home-hero,
+.home-page .home-main-hero,
+.home-page .home-slider-section,
+.home-page .home-yeon-section,
+.home-page .home-category-section,
+.home-page .home-signature-collection,
+.home-page .home-service,
+.home-page .home-company-story,
+.home-page .home-yeon-large-section {
+    background: #f5f5f5 !important;
+    background-color: #f5f5f5 !important;
+    background-image: none !important;
+    color: #111111 !important;
+}
+
+/* 섹션 안쪽 카드/큰 박스도 주황빛 제거 */
+.home-page .yeon-large-box,
+.home-page .home-yeon-card,
+.home-page .home-signature-card,
+.home-page .service-item {
+    background: #f8f8f8 !important;
+    background-color: #f8f8f8 !important;
+    background-image: none !important;
+
+    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.045) !important;
+
+    color: #111111 !important;
+}
+
+/* 홈 안의 주황/골드 계열 그림자 제거 */
+.home-page * {
+    text-shadow: none !important;
+}
+
+/* ===============================
+   홈 원형 카테고리
+   네모 박스 제거
+================================ */
+
+/* 카테고리 전체 카드 박스 제거 */
+.home-page .home-category-card {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+
+    border: none !important;
+    box-shadow: none !important;
+
+    padding: 0 !important;
+    border-radius: 0 !important;
+}
+
+/* hover 때도 네모 박스 안 생기게 */
+.home-page .home-category-card:hover {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    transform: none !important;
+}
+
+/* 원형 이미지만 남기기 */
+.home-page .home-category-circle {
+    background:
+        radial-gradient(circle at 35% 28%, rgba(255, 255, 255, 0.8), transparent 34%),
+        linear-gradient(135deg, #ffffff 0%, #e5e5e5 55%, #cfcfcf 100%) !important;
+
+    border: 1px solid rgba(0, 0, 0, 0.12) !important;
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.06) !important;
+
+    color: rgba(0, 0, 0, 0.38) !important;
+}
+
+/* 원 아래 카테고리 이름 */
+.home-page .home-category-name,
+.home-page .home-category-card span,
+.home-page .home-category-card p {
+    color: #111111 !important;
+    background: transparent !important;
+}
+
+/* 카테고리 섹션 제목/설명 */
+.home-page .home-category-section h2,
+.home-page .home-category-section p {
+    color: #111111 !important;
+}
+
+/* 이미지 placeholder 주황빛 제거 */
+.home-page .home-main-slide,
+.home-page .hero-slide-placeholder,
+.home-page .yeon-large-img {
+    background:
+        radial-gradient(circle at center, rgba(255, 255, 255, 0.72), transparent 36%),
+        linear-gradient(135deg, #ffffff 0%, #e1e1e1 55%, #c9c9c9 100%) !important;
+
+    color: rgba(0, 0, 0, 0.35) !important;
+}
+
+/* 홈 버튼/화살표 주황빛 제거 */
+.home-page .hero-arrow,
+.home-page .main-slider-arrow,
+.home-page .yeon-scroll-left,
+.home-page .yeon-scroll-right {
+    background: rgba(255, 255, 255, 0.82) !important;
+    color: #111111 !important;
+    border: 1px solid rgba(0, 0, 0, 0.12) !important;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.06) !important;
+}
+
+.home-page .hero-arrow:hover,
+.home-page .main-slider-arrow:hover,
+.home-page .yeon-scroll-left:hover,
+.home-page .yeon-scroll-right:hover {
+    background: #111111 !important;
+    color: #ffffff !important;
+}
+
+/* dot 색상도 흑백으로 */
+.home-page .hero-dot,
+.home-page .main-slider-dot,
+.home-page .yeon-dot {
+    background: rgba(0, 0, 0, 0.22) !important;
+    border: none !important;
+}
+
+.home-page .hero-dot.active,
+.home-page .main-slider-dot.active,
+.home-page .yeon-dot.active,
+.home-page .hero-dot.is-active,
+.home-page .main-slider-dot.is-active,
+.home-page .yeon-dot.is-active {
+    background: #111111 !important;
+}
