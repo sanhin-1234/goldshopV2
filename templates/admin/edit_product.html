@@ -85,7 +85,51 @@
                                 <option value="EARRINGS" {% if product['collection'] == 'EARRINGS' %}selected{% endif %}>Earrings</option>
                                 <option value="BRACELET" {% if product['collection'] == 'BRACELET' %}selected{% endif %}>Bracelet</option>
                                 <option value="ANKLET" {% if product['collection'] == 'ANKLET' %}selected{% endif %}>Anklet</option>
+                                <option value="GIFT" {% if product['collection'] == 'GIFT' %}selected{% endif %}>Gift</option>
                             </select>
+                        </div>
+
+                        <div class="admin-field">
+                            <label>선물 상세 카테고리</label>
+                            <select name="sub_category">
+                                <option value="" {% if not product['sub_category'] %}selected{% endif %}>선택 안함</option>
+
+                                <option value="MEN" {% if product['sub_category'] == 'MEN' %}selected{% endif %}>
+                                    남
+                                </option>
+
+                                <option value="WOMEN" {% if product['sub_category'] == 'WOMEN' %}selected{% endif %}>
+                                    여
+                                </option>
+
+                                <option value="KIDS_BABY" {% if product['sub_category'] == 'KIDS_BABY' %}selected{% endif %}>
+                                    키즈/베이비
+                                </option>
+
+                                <option value="PARENTS_TEACHER" {% if product['sub_category'] == 'PARENTS_TEACHER' %}selected{% endif %}>
+                                    부모/스승
+                                </option>
+
+                                <option value="DOG" {% if product['sub_category'] == 'DOG' %}selected{% endif %}>
+                                    반려견
+                                </option>
+
+                                <option value="GROUP" {% if product['sub_category'] == 'GROUP' %}selected{% endif %}>
+                                    모임
+                                </option>
+
+                                <option value="MEMORIAL" {% if product['sub_category'] == 'MEMORIAL' %}selected{% endif %}>
+                                    추모
+                                </option>
+
+                                <option value="CELEBRATION" {% if product['sub_category'] == 'CELEBRATION' %}selected{% endif %}>
+                                    축하
+                                </option>
+                            </select>
+
+                            <small>
+                                컬렉션이 <strong>Gift / 선물</strong>인 상품에만 사용하는 상세 카테고리입니다.
+                            </small>
                         </div>
 
                         <div class="admin-field">
@@ -155,8 +199,8 @@
                             <label>NEW 페이지 가로 배너 이미지 변경</label>
                             <input
                                 type="file"
-                                name="season_between_media"
-                                accept="image/*,video/mp4,video/webm,video/quicktime"
+                                name="new_banner_image"
+                                accept="image/*"
                             >
                             <small>NEW 페이지의 상품별 가로형 캠페인 배너에 사용됩니다.</small>
                         </div>
@@ -322,9 +366,31 @@
                     </div>
 
                     <div class="edit-preview-info">
+                        {% set gift_labels = {
+                            'MEN': '남',
+                            'WOMEN': '여',
+                            'KIDS_BABY': '키즈/베이비',
+                            'PARENTS_TEACHER': '부모/스승',
+                            'DOG': '반려견',
+                            'GROUP': '모임',
+                            'MEMORIAL': '추모',
+                            'CELEBRATION': '축하'
+                        } %}
+
                         <p class="preview-collection">
                             {{ product['collection'] or 'GENERAL' }}
                         </p>
+
+                        {% if product['collection'] == 'GIFT' %}
+                            <p class="preview-tag">
+                                선물 상세 :
+                                {% if product['sub_category'] %}
+                                    {{ gift_labels.get(product['sub_category'], product['sub_category']) }}
+                                {% else %}
+                                    선택 안함
+                                {% endif %}
+                            </p>
+                        {% endif %}
 
                         <h4>
                             {{ product['name'] }}
