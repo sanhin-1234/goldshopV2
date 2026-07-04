@@ -324,6 +324,7 @@ def add_product():
         price = request.form.get("price")
         description = request.form.get("description")
         collection = request.form.get("collection", "").strip().upper()
+        sub_category = request.form.get("sub_category", "").strip()
         tag = request.form.get("tag", "").strip().upper()
         material = request.form.get("material", "").strip().upper()
 
@@ -374,6 +375,7 @@ def add_product():
                 image,
                 description,
                 collection,
+                sub_category,
                 tag,
                 material,
                 new_banner_image,
@@ -383,7 +385,7 @@ def add_product():
                 season_between_media,
                 season_between_media_type
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 name,
@@ -391,6 +393,7 @@ def add_product():
                 filename,
                 description,
                 collection,
+                sub_category,
                 tag,
                 material,
                 new_banner_filename,
@@ -721,6 +724,7 @@ def update_product(product_id):
     price = request.form.get("price")
     description = request.form.get("description")
     collection = request.form.get("collection", "").strip().upper()
+    sub_category = request.form.get("sub_category", "").strip().upper()
     tag = request.form.get("tag", "").strip().upper()
     material = request.form.get("material", "").strip().upper()
 
@@ -771,6 +775,7 @@ def update_product(product_id):
         "price = ?",
         "description = ?",
         "collection = ?",
+        "sub_category = ?",
         "tag = ?",
         "material = ?"
     ]
@@ -909,6 +914,16 @@ def ensure_home_media_slots(db):
         ("menu_metal_18k", "메뉴 METAL 이미지 - 18K", "image", 73),
         ("menu_metal_14k", "메뉴 METAL 이미지 - 14K", "image", 74),
         ("menu_metal_silver", "메뉴 METAL 이미지 - SILVER", "image", 75),
+
+        # 메뉴 GIFT 이미지
+        ("menu_gift_men", "메뉴 GIFT 이미지 - 남", "image", 81),
+        ("menu_gift_women", "메뉴 GIFT 이미지 - 여", "image", 82),
+        ("menu_gift_kids_baby", "메뉴 GIFT 이미지 - 키즈/베이비", "image", 83),
+        ("menu_gift_parents_teacher", "메뉴 GIFT 이미지 - 부모/스승", "image", 84),
+        ("menu_gift_dog", "메뉴 GIFT 이미지 - 반려견", "image", 85),
+        ("menu_gift_group", "메뉴 GIFT 이미지 - 모임", "image", 86),
+        ("menu_gift_memorial", "메뉴 GIFT 이미지 - 추모", "image", 87),
+        ("menu_gift_celebration", "메뉴 GIFT 이미지 - 축하", "image", 88),
     ]
 
     for slot_key, slot_name, media_type, sort_order in slots:

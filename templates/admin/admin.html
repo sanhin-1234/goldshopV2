@@ -91,9 +91,32 @@
                     </div>
 
                     <div class="admin-product-info">
+
+                        {% set gift_labels = {
+                            'MEN': '남',
+                            'WOMEN': '여',
+                            'KIDS_BABY': '키즈/베이비',
+                            'PARENTS_TEACHER': '부모/스승',
+                            'DOG': '반려견',
+                            'GROUP': '모임',
+                            'MEMORIAL': '추모',
+                            'CELEBRATION': '축하'
+                        } %}
+
                         <p class="admin-product-collection">
                             {{ product['collection'] or 'GENERAL' }}
                         </p>
+
+                        {% if product['collection'] == 'GIFT' %}
+                            <p class="admin-product-sub-category">
+                                선물 상세 :
+                                {% if product['sub_category'] %}
+                                    {{ gift_labels.get(product['sub_category'], product['sub_category']) }}
+                                {% else %}
+                                    선택 안함
+                                {% endif %}
+                            </p>
+                        {% endif %}
 
                         <h3>
                             {{ product['name'] }}
