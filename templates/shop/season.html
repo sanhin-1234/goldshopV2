@@ -17,7 +17,23 @@
     <section class="season-hero">
 
         <div class="season-hero-media">
-            <span>SEASON IMAGE / VIDEO</span>
+
+            {% if hero_media and hero_media['filename'] %}
+
+                {% if hero_media['media_type'] == 'video' %}
+                    <video autoplay muted loop playsinline>
+                        <source src="/uploads/{{ hero_media['filename'] }}" type="video/mp4">
+                    </video>
+                {% else %}
+                    <img src="/uploads/{{ hero_media['filename'] }}" alt="SEASON ITEM">
+                {% endif %}
+
+            {% else %}
+
+                <span>SEASON IMAGE / VIDEO</span>
+
+            {% endif %}
+
         </div>
 
         <div class="season-hero-text">

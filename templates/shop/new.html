@@ -17,21 +17,25 @@
     <section class="new-hero-section">
 
         <div class="new-hero-media">
-            <div class="new-hero-placeholder">
-                NEW COLLECTION IMAGE / VIDEO
-            </div>
 
-            <!-- 나중에 이미지 넣을 때는 위 div 대신 아래 사용 -->
-            <!--
-            <img src="{{ url_for('static', filename='images/new-hero.jpg') }}" alt="NEW Collection">
-            -->
+            {% if hero_media and hero_media['filename'] %}
 
-            <!-- 나중에 영상 넣을 때는 아래 사용 -->
-            <!--
-            <video autoplay muted loop playsinline>
-                <source src="{{ url_for('static', filename='videos/new-hero.mp4') }}" type="video/mp4">
-            </video>
-            -->
+                {% if hero_media['media_type'] == 'video' %}
+                    <video autoplay muted loop playsinline>
+                        <source src="/uploads/{{ hero_media['filename'] }}" type="video/mp4">
+                    </video>
+                {% else %}
+                    <img src="/uploads/{{ hero_media['filename'] }}" alt="NEW Collection">
+                {% endif %}
+
+            {% else %}
+
+                <div class="new-hero-placeholder">
+                    NEW COLLECTION IMAGE / VIDEO
+                </div>
+
+            {% endif %}
+
         </div>
 
         <div class="new-hero-copy">

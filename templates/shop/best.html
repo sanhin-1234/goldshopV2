@@ -7,14 +7,37 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
-<body class="best-page-body header-dynamic">
+<body class="best-page-body">
 
 {% include "shop/header.html" %}
 
 <main class="best-page">
 
     <!-- HERO -->
-    <section class="best-hero" data-header-theme="dark">
+    <section class="best-hero">
+
+        <div class="best-hero-media">
+
+            {% if hero_media and hero_media['filename'] %}
+
+                {% if hero_media['media_type'] == 'video' %}
+                    <video autoplay muted loop playsinline>
+                        <source src="/uploads/{{ hero_media['filename'] }}" type="video/mp4">
+                    </video>
+                {% else %}
+                    <img src="/uploads/{{ hero_media['filename'] }}" alt="BEST SELECTION">
+                {% endif %}
+
+            {% else %}
+
+                <div class="best-hero-placeholder">
+                    BEST HERO IMAGE
+                </div>
+
+            {% endif %}
+
+        </div>
+
         <div class="best-hero-inner">
             <p class="best-eyebrow">GY JEWELRY BEST SELECTION</p>
             <h1>Best Pieces</h1>
@@ -23,6 +46,7 @@
                 매일의 순간에 자연스럽게 스며드는 아름다움을 선별했습니다.
             </p>
         </div>
+
     </section>
 
     {% if products %}
@@ -30,7 +54,7 @@
         {% set featured = products[0] %}
 
         <!-- BEST 01 FEATURED -->
-        <section class="best-featured-section" data-header-theme="light">
+        <section class="best-featured-section">
 
             <div class="best-section-head">
                 <p>NO. 01</p>
@@ -85,7 +109,7 @@
         </section>
 
         <!-- BEST LIST -->
-        <section class="best-ranking-section" data-header-theme="light">
+        <section class="best-ranking-section">
 
             <div class="best-section-head compact">
                 <p>BEST RANKING</p>
@@ -147,7 +171,7 @@
 
     {% else %}
 
-        <section class="best-empty-section" data-header-theme="light">
+        <section class="best-empty-section">
             <div class="best-empty">
                 <p class="best-empty-title">아직 등록된 Best 상품이 없습니다.</p>
                 <p>

@@ -11,19 +11,56 @@
 /* HERO */
 
 .best-hero {
-    min-height: calc(82vh - 76px);
+    position: relative;
+    min-height: calc(100vh - 106px);
+    overflow: hidden;
+
     display: flex;
     align-items: center;
     justify-content: center;
+
     padding: 110px 24px 90px;
     text-align: center;
     color: #fff;
-    background:
-        linear-gradient(rgba(14, 10, 6, 0.44), rgba(14, 10, 6, 0.54)),
-        radial-gradient(circle at center, #b79a70 0%, #5a432c 42%, #12100d 100%);
 }
 
+/* 업로드된 BEST 히어로 이미지 / 영상 */
+.best-hero-media {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+}
+
+.best-hero-media img,
+.best-hero-media video {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+}
+
+/* 이미지 없을 때 기본 배경 */
+.best-hero-placeholder {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background:
+        radial-gradient(circle at center, #b79a70 0%, #5a432c 42%, #12100d 100%);
+
+    color: rgba(255, 255, 255, 0.45);
+    font-size: 14px;
+    letter-spacing: 0.22em;
+}
+
+/* 텍스트는 이미지 위로 */
 .best-hero-inner {
+    position: relative;
+    z-index: 3;
+
     max-width: 860px;
 }
 
@@ -31,7 +68,7 @@
     margin-bottom: 26px;
     font-size: 12px;
     letter-spacing: 0.34em;
-    color: rgba(255, 255, 255, 0.72);
+    color: rgba(0, 0, 0, 0.78);
 }
 
 .best-hero h1 {
@@ -40,6 +77,7 @@
     font-size: clamp(52px, 8vw, 116px);
     font-weight: 400;
     letter-spacing: 0.04em;
+    color: rgba(0, 0, 0, 0.94);
 }
 
 .best-hero p:last-child {
@@ -47,7 +85,7 @@
     margin: 0 auto;
     font-size: 15px;
     line-height: 2;
-    color: rgba(255, 255, 255, 0.78);
+    color: rgba(0, 0, 0, 0.82);
 }
 
 /* SECTION HEAD */
@@ -362,4 +400,76 @@
         top: 20px;
         left: 22px;
     }
+}
+
+@media (max-width: 700px) {
+    .best-hero {
+        min-height: calc(88vh - 94px);
+        padding: 96px 22px 80px;
+    }
+
+    .best-eyebrow {
+        font-size: 11px;
+        letter-spacing: 0.24em;
+    }
+
+    .best-hero h1 {
+        font-size: clamp(48px, 16vw, 78px);
+    }
+
+    .best-hero p:last-child {
+        font-size: 14px;
+        line-height: 1.85;
+    }
+}
+
+/* ================================
+   BEST PAGE HEADER FINAL FIX
+   best.css는 header.css보다 뒤에 로드됨
+================================ */
+
+body.best-page-body {
+    padding-top: 0 !important;
+}
+
+/* BEST에서는 헤더 배경을 투명하게 */
+body.best-page-body .site-header {
+    background: transparent !important;
+    border-bottom: none !important;
+    box-shadow: none !important;
+}
+
+/* MENU / 로고 / Cart / Login / Join 전부 검은색 */
+body.best-page-body .site-header,
+body.best-page-body .site-header *,
+body.best-page-body .site-header a,
+body.best-page-body .site-header button,
+body.best-page-body .menu-btn,
+body.best-page-body .brand-logo,
+body.best-page-body .header-link,
+body.best-page-body .cart-count {
+    color: #111 !important;
+}
+
+/* 검색창 */
+body.best-page-body .header-search input {
+    color: #111 !important;
+    border-bottom-color: rgba(17, 17, 17, 0.45) !important;
+}
+
+body.best-page-body .header-search input::placeholder {
+    color: rgba(17, 17, 17, 0.65) !important;
+}
+
+/* 메뉴 열었을 때는 흰 배경 + 검은 글씨 */
+body.best-page-body.mega-open .site-header {
+    background: #fff !important;
+    border-bottom: 1px solid rgba(80, 62, 44, 0.1) !important;
+}
+
+body.best-page-body.mega-open .site-header,
+body.best-page-body.mega-open .site-header *,
+body.best-page-body.mega-open .site-header a,
+body.best-page-body.mega-open .site-header button {
+    color: #111 !important;
 }

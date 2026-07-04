@@ -214,25 +214,6 @@ body.header-on-light:not(.mega-open) .site-header .header-search input::placehol
     color: rgba(17, 17, 17, 0.55) !important;
 }
 
-body.best-page-body:not(.mega-open) .brand-logo,
-body.best-page-body:not(.mega-open) .menu-btn,
-body.best-page-body:not(.mega-open) #megaMenuBtn,
-body.best-page-body:not(.mega-open) .header-link,
-body.best-page-body:not(.mega-open) .header-right a,
-body.best-page-body:not(.mega-open) .site-header a,
-body.best-page-body:not(.mega-open) .site-header button {
-    color: #ffffff !important;
-}
-
-body.best-page-body:not(.mega-open) .site-header .header-search input {
-    color: #ffffff !important;
-    border-bottom-color: rgba(255, 255, 255, 0.62) !important;
-}
-
-body.best-page-body:not(.mega-open) .site-header .header-search input::placeholder {
-    color: rgba(255, 255, 255, 0.72) !important;
-}
-
 /* 검색창 */
 .site-header .header-search input {
     background: transparent !important;

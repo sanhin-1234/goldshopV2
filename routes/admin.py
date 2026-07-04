@@ -897,6 +897,11 @@ def ensure_home_media_slots(db):
         ("menu_featured_season", "메뉴 FEATURED 이미지 - SEASON", "image", 61),
         ("menu_featured_best", "메뉴 FEATURED 이미지 - BEST", "image", 62),
 
+        # NEW / SEASON / BEST 페이지 히어로 이미지
+        ("page_hero_new", "페이지 히어로 이미지 - NEW", "image", 63),
+        ("page_hero_season", "페이지 히어로 이미지 - SEASON", "image", 64),
+        ("page_hero_best", "페이지 히어로 이미지 - BEST", "image", 65),
+
         # 메뉴 METAL 이미지
         ("menu_metal_diamond", "메뉴 METAL 이미지 - DIAMOND", "image", 70),
         ("menu_metal_goldbar", "메뉴 METAL 이미지 - GOLD BAR", "image", 71),

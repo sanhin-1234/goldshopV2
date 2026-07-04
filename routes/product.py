@@ -35,6 +35,17 @@ def attach_rating_to_products(db, products):
 
     return rated_products
 
+def get_page_hero_media(db, slot_key):
+    hero = db.execute("""
+        SELECT *
+        FROM home_media
+        WHERE slot_key = ?
+          AND is_active = 1
+        LIMIT 1
+    """, (slot_key,)).fetchone()
+
+    return hero
+
 def ensure_home_media_table(cur):
     cur.execute("""
         CREATE TABLE IF NOT EXISTS home_media (
@@ -73,6 +84,10 @@ def ensure_home_media_table(cur):
         ("company_story_box_1", "회사 스토리 하단 이미지 1", "image", 31),
         ("company_story_box_2", "회사 스토리 하단 이미지 2", "image", 32),
         ("company_story_box_3", "회사 스토리 하단 이미지 3", "image", 33),
+
+        ("page_hero_new", "페이지 히어로 이미지 - NEW", "image", 63),
+        ("page_hero_season", "페이지 히어로 이미지 - SEASON", "image", 64),
+        ("page_hero_best", "페이지 히어로 이미지 - BEST", "image", 65),
     ]
 
     for slot_key, slot_name, media_type, sort_order in slots:
@@ -239,10 +254,13 @@ def shop():
 
             wished_product_ids = [row["product_id"] for row in wished_rows]
 
+        hero_media = get_page_hero_media(db, "page_hero_new")
+
         return render_template(
             "shop/new.html",
             products=products,
-            wished_product_ids=wished_product_ids
+            wished_product_ids=wished_product_ids,
+            hero_media=hero_media
         )
 
     query = "SELECT * FROM products WHERE 1=1"
@@ -611,12 +629,15 @@ def season():
 
         wished_product_ids = [row["product_id"] for row in wished_rows]
 
+    hero_media = get_page_hero_media(db, "page_hero_season")
+
     return render_template(
         "shop/season.html",
         products=products,
         season_products=products,
         product_count=len(products),
-        wished_product_ids=wished_product_ids
+        wished_product_ids=wished_product_ids,
+        hero_media=hero_media
     )
 
 @product_bp.route("/best")
@@ -632,7 +653,13 @@ def best():
 
     products = attach_rating_to_products(db, products)
 
-    return render_template("shop/best.html", products=products)
+    hero_media = get_page_hero_media(db, "page_hero_best")
+
+    return render_template(
+        "shop/best.html",
+        products=products,
+        hero_media=hero_media
+    )
 
 @product_bp.route("/brand-story")
 def brand_story():

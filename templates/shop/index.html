@@ -107,6 +107,101 @@
 
     </form>
 
+    <!-- MOBILE FILTER -->
+    <button type="button" class="shop-mobile-filter-toggle" aria-expanded="false">
+        FILTER
+        <span>+</span>
+    </button>
+
+    <div class="shop-mobile-filter-panel">
+
+        <div class="shop-mobile-filter-group">
+            <p>PRICE</p>
+
+            <button type="button"
+                    class="shop-mobile-filter-option {% if not price_range %}active{% endif %}"
+                    data-filter-name="price_range"
+                    data-filter-value="">
+                전체 가격
+            </button>
+
+            <button type="button"
+                    class="shop-mobile-filter-option {% if price_range == '0_50' %}active{% endif %}"
+                    data-filter-name="price_range"
+                    data-filter-value="0_50">
+                0 ~ 50만원
+            </button>
+
+            <button type="button"
+                    class="shop-mobile-filter-option {% if price_range == '50_100' %}active{% endif %}"
+                    data-filter-name="price_range"
+                    data-filter-value="50_100">
+                50 ~ 100만원
+            </button>
+
+            <button type="button"
+                    class="shop-mobile-filter-option {% if price_range == '100_150' %}active{% endif %}"
+                    data-filter-name="price_range"
+                    data-filter-value="100_150">
+                100 ~ 150만원
+            </button>
+
+            <button type="button"
+                    class="shop-mobile-filter-option {% if price_range == '150_200' %}active{% endif %}"
+                    data-filter-name="price_range"
+                    data-filter-value="150_200">
+                150 ~ 200만원
+            </button>
+
+            <button type="button"
+                    class="shop-mobile-filter-option {% if price_range == '200_up' %}active{% endif %}"
+                    data-filter-name="price_range"
+                    data-filter-value="200_up">
+                200만원 이상
+            </button>
+        </div>
+
+        <div class="shop-mobile-filter-group">
+            <p>SORT</p>
+
+            <button type="button"
+                    class="shop-mobile-filter-option {% if sort == 'latest' %}active{% endif %}"
+                    data-filter-name="sort"
+                    data-filter-value="latest">
+                최신순
+            </button>
+
+            <button type="button"
+                    class="shop-mobile-filter-option {% if sort == 'oldest' %}active{% endif %}"
+                    data-filter-name="sort"
+                    data-filter-value="oldest">
+                오래된순
+            </button>
+
+            <button type="button"
+                    class="shop-mobile-filter-option {% if sort == 'price_low' %}active{% endif %}"
+                    data-filter-name="sort"
+                    data-filter-value="price_low">
+                낮은 가격순
+            </button>
+
+            <button type="button"
+                    class="shop-mobile-filter-option {% if sort == 'price_high' %}active{% endif %}"
+                    data-filter-name="sort"
+                    data-filter-value="price_high">
+                높은 가격순
+            </button>
+
+            <button type="button"
+                    class="shop-mobile-filter-option {% if sort == 'name' %}active{% endif %}"
+                    data-filter-name="sort"
+                    data-filter-value="name">
+                이름순
+            </button>
+        </div>
+
+    </div>
+
 </section>
 
 <main class="shop-page">
@@ -208,6 +303,44 @@ function submitShopFilter(selectElement) {
     sessionStorage.setItem("shopScrollTarget", "shop-control-anchor");
     selectElement.form.submit();
 }
+
+document.addEventListener("DOMContentLoaded", function () {
+    const filterToggle = document.querySelector(".shop-mobile-filter-toggle");
+    const filterPanel = document.querySelector(".shop-mobile-filter-panel");
+    const filterForm = document.querySelector(".shop-control-form");
+
+    if (filterToggle && filterPanel) {
+        filterToggle.addEventListener("click", function () {
+            const isOpen = filterPanel.classList.toggle("is-open");
+
+            filterToggle.classList.toggle("is-open", isOpen);
+            filterToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+
+            const icon = filterToggle.querySelector("span");
+            if (icon) {
+                icon.textContent = isOpen ? "−" : "+";
+            }
+        });
+    }
+
+    document.querySelectorAll(".shop-mobile-filter-option").forEach(function (button) {
+        button.addEventListener("click", function () {
+            if (!filterForm) return;
+
+            const filterName = button.dataset.filterName;
+            const filterValue = button.dataset.filterValue;
+
+            const targetField = filterForm.querySelector(`[name="${filterName}"]`);
+
+            if (targetField) {
+                targetField.value = filterValue;
+            }
+
+            sessionStorage.setItem("shopScrollTarget", "shop-control-anchor");
+            filterForm.submit();
+        });
+    });
+});
 
 window.addEventListener("load", function () {
     const targetId = sessionStorage.getItem("shopScrollTarget");

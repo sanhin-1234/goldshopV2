@@ -533,11 +533,25 @@ body.mega-open .site-header {
         height: 30px;
     }
 
+    /* 모바일 상단 광고 띠 간격 */
+    .top-promo-set,
+    .top-promo-group {
+        min-width: 180vw;
+        justify-content: flex-start;
+        gap: 56px;
+        padding: 0 28px;
+    }
+
     .top-promo-set a,
     .top-promo-group a,
     .top-promo-group span {
         font-size: 10px;
         letter-spacing: 0.12em;
+        white-space: nowrap;
+    }
+
+    .top-promo-track {
+        animation-duration: 38s;
     }
 
     .site-header {
@@ -814,4 +828,44 @@ body.mega-open .site-header {
     height: 100%;
     object-fit: cover;
     display: block;
+}
+
+/* ================================
+   BEST PAGE HEADER FIX
+   히어로 위 투명 헤더 + 검은 글씨
+================================ */
+
+body.best-page-body {
+    padding-top: 0 !important;
+}
+
+body.best-page-body .site-header {
+    background: transparent !important;
+    border-bottom: none !important;
+    box-shadow: none !important;
+}
+
+body.best-page-body .site-header,
+body.best-page-body .site-header a,
+body.best-page-body .site-header button,
+body.best-page-body .site-header span,
+body.best-page-body .menu-btn,
+body.best-page-body .brand-logo,
+body.best-page-body .header-link,
+body.best-page-body .cart-count {
+    color: #111 !important;
+}
+
+body.best-page-body .header-search input {
+    color: #111 !important;
+    border-bottom-color: rgba(17, 17, 17, 0.45) !important;
+}
+
+body.best-page-body .header-search input::placeholder {
+    color: rgba(17, 17, 17, 0.65) !important;
+}
+
+body.best-page-body.mega-open .site-header {
+    background: #fff !important;
+    border-bottom: 1px solid rgba(80, 62, 44, 0.1) !important;
 }

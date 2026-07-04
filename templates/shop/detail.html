@@ -666,5 +666,23 @@
 
 </script>
 
+<!-- MOBILE FIXED OPTION BUTTON -->
+<button type="button" class="detail-mobile-fixed-cart-btn" id="mobileFixedCartBtn">
+    옵션 선택하기
+</button>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const originalCartBtn = document.querySelector(".detail-cart-btn");
+    const mobileFixedBtn = document.getElementById("mobileFixedCartBtn");
+
+    if (!originalCartBtn || !mobileFixedBtn) return;
+
+    mobileFixedBtn.addEventListener("click", function () {
+        originalCartBtn.click();
+    });
+});
+</script>
+
 </body>
 </html>
