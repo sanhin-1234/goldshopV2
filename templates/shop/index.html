@@ -39,27 +39,48 @@
     {% set hero_label = '<SHOP IMAGE>' %}
 {% endif %}
 
-<section class="shop-category-hero">
+<section class="shop-category-hero
+    {% if current_category in ['NECKLACE', 'EARRINGS', 'BRACELET'] %}
+        hero-text-right
+    {% else %}
+        hero-text-left
+    {% endif %}
+">
 
     <div class="shop-category-hero-visual">
-        <div class="shop-category-hero-placeholder">
-            {{ hero_label }}
-        </div>
+
+        {% if shop_hero_media and shop_hero_media['filename'] %}
+
+            {% if shop_hero_media['media_type'] == 'video' %}
+
+                <video class="shop-category-hero-media" autoplay muted loop playsinline>
+                    <source src="/uploads/{{ shop_hero_media['filename'] }}">
+                </video>
+
+            {% else %}
+
+                <img
+                    class="shop-category-hero-media"
+                    src="/uploads/{{ shop_hero_media['filename'] }}"
+                    alt="{{ hero_title }} hero image"
+                >
+
+            {% endif %}
+
+        {% else %}
+
+            <div class="shop-category-hero-placeholder">
+                {{ hero_label }}
+            </div>
+
+        {% endif %}
+
     </div>
 
     <div class="shop-category-hero-text">
         <p class="shop-category-eyebrow">GY JEWELRY</p>
         <h1>{{ hero_title }}</h1>
         <p>{{ hero_subtitle }}</p>
-    </div>
-
-    <div class="shop-category-tabs">
-        <a href="/shop" class="{% if not current_category %}active{% endif %}">All</a>
-        <a href="/shop?category=RING" class="{% if current_category == 'RING' %}active{% endif %}">Ring</a>
-        <a href="/shop?category=NECKLACE" class="{% if current_category == 'NECKLACE' %}active{% endif %}">Necklace</a>
-        <a href="/shop?category=EARRINGS" class="{% if current_category == 'EARRINGS' %}active{% endif %}">Earrings</a>
-        <a href="/shop?category=BRACELET" class="{% if current_category == 'BRACELET' %}active{% endif %}">Bracelet</a>
-        <a href="/shop?category=ANKLET" class="{% if current_category == 'ANKLET' %}active{% endif %}">Anklet</a>
     </div>
 
 </section>

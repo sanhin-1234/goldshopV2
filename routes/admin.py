@@ -8,7 +8,7 @@ import uuid
 from werkzeug.utils import secure_filename
 from werkzeug.security import check_password_hash
 from datetime import datetime, date
-
+from decimal import Decimal, ROUND_HALF_UP, InvalidOperation, getcontext
 
 admin_bp = Blueprint("admin", __name__, url_prefix="/admin")
 
@@ -190,6 +190,443 @@ def save_season_between_media(file):
     return new_filename, "image"
 
 # =========================================================
+# GOLD RATE ADMIN
+# =========================================================
+
+def clean_money_value(value):
+    value = value or ""
+    digits = "".join(filter(str.isdigit, value))
+
+    if not digits:
+        return 0
+
+    return int(digits)
+
+
+@admin_bp.route("/gold-rate", methods=["GET", "POST"])
+def admin_gold_rate():
+    db = get_db()
+
+    today_str = date.today().strftime("%Y-%m-%d")
+    error = None
+
+    if request.method == "POST":
+        rate_date = request.form.get("rate_date", today_str).strip()
+        pure_gold_price_per_don = clean_money_value(
+            request.form.get("pure_gold_price_per_don")
+        )
+
+        if not rate_date:
+            rate_date = today_str
+
+        if pure_gold_price_per_don <= 0:
+            error = "순금시세를 숫자로 입력해 주세요."
+        else:
+            pure_gold_price_per_gram = round(pure_gold_price_per_don / 3.75)
+
+            existing_rate = db.execute("""
+                SELECT *
+                FROM gold_market_rates
+                WHERE rate_date = ?
+            """, (rate_date,)).fetchone()
+
+            if existing_rate:
+                db.execute("""
+                    UPDATE gold_market_rates
+                    SET pure_gold_price_per_don = ?,
+                        pure_gold_price_per_gram = ?,
+                        source = ?,
+                        updated_at = CURRENT_TIMESTAMP
+                    WHERE rate_date = ?
+                """, (
+                    pure_gold_price_per_don,
+                    pure_gold_price_per_gram,
+                    "manual",
+                    rate_date
+                ))
+            else:
+                db.execute("""
+                    INSERT INTO gold_market_rates (
+                        rate_date,
+                        pure_gold_price_per_don,
+                        pure_gold_price_per_gram,
+                        source
+                    )
+                    VALUES (?, ?, ?, ?)
+                """, (
+                    rate_date,
+                    pure_gold_price_per_don,
+                    pure_gold_price_per_gram,
+                    "manual"
+                ))
+
+            db.commit()
+            flash("금 시세가 저장되었습니다.")
+            return redirect(url_for("admin.admin_gold_rate"))
+
+    latest_rate = db.execute("""
+        SELECT *
+        FROM gold_market_rates
+        ORDER BY rate_date DESC, id DESC
+        LIMIT 1
+    """).fetchone()
+
+    recent_rates = db.execute("""
+        SELECT *
+        FROM gold_market_rates
+        ORDER BY rate_date DESC, id DESC
+        LIMIT 20
+    """).fetchall()
+
+    return render_template(
+        "admin/gold_rate.html",
+        today_str=today_str,
+        latest_rate=latest_rate,
+        recent_rates=recent_rates,
+        error=error
+    )
+
+# =========================================================
+# JEWELRY PRICE CALCULATION - 14K BASE
+# =========================================================
+
+GOLD_PURITY_14K = Decimal("0.585")
+GOLD_PURITY_18K = Decimal("0.75")
+WEIGHT_RATIO_18K_FROM_14K = Decimal("1.15")
+VAT_MULTIPLIER = Decimal("1.10")
+
+
+def to_decimal(value, default="0"):
+    try:
+        if value is None:
+            return Decimal(default)
+
+        value = str(value).replace(",", "").strip()
+
+        if value == "":
+            return Decimal(default)
+
+        return Decimal(value)
+
+    except (InvalidOperation, ValueError):
+        return Decimal(default)
+
+
+def round_won(value):
+    return int(Decimal(value).quantize(Decimal("1"), rounding=ROUND_HALF_UP))
+
+def round_1000_won(value):
+    return int(
+        (Decimal(value) / Decimal("1000"))
+        .quantize(Decimal("1"), rounding=ROUND_HALF_UP)
+        * Decimal("1000")
+    )
+
+def round_10000_won(value):
+    return int(
+        (Decimal(value) / Decimal("10000"))
+        .quantize(Decimal("1"), rounding=ROUND_HALF_UP)
+        * Decimal("10000")
+    )
+
+def normalize_percent_rate(value):
+    """
+    할인율 변환.
+    10 입력 → 0.10
+    0.10 입력 → 0.10
+    """
+    rate = to_decimal(value, "0")
+
+    if rate > 1:
+        rate = rate / Decimal("100")
+
+    return rate
+
+def normalize_haeri_rate(value):
+    """
+    해리율 변환.
+    10 입력   → 0.10
+    0.10 입력 → 0.10
+    1.10 입력 → 0.10
+    """
+    rate = to_decimal(value, "0")
+
+    if rate >= 1:
+        if rate >= 2:
+            rate = rate / Decimal("100")
+        else:
+            rate = rate - Decimal("1")
+
+    return rate
+
+
+def get_latest_gold_rate(db):
+    return db.execute("""
+        SELECT *
+        FROM gold_market_rates
+        ORDER BY rate_date DESC, id DESC
+        LIMIT 1
+    """).fetchone()
+
+
+def calculate_price_from_14k_weight(
+    pure_gold_price_per_gram,
+    weight_14k,
+    labor_fee,
+    multiplier,
+    discount_rate,
+    haeri_rate
+):
+    """
+    14K 금중량 기준 가격 계산.
+
+    관리자 입력값:
+    - 14K 금중량
+    - 총 공임
+    - 배수
+    - 할인율
+
+    14K:
+    순중량 = 14K 금중량 × 0.585
+    금값 = 순중량 × g당 금시세
+    제품원가 = 금값 + 총 공임
+    기본판매가 = 제품원가 × 배수
+    할인판매가 = 기본판매가 × (1 - 할인율)
+
+    18K:
+    18K 금중량 = 14K 금중량 × 1.15
+    순중량 = 18K 금중량 × 0.75
+    금값 = 순중량 × g당 금시세
+    제품원가 = 금값 + 총 공임
+    기본판매가 = 제품원가 × 배수
+    할인판매가 = 기본판매가 × (1 - 할인율)
+    """
+
+    gram_price = to_decimal(pure_gold_price_per_gram)
+    weight_14k = to_decimal(weight_14k)
+    labor_fee = to_decimal(labor_fee)
+    multiplier = to_decimal(multiplier, "1.20")
+    discount_rate = normalize_percent_rate(discount_rate)
+    haeri_rate = normalize_haeri_rate(haeri_rate)
+    haeri_multiplier = Decimal("1") + haeri_rate
+
+    # 14K 계산
+    pure_weight_14k = weight_14k * GOLD_PURITY_14K
+    gold_price_14k_raw = pure_weight_14k * gram_price * haeri_multiplier
+    gold_price_14k = Decimal(round_1000_won(gold_price_14k_raw))
+    cost_14k = gold_price_14k + labor_fee
+    base_sale_price_14k_raw = cost_14k * multiplier * VAT_MULTIPLIER
+    base_sale_price_14k = Decimal(round_10000_won(base_sale_price_14k_raw))
+    discount_price_14k = base_sale_price_14k * (Decimal("1") - discount_rate)
+    margin_amount_14k = discount_price_14k - cost_14k
+
+    # 18K 계산
+    weight_18k = weight_14k * WEIGHT_RATIO_18K_FROM_14K
+    pure_weight_18k = weight_18k * GOLD_PURITY_18K
+    gold_price_18k_raw = pure_weight_18k * gram_price * haeri_multiplier
+    gold_price_18k = Decimal(round_1000_won(gold_price_18k_raw))
+    cost_18k = gold_price_18k + labor_fee
+    base_sale_price_18k_raw = cost_18k * multiplier * VAT_MULTIPLIER
+    base_sale_price_18k = Decimal(round_10000_won(base_sale_price_18k_raw))
+    discount_price_18k = base_sale_price_18k * (Decimal("1") - discount_rate)
+    margin_amount_18k = discount_price_18k - cost_18k
+
+    additional_price_18k = discount_price_18k - discount_price_14k
+
+    return {
+        "14K": {
+            "material": "14K",
+            "gold_weight": str(weight_14k.quantize(Decimal("0.01"))),
+            "pure_weight": str(pure_weight_14k.quantize(Decimal("0.01"))),
+            "gold_price": round_won(gold_price_14k),
+            "labor_fee": round_won(labor_fee),
+            "cost": round_won(cost_14k),
+            "base_sale_price": round_won(base_sale_price_14k),
+            "discount_rate": float(discount_rate),
+            "haeri_rate": float(haeri_rate),
+            "discount_price": round_won(discount_price_14k),
+            "margin_amount": round_won(margin_amount_14k),
+            "additional_price": 0,
+        },
+        "18K": {
+            "material": "18K",
+            "gold_weight": str(weight_18k.quantize(Decimal("0.01"))),
+            "pure_weight": str(pure_weight_18k.quantize(Decimal("0.01"))),
+            "gold_price": round_won(gold_price_18k),
+            "labor_fee": round_won(labor_fee),
+            "cost": round_won(cost_18k),
+            "base_sale_price": round_won(base_sale_price_18k),
+            "discount_rate": float(discount_rate),
+            "haeri_rate": float(haeri_rate),
+            "discount_price": round_won(discount_price_18k),
+            "margin_amount": round_won(margin_amount_18k),
+            "additional_price": round_won(additional_price_18k),
+        }
+    }
+
+
+# =========================================================
+# PRODUCT MATERIAL PRICE SAVE - 14K BASE
+# =========================================================
+
+def parse_admin_number(value):
+    value = value or ""
+    digits = "".join(filter(str.isdigit, str(value)))
+
+    if not digits:
+        return 0
+
+    return int(digits)
+
+
+def parse_admin_decimal_string(value, default="0"):
+    value = str(value or "").replace(",", "").strip()
+
+    if value == "":
+        return default
+
+    return value
+
+
+def get_14k_base_price_result(db, form):
+    latest_rate = get_latest_gold_rate(db)
+
+    if not latest_rate:
+        return None
+
+    weight_14k = parse_admin_decimal_string(
+        form.get("base_14k_weight")
+    )
+
+    labor_fee = parse_admin_number(
+        form.get("total_labor_fee")
+    )
+
+    multiplier = parse_admin_decimal_string(
+        form.get("price_multiplier"),
+        "1.20"
+    )
+
+    discount_rate = parse_admin_decimal_string(
+        form.get("discount_rate"),
+        "0"
+    )
+
+    haeri_rate = parse_admin_decimal_string(
+        form.get("haeri_rate"),
+        "0"
+    )
+
+    if to_decimal(weight_14k) <= 0:
+        return None
+
+    if labor_fee <= 0:
+        return None
+
+    return calculate_price_from_14k_weight(
+        pure_gold_price_per_gram=latest_rate["pure_gold_price_per_gram"],
+        weight_14k=weight_14k,
+        labor_fee=labor_fee,
+        multiplier=multiplier,
+        discount_rate=discount_rate,
+        haeri_rate=haeri_rate
+    )
+
+
+def get_representative_product_price(db, form):
+    """
+    상품 카드에 표시될 대표 가격.
+    기준은 무조건 14K 할인판매가.
+    """
+
+    result = get_14k_base_price_result(db, form)
+
+    if result and result["14K"]["discount_price"] > 0:
+        return result["14K"]["discount_price"]
+
+    return 0
+
+
+def save_product_material_prices(db, product_id, form):
+    """
+    product_material_prices에 항상 14K / 18K 두 줄 저장.
+    기준 입력은 14K 금중량 하나만 사용.
+    """
+
+    db.execute("""
+        DELETE FROM product_material_prices
+        WHERE product_id = ?
+    """, (product_id,))
+
+    result = get_14k_base_price_result(db, form)
+
+    if not result:
+        return
+
+    weight_14k = parse_admin_decimal_string(
+        form.get("base_14k_weight")
+    )
+
+    multiplier = parse_admin_decimal_string(
+        form.get("price_multiplier"),
+        "1.20"
+    )
+
+    discount_rate = parse_admin_decimal_string(
+        form.get("discount_rate"),
+        "0"
+    )
+
+    haeri_rate = parse_admin_decimal_string(
+        form.get("haeri_rate"),
+        "0"
+    )
+
+    for sort_order, material_label in enumerate(["14K", "18K"], start=1):
+        data = result[material_label]
+
+        db.execute("""
+            INSERT INTO product_material_prices (
+                product_id,
+                material,
+                gold_weight,
+                base_price,
+                sort_order,
+                labor_fee,
+                stone_price,
+                extra_fee,
+                loss_rate,
+                margin_multiplier,
+                calculated_cost,
+                is_manual_price,
+                pure_weight,
+                gold_price,
+                discount_rate,
+                discount_price,
+                base_14k_weight
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (
+            product_id,
+            material_label,
+            data["gold_weight"],
+            data["base_sale_price"],
+            sort_order,
+            data["labor_fee"],
+            0,
+            data["additional_price"],
+            haeri_rate,
+            multiplier,
+            data["cost"],
+            0,
+            data["pure_weight"],
+            data["gold_price"],
+            discount_rate,
+            data["discount_price"],
+            weight_14k
+        ))
+
+# =========================================================
 # FAQ ADMIN
 # =========================================================
 
@@ -319,12 +756,15 @@ def admin_home():
 # 상품 추가
 @admin_bp.route("/add", methods=["GET", "POST"])
 def add_product():
+    db = get_db()
+
+    latest_rate = get_latest_gold_rate(db)
+
     if request.method == "POST":
-        name = request.form.get("name")
-        price = request.form.get("price")
-        description = request.form.get("description")
+        name = request.form.get("name", "").strip()
+        description = request.form.get("description", "").strip()
         collection = request.form.get("collection", "").strip().upper()
-        sub_category = request.form.get("sub_category", "").strip()
+        sub_category = request.form.get("sub_category", "").strip().upper()
         tag = request.form.get("tag", "").strip().upper()
         material = request.form.get("material", "").strip().upper()
 
@@ -334,6 +774,29 @@ def add_product():
 
         season_banner_image = request.files.get("season_banner_image")
         season_between_media = request.files.get("season_between_media")
+
+        if not name:
+            return render_template(
+                "admin/add_product.html",
+                error="상품명을 입력해 주세요.",
+                latest_rate=latest_rate
+            )
+
+        if not collection:
+            return render_template(
+                "admin/add_product.html",
+                error="컬렉션을 선택해 주세요.",
+                latest_rate=latest_rate
+            )
+
+        representative_price = get_representative_product_price(db, request.form)
+
+        if representative_price <= 0:
+            return render_template(
+                "admin/add_product.html",
+                error="14K 금중량, 총 공임, 해리율, 배수, 할인율을 입력해 주세요.",
+                latest_rate=latest_rate
+            )
 
         filename = None
         new_banner_filename = None
@@ -352,22 +815,15 @@ def add_product():
 
             season_banner_filename = save_product_image(season_banner_image)
             season_between_filename, season_between_media_type = save_season_between_media(season_between_media)
+
         except ValueError as e:
             return render_template(
                 "admin/add_product.html",
-                error=str(e)
+                error=str(e),
+                latest_rate=latest_rate
             )
 
-        price = "".join(filter(str.isdigit, price or ""))
-
-        if not price:
-            return render_template(
-                "admin/add_product.html",
-                error="가격은 숫자로 입력해 주세요."
-            )
-
-        db = get_db()
-        db.execute(
+        cursor = db.execute(
             """
             INSERT INTO products (
                 name,
@@ -389,7 +845,7 @@ def add_product():
             """,
             (
                 name,
-                price,
+                representative_price,
                 filename,
                 description,
                 collection,
@@ -404,11 +860,19 @@ def add_product():
                 season_between_media_type
             )
         )
+
+        product_id = cursor.lastrowid
+
+        save_product_material_prices(db, product_id, request.form)
+
         db.commit()
 
         return redirect("/admin")
 
-    return render_template("admin/add_product.html")
+    return render_template(
+        "admin/add_product.html",
+        latest_rate=latest_rate
+    )
 
 # 이미지 서빙 (중요)
 @admin_bp.route("/uploads/<filename>")
@@ -700,6 +1164,9 @@ def update_order_status(order_id):
 @admin_bp.route("/edit/<int:product_id>")
 def edit_product(product_id):
     db = get_db()
+
+    latest_rate = get_latest_gold_rate(db)
+
     product = db.execute(
         "SELECT * FROM products WHERE id = ?",
         (product_id,)
@@ -708,7 +1175,27 @@ def edit_product(product_id):
     if product is None:
         return redirect("/admin")
 
-    return render_template("admin/edit_product.html", product=product)
+    material_prices = db.execute("""
+        SELECT *
+        FROM product_material_prices
+        WHERE product_id = ?
+        ORDER BY sort_order ASC, id ASC
+    """, (product_id,)).fetchall()
+
+    material_price_map = {}
+
+    for item in material_prices:
+        material_price_map[item["material"]] = item
+
+    price_base = material_price_map.get("14K")
+
+    return render_template(
+        "admin/edit_product.html",
+        product=product,
+        latest_rate=latest_rate,
+        material_price_map=material_price_map,
+        price_base=price_base
+    )
 
 
 @admin_bp.route("/edit-product/<int:product_id>")
@@ -720,9 +1207,42 @@ def old_edit_product_url(product_id):
 def update_product(product_id):
     db = get_db()
 
-    name = request.form.get("name")
-    price = request.form.get("price")
-    description = request.form.get("description")
+    latest_rate = get_latest_gold_rate(db)
+
+    product = db.execute(
+        "SELECT * FROM products WHERE id = ?",
+        (product_id,)
+    ).fetchone()
+
+    if product is None:
+        return redirect("/admin")
+
+    material_prices = db.execute("""
+        SELECT *
+        FROM product_material_prices
+        WHERE product_id = ?
+        ORDER BY sort_order ASC, id ASC
+    """, (product_id,)).fetchall()
+
+    material_price_map = {}
+
+    for item in material_prices:
+        material_price_map[item["material"]] = item
+
+    price_base = material_price_map.get("14K")
+
+    def render_edit_with_error(message):
+        return render_template(
+            "admin/edit_product.html",
+            product=product,
+            latest_rate=latest_rate,
+            material_price_map=material_price_map,
+            price_base=price_base,
+            error=message
+        )
+
+    name = request.form.get("name", "").strip()
+    description = request.form.get("description", "").strip()
     collection = request.form.get("collection", "").strip().upper()
     sub_category = request.form.get("sub_category", "").strip().upper()
     tag = request.form.get("tag", "").strip().upper()
@@ -735,18 +1255,17 @@ def update_product(product_id):
     season_banner_image = request.files.get("season_banner_image")
     season_between_media = request.files.get("season_between_media")
 
-    price = "".join(filter(str.isdigit, price or ""))
+    if not name:
+        return render_edit_with_error("상품명을 입력해 주세요.")
 
-    if not price:
-        product = db.execute(
-            "SELECT * FROM products WHERE id = ?",
-            (product_id,)
-        ).fetchone()
+    if not collection:
+        return render_edit_with_error("컬렉션을 선택해 주세요.")
 
-        return render_template(
-            "admin/edit_product.html",
-            product=product,
-            error="가격은 숫자로 입력해 주세요."
+    representative_price = get_representative_product_price(db, request.form)
+
+    if representative_price <= 0:
+        return render_edit_with_error(
+            "14K 금중량, 총 공임, 해리율, 배수, 할인율을 입력해 주세요."
         )
 
     try:
@@ -759,16 +1278,7 @@ def update_product(product_id):
         season_between_filename, season_between_media_type = save_season_between_media(season_between_media)
 
     except ValueError as e:
-        product = db.execute(
-            "SELECT * FROM products WHERE id = ?",
-            (product_id,)
-        ).fetchone()
-
-        return render_template(
-            "admin/edit_product.html",
-            product=product,
-            error=str(e)
-        )
+        return render_edit_with_error(str(e))
 
     update_fields = [
         "name = ?",
@@ -782,9 +1292,10 @@ def update_product(product_id):
 
     params = [
         name,
-        price,
+        representative_price,
         description,
         collection,
+        sub_category,
         tag,
         material
     ]
@@ -822,6 +1333,9 @@ def update_product(product_id):
     """
 
     db.execute(query, params)
+
+    save_product_material_prices(db, product_id, request.form)
+
     db.commit()
 
     return redirect("/admin")
@@ -906,14 +1420,20 @@ def ensure_home_media_slots(db):
         ("page_hero_new", "페이지 히어로 이미지 - NEW", "image", 63),
         ("page_hero_season", "페이지 히어로 이미지 - SEASON", "image", 64),
         ("page_hero_best", "페이지 히어로 이미지 - BEST", "image", 65),
+        ("page_hero_shop", "페이지 히어로 이미지 - SHOP", "image", 66),
+        ("page_hero_shop_ring", "페이지 히어로 이미지 - SHOP / RING", "image", 67),
+        ("page_hero_shop_necklace", "페이지 히어로 이미지 - SHOP / NECKLACE", "image", 68),
+        ("page_hero_shop_earrings", "페이지 히어로 이미지 - SHOP / EARRINGS", "image", 69),
+        ("page_hero_shop_bracelet", "페이지 히어로 이미지 - SHOP / BRACELET", "image", 70),
+        ("page_hero_shop_anklet", "페이지 히어로 이미지 - SHOP / ANKLET", "image", 71),
 
         # 메뉴 METAL 이미지
-        ("menu_metal_diamond", "메뉴 METAL 이미지 - DIAMOND", "image", 70),
-        ("menu_metal_goldbar", "메뉴 METAL 이미지 - GOLD BAR", "image", 71),
-        ("menu_metal_24k", "메뉴 METAL 이미지 - 24K", "image", 72),
-        ("menu_metal_18k", "메뉴 METAL 이미지 - 18K", "image", 73),
-        ("menu_metal_14k", "메뉴 METAL 이미지 - 14K", "image", 74),
-        ("menu_metal_silver", "메뉴 METAL 이미지 - SILVER", "image", 75),
+        ("menu_metal_diamond", "메뉴 METAL 이미지 - DIAMOND", "image", 72),
+        ("menu_metal_goldbar", "메뉴 METAL 이미지 - GOLD BAR", "image", 73),
+        ("menu_metal_24k", "메뉴 METAL 이미지 - 24K", "image", 74),
+        ("menu_metal_18k", "메뉴 METAL 이미지 - 18K", "image", 75),
+        ("menu_metal_14k", "메뉴 METAL 이미지 - 14K", "image", 76),
+        ("menu_metal_silver", "메뉴 METAL 이미지 - SILVER", "image", 77),
 
         # 메뉴 GIFT 이미지
         ("menu_gift_men", "메뉴 GIFT 이미지 - 남", "image", 81),

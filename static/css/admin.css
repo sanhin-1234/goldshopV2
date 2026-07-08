@@ -617,10 +617,15 @@
     min-height: 100vh;
 }
 
+.add-product-page .admin-container {
+    width: min(1360px, calc(100% - 56px));
+    max-width: 1360px;
+}
+
 .add-product-layout {
     display: grid;
-    grid-template-columns: minmax(0, 1.4fr) 360px;
-    gap: 40px;
+    grid-template-columns: minmax(0, 1fr) 320px;
+    gap: 52px;
     align-items: start;
     margin-top: 42px;
 }
@@ -633,7 +638,8 @@
 }
 
 .add-product-form-card {
-    padding: 44px 48px;
+    padding: 54px 58px;
+    border-radius: 34px;
 }
 
 .form-head {
@@ -663,27 +669,29 @@
 .admin-product-form {
     display: flex;
     flex-direction: column;
-    gap: 22px;
+    gap: 34px;
 }
 
 .form-field {
-    display: grid;
-    grid-template-columns: 120px 1fr;
-    gap: 18px;
-    align-items: start;
+    display: block;
+    width: 100%;
 }
 
 .form-field label {
-    padding-top: 14px;
+    display: block;
+    padding-top: 0;
+    margin-bottom: 10px;
     font-size: 13px;
     color: #111;
     letter-spacing: 0.08em;
+    line-height: 1.6;
 }
 
 .form-field input,
 .form-field select,
 .form-field textarea {
     width: 100%;
+    min-height: 52px;
     box-sizing: border-box;
 
     border: 1px solid #d8cfc0;
@@ -748,8 +756,8 @@
 .form-actions {
     display: flex;
     gap: 12px;
-    margin-top: 16px;
-    padding-left: 138px;
+    margin-top: 10px;
+    padding-left: 0;
 }
 
 .admin-submit-btn,
@@ -791,9 +799,11 @@
 }
 
 .product-guide-card {
-    padding: 38px 34px;
+    padding: 36px 32px;
     position: sticky;
-    top: 110px;
+    top: 82px;
+    margin-top: -18px;
+    border-radius: 28px;
 }
 
 .guide-label {
@@ -874,21 +884,15 @@
 }
 
 @media (max-width: 640px) {
+    .add-product-page .admin-container {
+        width: min(100% - 28px, 1360px);
+    }
+
     .add-product-form-card {
         padding: 34px 24px;
     }
 
-    .form-field {
-        grid-template-columns: 1fr;
-        gap: 8px;
-    }
-
-    .form-field label {
-        padding-top: 0;
-    }
-
     .form-actions {
-        padding-left: 0;
         flex-direction: column;
     }
 
@@ -2588,4 +2592,411 @@
     color: #7a5b37;
     font-size: 12px;
     letter-spacing: -0.02em;
+}
+
+/* =========================================================
+   ADD PRODUCT PRICE CALCULATION FORM
+   상품 등록 가격 계산 폼
+========================================================= */
+
+.admin-form-panel {
+    margin-bottom: 46px;
+    padding: 42px;
+    border: 1px solid rgba(40, 32, 24, 0.1);
+    border-radius: 30px;
+    background: rgba(255, 255, 255, 0.78);
+    box-shadow: 0 18px 45px rgba(40, 32, 24, 0.06);
+}
+
+.form-head.compact {
+    margin-bottom: 34px;
+}
+
+.form-head.compact p {
+    margin-bottom: 10px;
+}
+
+.form-head.compact h2 {
+    margin-top: 4px;
+    font-size: 26px;
+    line-height: 1.35;
+}
+
+.form-head.compact span {
+    display: block;
+    margin-top: 10px;
+    line-height: 1.8;
+}
+
+.form-row-2 {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 26px;
+    align-items: start;
+}
+
+.admin-form-panel .form-field {
+    margin-bottom: 24px;
+}
+
+.admin-form-panel .form-field small {
+    display: block;
+    margin-top: 9px;
+    font-size: 12px;
+    line-height: 1.65;
+    color: #8a8177;
+}
+
+.gold-rate-summary {
+    margin-bottom: 34px;
+    padding: 28px 32px;
+    border-radius: 24px;
+    background: linear-gradient(135deg, #f7efe2, #fffaf1);
+    border: 1px solid rgba(160, 120, 70, 0.18);
+}
+
+.gold-rate-summary p {
+    margin: 0 0 6px;
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    color: #9a7a4f;
+}
+
+.gold-rate-summary strong {
+    display: block;
+    margin-top: 6px;
+    font-size: 28px;
+    font-weight: 500;
+    line-height: 1.35;
+    color: #2d241b;
+}
+
+.gold-rate-summary span,
+.gold-rate-summary a {
+    display: inline-block;
+    margin-top: 10px;
+    font-size: 13px;
+    color: #7d6a54;
+}
+
+.material-calc-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 30px;
+}
+
+.material-calc-card {
+    padding: 34px;
+    border-radius: 26px;
+    background: #fff;
+    border: 1px solid rgba(30, 24, 18, 0.09);
+}
+
+.material-calc-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 28px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(30, 24, 18, 0.08);
+    font-size: 17px;
+    font-weight: 500;
+    color: #2d241b;
+}
+
+.material-calc-head input {
+    width: 18px;
+    height: 18px;
+}
+
+.material-calc-head span {
+    font-size: 20px;
+}
+
+.material-calc-card .form-row-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+}
+
+.material-calc-card .form-field label {
+    white-space: nowrap;
+}
+
+.calculated-price-box {
+    margin-top: 16px;
+    padding: 26px 28px;
+    border-radius: 22px;
+    background: #18130f;
+    color: #fff;
+}
+
+.calculated-price-box span {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.65);
+    letter-spacing: 0.12em;
+}
+
+.calculated-price-box strong {
+    font-size: 32px;
+    line-height: 1.3;
+    font-weight: 500;
+}
+
+.advanced-media-box {
+    margin-top: 30px;
+    padding: 28px;
+    border-radius: 24px;
+    background: #f8f4ee;
+    border: 1px solid rgba(40, 32, 24, 0.08);
+}
+
+.advanced-media-box summary {
+    cursor: pointer;
+    padding: 4px 0;
+    font-size: 15px;
+    letter-spacing: 0.08em;
+    color: #4a3a2c;
+}
+
+.advanced-media-box .form-field {
+    margin-top: 20px;
+}
+
+@media (max-width: 1100px) {
+    .add-product-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .product-guide-card {
+        position: static;
+        margin-top: 0;
+    }
+}
+
+@media (max-width: 760px) {
+    .admin-form-panel {
+        padding: 26px;
+    }
+
+    .form-row-2,
+    .material-calc-card .form-row-2 {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* =========================================================
+   ADD PRODUCT PRICE RESULT UI
+   14K / 18K 계산 결과 카드
+========================================================= */
+
+.price-calc-input-card {
+    margin: 30px 0 34px;
+    padding: 30px;
+    border-radius: 24px;
+    background: #fbf8f2;
+    border: 1px solid rgba(150, 120, 80, 0.16);
+}
+
+.price-result-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+    margin-top: 30px;
+}
+
+.price-result-card {
+    padding: 30px;
+    border-radius: 26px;
+    background: #ffffff;
+    border: 1px solid rgba(30, 24, 18, 0.09);
+    box-shadow: 0 18px 46px rgba(40, 32, 24, 0.06);
+}
+
+.price-result-card > p {
+    margin: 0 0 10px;
+    font-size: 12px;
+    letter-spacing: 0.22em;
+    color: #9a7a4f;
+}
+
+.price-result-card h3 {
+    margin: 0 0 24px;
+    font-size: 23px;
+    font-weight: 500;
+    letter-spacing: -0.04em;
+    color: #17120e;
+}
+
+.price-result-card dl {
+    margin: 0;
+    display: grid;
+    gap: 12px;
+}
+
+.price-result-card dl div {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 13px 0;
+    border-bottom: 1px solid rgba(30, 24, 18, 0.08);
+}
+
+.price-result-card dt {
+    font-size: 14px;
+    color: #7b7064;
+    letter-spacing: -0.02em;
+}
+
+.price-result-card dd {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 500;
+    color: #17120e;
+    text-align: right;
+    white-space: nowrap;
+}
+
+.final-sale-price {
+    margin-top: 26px;
+    padding: 24px;
+    border-radius: 22px;
+    background: #17120e;
+    color: #ffffff;
+}
+
+.final-sale-price span {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 12px;
+    letter-spacing: 0.16em;
+    color: rgba(255, 255, 255, 0.62);
+}
+
+.final-sale-price strong {
+    display: block;
+    font-size: 30px;
+    line-height: 1.2;
+    font-weight: 600;
+    letter-spacing: -0.04em;
+}
+
+.final-sale-price em {
+    display: inline-flex;
+    margin-top: 12px;
+    padding: 7px 12px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.12);
+    color: #f4d8aa;
+    font-size: 14px;
+    font-style: normal;
+    letter-spacing: -0.02em;
+}
+
+/* 18K 카드 살짝 구분 */
+.price-result-card:nth-child(2) {
+    background:
+        linear-gradient(145deg, rgba(255, 250, 242, 0.9), rgba(255, 255, 255, 0.95));
+}
+
+/* 입력 카드 안의 form-field가 너무 좁게 보이지 않도록 */
+.price-calc-input-card .form-field {
+    display: block;
+}
+
+.price-calc-input-card .form-field label {
+    display: block;
+    margin-bottom: 10px;
+    padding-top: 0;
+}
+
+.price-calc-input-card .form-field input {
+    min-height: 52px;
+}
+
+/* 모바일 */
+@media (max-width: 900px) {
+    .price-result-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .price-calc-input-card,
+    .price-result-card {
+        padding: 24px;
+    }
+
+    .final-sale-price strong {
+        font-size: 26px;
+    }
+}
+
+/* =========================================================
+   EDIT PRODUCT PAGE CLEAN FORM
+========================================================= */
+
+.admin-edit-clean-form .admin-edit-block {
+    padding: 34px 38px;
+    border: 1px solid rgba(30, 24, 18, 0.09);
+    background: #fff;
+    margin-bottom: 32px;
+}
+
+.admin-edit-clean-form .admin-edit-block-head {
+    margin-bottom: 26px;
+}
+
+.admin-edit-clean-form .admin-edit-block-head h3 {
+    margin: 0 0 10px;
+    font-size: 24px;
+    font-weight: 500;
+    letter-spacing: -0.04em;
+}
+
+.admin-edit-clean-form .admin-edit-block-head p {
+    margin: 0;
+    color: #807469;
+    font-size: 14px;
+}
+
+.admin-edit-clean-form .admin-field {
+    display: grid;
+    grid-template-columns: 130px minmax(0, 1fr);
+    gap: 18px;
+    align-items: start;
+    margin-bottom: 18px;
+}
+
+.admin-edit-clean-form .admin-field label {
+    padding-top: 13px;
+    font-size: 14px;
+    color: #3a3028;
+    font-weight: 500;
+}
+
+.admin-edit-clean-form .admin-field input,
+.admin-edit-clean-form .admin-field select,
+.admin-edit-clean-form .admin-field textarea {
+    width: 100%;
+    min-height: 46px;
+    padding: 0 14px;
+    border: 1px solid rgba(30, 24, 18, 0.16);
+    background: #faf9f6;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.admin-edit-clean-form .admin-field textarea {
+    min-height: 110px;
+    padding: 14px;
+    resize: vertical;
+}
+
+.admin-edit-clean-form .admin-field small {
+    grid-column: 2;
+    margin-top: -8px;
+    color: #8a7d70;
+    font-size: 12px;
+    line-height: 1.6;
 }

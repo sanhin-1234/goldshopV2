@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>금 시세 관리 | GY JEWELRY ADMIN</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body class="admin-page-body">
+
+<main class="admin-page add-product-page">
+
+    <div class="admin-container">
+
+        <div class="admin-header">
+            <div>
+                <p class="admin-label">GY JEWELRY</p>
+                <h1 class="admin-title">GOLD RATE</h1>
+            </div>
+        </div>
+
+        <nav class="admin-nav">
+            <a href="/">홈</a>
+            <a href="/shop">쇼핑몰</a>
+            <a href="/admin">상품관리</a>
+            <a href="/admin/add">상품등록</a>
+            <a href="/admin/gold-rate">금 시세 관리</a>
+            <a href="/admin/orders">주문관리</a>
+        </nav>
+
+        <section class="add-product-layout">
+
+            <article class="add-product-form-card">
+
+                <div class="form-head">
+                    <p>DAILY GOLD MARKET RATE</p>
+                    <h2>금 시세 입력</h2>
+                    <span>
+                        한국금거래소 기준 순금시세를 입력하면 g당 시세가 자동 계산됩니다.
+                    </span>
+                </div>
+
+                {% if error %}
+                    <div class="admin-form-error">
+                        {{ error }}
+                    </div>
+                {% endif %}
+
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        <div class="admin-form-success">
+                            {% for message in messages %}
+                                <p>{{ message }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+
+                <form method="POST" class="admin-product-form">
+
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+
+                    <div class="form-field">
+                        <label>적용 날짜</label>
+                        <input type="date"
+                               name="rate_date"
+                               value="{{ today_str }}"
+                               required>
+                    </div>
+
+                    <div class="form-field">
+                        <label>순금시세 / 돈당</label>
+                        <input type="text"
+                               name="pure_gold_price_per_don"
+                               id="pureGoldPricePerDon"
+                               placeholder="예: 870000"
+                               required>
+                        <small>
+                            콤마 없이 숫자만 입력해도 됩니다. 예: 870000
+                        </small>
+                    </div>
+
+                    <div class="form-field">
+                        <label>g당 시세 자동 계산</label>
+                        <input type="text"
+                               id="pureGoldPricePerGram"
+                               placeholder="자동 계산"
+                               readonly>
+                        <small>
+                            계산식: 순금시세 ÷ 3.75
+                        </small>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="admin-submit-btn">
+                            저장하기
+                        </button>
+
+                        <a href="/admin" class="admin-cancel-btn">
+                            취소
+                        </a>
+                    </div>
+
+                </form>
+
+            </article>
+
+            <aside class="product-guide-card">
+
+                <p class="guide-label">LATEST RATE</p>
+
+                <h3>최근 적용 시세</h3>
+
+                {% if latest_rate %}
+                    <p class="guide-text">
+                        적용일: {{ latest_rate.rate_date }}
+                    </p>
+
+                    <ul>
+                        <li>
+                            순금시세:
+                            {{ "{:,}".format(latest_rate.pure_gold_price_per_don) }}원 / 돈
+                        </li>
+                        <li>
+                            g당 시세:
+                            {{ "{:,}".format(latest_rate.pure_gold_price_per_gram) }}원
+                        </li>
+                    </ul>
+                {% else %}
+                    <p class="guide-text">
+                        아직 등록된 금 시세가 없습니다.
+                    </p>
+                {% endif %}
+
+                <div class="guide-preview-box">
+                    <span>PRICE SYSTEM</span>
+                    <strong>금 시세 기준 가격 계산</strong>
+                    <p>
+                        이후 상품별 금중량, 공임, 스톤 가격, 마진 배수와 연결됩니다.
+                    </p>
+                </div>
+
+            </aside>
+
+        </section>
+
+        <section class="admin-table-section" style="margin-top: 40px;">
+
+            <div class="form-head">
+                <p>RATE HISTORY</p>
+                <h2>최근 금 시세 기록</h2>
+            </div>
+
+            <div class="admin-table-wrap">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>날짜</th>
+                            <th>순금시세 / 돈당</th>
+                            <th>g당 시세</th>
+                            <th>입력 방식</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% if recent_rates %}
+                            {% for rate in recent_rates %}
+                                <tr>
+                                    <td>{{ rate.rate_date }}</td>
+                                    <td>{{ "{:,}".format(rate.pure_gold_price_per_don) }}원</td>
+                                    <td>{{ "{:,}".format(rate.pure_gold_price_per_gram) }}원</td>
+                                    <td>{{ rate.source }}</td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="4">등록된 금 시세가 없습니다.</td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+
+        </section>
+
+    </div>
+
+</main>
+
+<script>
+const pureGoldPricePerDonInput = document.getElementById("pureGoldPricePerDon");
+const pureGoldPricePerGramInput = document.getElementById("pureGoldPricePerGram");
+
+function onlyDigits(value) {
+    return String(value || "").replace(/[^\d]/g, "");
+}
+
+function formatNumber(value) {
+    const number = Number(value || 0);
+
+    if (!number) {
+        return "";
+    }
+
+    return number.toLocaleString("ko-KR");
+}
+
+function updateGramPrice() {
+    if (!pureGoldPricePerDonInput || !pureGoldPricePerGramInput) {
+        return;
+    }
+
+    const donPrice = Number(onlyDigits(pureGoldPricePerDonInput.value));
+
+    if (!donPrice) {
+        pureGoldPricePerGramInput.value = "";
+        return;
+    }
+
+    const gramPrice = Math.round(donPrice / 3.75);
+    pureGoldPricePerGramInput.value = formatNumber(gramPrice) + "원";
+}
+
+if (pureGoldPricePerDonInput) {
+    pureGoldPricePerDonInput.addEventListener("input", updateGramPrice);
+}
+</script>
+
+</body>
+</html>

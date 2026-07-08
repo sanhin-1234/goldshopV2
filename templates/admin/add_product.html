@@ -23,6 +23,7 @@
             <a href="/">홈</a>
             <a href="/shop">쇼핑몰</a>
             <a href="/admin">상품관리</a>
+            <a href="/admin/gold-rate">금 시세 관리</a>
             <a href="/admin/orders">주문관리</a>
         </nav>
 
@@ -43,179 +44,356 @@
                 {% endif %}
 
                 <form method="POST"
-                      enctype="multipart/form-data"
-                      class="admin-product-form">
+                    enctype="multipart/form-data"
+                    class="admin-product-form">
 
                     <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
 
-                    <div class="form-field">
-                        <label>상품명</label>
-                        <input type="text"
-                               name="name"
-                               placeholder="예: 골드 반지"
-                               required>
-                    </div>
+                    <!-- 1. 기본 정보 -->
+                    <section class="admin-form-panel">
+                        <div class="form-head compact">
+                            <p>STEP 01</p>
+                            <h2>기본 상품 정보</h2>
+                            <span>상품명, 컬렉션, 설명 등 쇼핑몰에 기본 노출될 정보를 입력합니다.</span>
+                        </div>
 
-                    <div class="form-field">
-                        <label>가격</label>
-                        <input type="text"
-                               name="price"
-                               placeholder="예: 900000"
-                               required>
-                    </div>
+                        <div class="form-field">
+                            <label>상품명</label>
+                            <input type="text"
+                                name="name"
+                                placeholder="예: 결 반지"
+                                required>
+                        </div>
 
-                    <div class="form-field">
-                        <label>컬렉션</label>
-                        <select name="collection" required>
-                            <option value="">카테고리를 선택하세요</option>
-                            <option value="RING">Ring</option>
-                            <option value="NECKLACE">Necklace</option>
-                            <option value="EARRINGS">Earrings</option>
-                            <option value="BRACELET">Bracelet</option>
-                            <option value="ANKLET">Anklet</option>
-                            <option value="GIFT">Gift</option>
-                        </select>
-                    </div>
+                        <div class="form-row-2">
+                            <div class="form-field">
+                                <label>컬렉션</label>
+                                <select name="collection" required>
+                                    <option value="">카테고리를 선택하세요</option>
+                                    <option value="RING">Ring</option>
+                                    <option value="NECKLACE">Necklace</option>
+                                    <option value="EARRINGS">Earrings</option>
+                                    <option value="BRACELET">Bracelet</option>
+                                    <option value="ANKLET">Anklet</option>
+                                    <option value="GIFT">Gift</option>
+                                </select>
+                            </div>
 
-                    <div class="form-field">
-                        <label>선물 상세 카테고리</label>
-                        <select name="sub_category">
-                            <option value="">선택 안함</option>
-                            <option value="MEN">남</option>
-                            <option value="WOMEN">여</option>
-                            <option value="KIDS_BABY">키즈/베이비</option>
-                            <option value="PARENTS_TEACHER">부모/스승</option>
-                            <option value="DOG">반려견</option>
-                            <option value="GROUP">모임</option>
-                            <option value="MEMORIAL">추모</option>
-                            <option value="CELEBRATION">축하</option>
-                        </select>
+                            <div class="form-field">
+                                <label>대표 Metal</label>
+                                <select name="material">
+                                    <option value="">선택 안함</option>
+                                    <option value="DIAMOND">Diamond</option>
+                                    <option value="GOLDBAR">Gold Bar</option>
+                                    <option value="24K">24K</option>
+                                    <option value="18K">18K</option>
+                                    <option value="14K">14K</option>
+                                    <option value="SILVER">Silver</option>
+                                </select>
+                                <small>상품 필터/분류용입니다. 실제 가격 계산은 아래 14K 기준 계산식을 사용합니다.</small>
+                            </div>
+                        </div>
 
-                        <small>
-                            컬렉션을 <strong>Gift / 선물</strong>로 선택한 상품에만 사용하는 상세 카테고리입니다.
-                        </small>
-                    </div>
+                        <div class="form-row-2">
+                            <div class="form-field">
+                                <label>선물 상세 카테고리</label>
+                                <select name="sub_category">
+                                    <option value="">선택 안함</option>
+                                    <option value="MEN">남</option>
+                                    <option value="WOMEN">여</option>
+                                    <option value="KIDS_BABY">키즈/베이비</option>
+                                    <option value="PARENTS_TEACHER">부모/스승</option>
+                                    <option value="DOG">반려견</option>
+                                    <option value="GROUP">모임</option>
+                                    <option value="MEMORIAL">추모</option>
+                                    <option value="CELEBRATION">축하</option>
+                                </select>
+                            </div>
 
-                    <div class="form-field">
-                        <label>노출 페이지 설정</label>
-                        <select name="tag">
-                            <option value="">일반 상품</option>
-                            <option value="NEW">NEW 페이지 노출</option>
-                            <option value="SEASON">SEASON 페이지 노출</option>
-                            <option value="BEST">BEST 페이지 노출</option>
-                        </select>
-                        <small>
-                            BEST 페이지에 노출하려면 <strong>BEST 페이지 노출</strong>을 선택하세요.
-                        </small>
-                    </div>
+                            <div class="form-field">
+                                <label>노출 페이지</label>
+                                <select name="tag">
+                                    <option value="">일반 상품</option>
+                                    <option value="NEW">NEW 페이지 노출</option>
+                                    <option value="SEASON">SEASON 페이지 노출</option>
+                                    <option value="BEST">BEST 페이지 노출</option>
+                                </select>
+                            </div>
+                        </div>
 
-                    <div class="form-field">
-                        <label>Metal</label>
-                        <select name="material">
-                            <option value="">소재를 선택하세요</option>
-                            <option value="DIAMOND">Diamond</option>
-                            <option value="GOLDBAR">Gold Bar</option>
-                            <option value="24K">24K</option>
-                            <option value="18K">18K</option>
-                            <option value="14K">14K</option>
-                            <option value="SILVER">Silver</option>
-                        </select>
-                    </div>
+                        <div class="form-field">
+                            <label>상품 설명</label>
+                            <textarea name="description"
+                                    rows="5"
+                                    placeholder="상품의 소재, 디자인, 분위기 등을 짧고 고급스럽게 작성해 주세요."></textarea>
+                        </div>
+                    </section>
 
-                    <div class="form-field">
-                        <label>상품 설명</label>
-                        <textarea name="description"
-                                  rows="5"
-                                  placeholder="상품의 소재, 디자인, 분위기 등을 짧고 고급스럽게 작성해 주세요."></textarea>
-                    </div>
-
-                    <div class="form-field">
-                        <label>상품 이미지</label>
-
-                        <label class="image-upload-box">
-                            <input type="file"
-                                   name="image"
-                                   id="productImageInput"
-                                   accept="image/*">
-
-                            <span class="upload-title">이미지 선택</span>
-                            <span class="upload-desc" id="imageFileName">
-                                선택된 파일이 없습니다.
+                    <!-- 2. 가격 계산 -->
+                    <section class="admin-form-panel price-panel">
+                        <div class="form-head compact">
+                            <p>STEP 02</p>
+                            <h2>14K 기준 가격 계산</h2>
+                            <span>
+                                14K 금중량, 총 공임, 배수, 할인율을 입력하면 14K와 18K 판매가가 자동 계산됩니다.
                             </span>
-                        </label>
-                    </div>
+                        </div>
 
-                    <div class="form-field">
-                        <label>NEW 페이지 가로 배너 이미지</label>
+                        <div class="gold-rate-summary">
+                            {% if latest_rate %}
+                                <p>현재 적용 금 시세</p>
+                                <strong>{{ "{:,}".format(latest_rate.pure_gold_price_per_don) }}원 / 돈</strong>
+                                <span>g당 {{ "{:,}".format(latest_rate.pure_gold_price_per_gram) }}원</span>
+                            {% else %}
+                                <p>현재 적용 금 시세가 없습니다.</p>
+                                <strong>금 시세를 먼저 입력해 주세요.</strong>
+                                <a href="/admin/gold-rate">금 시세 관리로 이동</a>
+                            {% endif %}
+                        </div>
 
-                        <label class="image-upload-box">
-                            <input type="file"
-                                name="new_banner_image"
-                                id="newBannerImageInput"
-                                accept="image/*">
+                        <div class="price-calc-input-card">
 
-                            <span class="upload-title">NEW 배너 이미지 선택</span>
-                            <span class="upload-desc" id="newBannerImageFileName">
-                                선택된 파일이 없습니다.
-                            </span>
-                        </label>
-                    </div>
+                            <div class="form-row-2">
+                                <div class="form-field">
+                                    <label>14K 금중량(g)</label>
+                                    <input type="text"
+                                        name="base_14k_weight"
+                                        id="base14kWeight"
+                                        class="simple-price-input"
+                                        placeholder="예: 2.16">
+                                </div>
 
-                    <div class="form-field">
-                        <label>NEW 상품 사이 광고 이미지 / 영상</label>
+                                <div class="form-field">
+                                    <label>총 공임</label>
+                                    <input type="text"
+                                        name="total_labor_fee"
+                                        id="totalLaborFee"
+                                        class="simple-price-input"
+                                        placeholder="예: 27000">
+                                </div>
+                            </div>
 
-                        <label class="image-upload-box">
-                            <input type="file"
-                                name="new_between_media"
-                                id="newBetweenMediaInput"
-                                accept="image/*,video/mp4,video/webm,video/quicktime">
+                            <div class="form-row-2">
+                                <div class="form-field">
+                                    <label>해리율</label>
+                                    <input type="text"
+                                        name="haeri_rate"
+                                        id="haeriRate"
+                                        class="simple-price-input"
+                                        value="10"
+                                        placeholder="예: 10 또는 0.10">
+                                    <small>10 입력 시 금값에 10%가 더해집니다.</small>
+                                </div>
 
-                            <span class="upload-title">중간 광고 이미지 / 영상 선택</span>
-                            <span class="upload-desc" id="newBetweenMediaFileName">
-                                선택된 파일이 없습니다.
-                            </span>
-                        </label>
-                    </div>
+                                <div class="form-field">
+                                    <label>배수</label>
+                                    <input type="text"
+                                        name="price_multiplier"
+                                        id="priceMultiplier"
+                                        class="simple-price-input"
+                                        value="1.20"
+                                        placeholder="예: 1.20">
+                                </div>
+                            </div>
 
-                    <hr>
+                            <div class="form-row-2">
+                                <div class="form-field">
+                                    <label>할인율</label>
+                                    <input type="text"
+                                        name="discount_rate"
+                                        id="discountRate"
+                                        class="simple-price-input"
+                                        value="0"
+                                        placeholder="예: 10 또는 0.10">
+                                    <small>10 입력 시 10% 할인으로 계산됩니다.</small>
+                                </div>
+                            </div>
 
-                    <div class="form-head">
-                        <p>SEASON ITEM SETTINGS</p>
-                        <h2>Season Item 설정</h2>
-                        <span>Season 페이지에 노출할 전용 이미지와 중간 광고 미디어를 등록할 수 있습니다.</span>
-                    </div>
+                        </div>
 
-                    <div class="form-field">
-                        <label>시즌 배너 이미지</label>
+                        <div class="price-result-grid">
 
-                        <label class="image-upload-box">
-                            <input type="file"
-                                name="season_banner_image"
-                                id="seasonBannerImageInput"
-                                accept="image/*">
+                            <article class="price-result-card">
+                                <p>14K</p>
+                                <h3>14K 계산 결과</h3>
 
-                            <span class="upload-title">시즌 배너 이미지 선택</span>
-                            <span class="upload-desc" id="seasonBannerImageFileName">
-                                선택된 파일이 없습니다.
-                            </span>
-                        </label>
-                    </div>
+                                <dl>
+                                    <div>
+                                        <dt>14K 금중량</dt>
+                                        <dd id="result14kWeight">0g</dd>
+                                    </div>
 
-                    <div class="form-field">
-                        <label>시즌 중간 광고 이미지 / 영상</label>
+                                    <div>
+                                        <dt>순중량</dt>
+                                        <dd id="result14kPureWeight">0g</dd>
+                                    </div>
 
-                        <label class="image-upload-box">
-                            <input type="file"
-                                name="season_between_media"
-                                id="seasonBetweenMediaInput"
-                                accept="image/*,video/mp4,video/webm,video/quicktime">
+                                    <div>
+                                        <dt>금값</dt>
+                                        <dd id="result14kGoldPrice">0원</dd>
+                                    </div>
 
-                            <span class="upload-title">시즌 중간 광고 이미지 / 영상 선택</span>
-                            <span class="upload-desc" id="seasonBetweenMediaFileName">
-                                선택된 파일이 없습니다.
-                            </span>
-                        </label>
-                    </div>
+                                    <div>
+                                        <dt>제품원가</dt>
+                                        <dd id="result14kCost">0원</dd>
+                                    </div>
+
+                                    <div>
+                                        <dt>기본판매가</dt>
+                                        <dd id="result14kBasePrice">0원</dd>
+                                    </div>
+
+                                    <div>
+                                        <dt>마진비</dt>
+                                        <dd id="result14kMarginAmount">0원</dd>
+                                    </div>
+                                </dl>
+
+                                <div class="final-sale-price">
+                                    <span>14K 할인판매가</span>
+                                    <strong id="result14kDiscountPrice">0원</strong>
+                                </div>
+
+                            </article>
+
+                            <article class="price-result-card">
+                                <p>18K</p>
+                                <h3>18K 자동 계산 결과</h3>
+
+                                <dl>
+                                    <div>
+                                        <dt>18K 금중량</dt>
+                                        <dd id="result18kWeight">0g</dd>
+                                    </div>
+
+                                    <div>
+                                        <dt>순중량</dt>
+                                        <dd id="result18kPureWeight">0g</dd>
+                                    </div>
+
+                                    <div>
+                                        <dt>금값</dt>
+                                        <dd id="result18kGoldPrice">0원</dd>
+                                    </div>
+
+                                    <div>
+                                        <dt>제품원가</dt>
+                                        <dd id="result18kCost">0원</dd>
+                                    </div>
+
+                                    <div>
+                                        <dt>기본판매가</dt>
+                                        <dd id="result18kBasePrice">0원</dd>
+                                    </div>
+
+                                    <div>
+                                        <dt>마진비</dt>
+                                        <dd id="result18kMarginAmount">0원</dd>
+                                    </div>
+
+                                </dl>
+
+                                <div class="final-sale-price">
+                                    <span>18K 할인판매가</span>
+                                    <strong id="result18kDiscountPrice">0원</strong>
+                                    <em id="result18kAdditionalPrice">+0원</em>
+                                </div>
+                            </article>
+
+                        </div>
+                    </section>
+
+                    <!-- 3. 이미지 -->
+                    <section class="admin-form-panel">
+                        <div class="form-head compact">
+                            <p>STEP 03</p>
+                            <h2>이미지 / 노출 미디어</h2>
+                            <span>기본 이미지만 먼저 등록하고, NEW / SEASON 전용 이미지는 필요할 때 펼쳐서 등록합니다.</span>
+                        </div>
+
+                        <div class="form-field">
+                            <label>상품 이미지</label>
+
+                            <label class="image-upload-box">
+                                <input type="file"
+                                    name="image"
+                                    id="productImageInput"
+                                    accept="image/*">
+
+                                <span class="upload-title">이미지 선택</span>
+                                <span class="upload-desc" id="imageFileName">
+                                    선택된 파일이 없습니다.
+                                </span>
+                            </label>
+                        </div>
+
+                        <details class="advanced-media-box">
+                            <summary>NEW / SEASON 전용 이미지 설정 열기</summary>
+
+                            <div class="form-field">
+                                <label>NEW 페이지 가로 배너 이미지</label>
+                                <label class="image-upload-box">
+                                    <input type="file"
+                                        name="new_banner_image"
+                                        id="newBannerImageInput"
+                                        accept="image/*">
+
+                                    <span class="upload-title">NEW 배너 이미지 선택</span>
+                                    <span class="upload-desc" id="newBannerImageFileName">
+                                        선택된 파일이 없습니다.
+                                    </span>
+                                </label>
+                            </div>
+
+                            <div class="form-field">
+                                <label>NEW 상품 사이 광고 이미지 / 영상</label>
+
+                                <label class="image-upload-box">
+                                    <input type="file"
+                                        name="new_between_media"
+                                        id="newBetweenMediaInput"
+                                        accept="image/*,video/mp4,video/webm,video/quicktime">
+
+                                    <span class="upload-title">중간 광고 이미지 / 영상 선택</span>
+                                    <span class="upload-desc" id="newBetweenMediaFileName">
+                                        선택된 파일이 없습니다.
+                                    </span>
+                                </label>
+                            </div>
+
+                            <div class="form-field">
+                                <label>시즌 배너 이미지</label>
+
+                                <label class="image-upload-box">
+                                    <input type="file"
+                                        name="season_banner_image"
+                                        id="seasonBannerImageInput"
+                                        accept="image/*">
+
+                                    <span class="upload-title">시즌 배너 이미지 선택</span>
+                                    <span class="upload-desc" id="seasonBannerImageFileName">
+                                        선택된 파일이 없습니다.
+                                    </span>
+                                </label>
+                            </div>
+
+                            <div class="form-field">
+                                <label>시즌 중간 광고 이미지 / 영상</label>
+
+                                <label class="image-upload-box">
+                                    <input type="file"
+                                        name="season_between_media"
+                                        id="seasonBetweenMediaInput"
+                                        accept="image/*,video/mp4,video/webm,video/quicktime">
+
+                                    <span class="upload-title">시즌 중간 광고 이미지 / 영상 선택</span>
+                                    <span class="upload-desc" id="seasonBetweenMediaFileName">
+                                        선택된 파일이 없습니다.
+                                    </span>
+                                </label>
+                            </div>
+                        </details>
+                    </section>
 
                     <div class="form-actions">
                         <button type="submit" class="admin-submit-btn">
@@ -326,6 +504,137 @@ if (seasonBetweenMediaInput && seasonBetweenMediaFileName) {
         }
     });
 }
+
+const latestGoldDonPrice = Number("{{ latest_rate.base_rate|default(0, true) if latest_rate else 0 }}");
+const latestGoldGramPriceFromTemplate = Number("{{ latest_rate.pure_gold_price_per_gram|default(0, true) if latest_rate else 0 }}");
+
+const latestGoldGramPrice = latestGoldGramPriceFromTemplate > 0
+    ? latestGoldGramPriceFromTemplate
+    : latestGoldDonPrice / 3.75;
+
+function getInputNumberById(id) {
+    const input = document.getElementById(id);
+
+    if (!input) {
+        return 0;
+    }
+
+    const value = String(input.value || "").replace(/[^\d.]/g, "");
+
+    return Number(value || 0);
+}
+
+function normalizePercent(value) {
+    const number = Number(value || 0);
+
+    if (number > 1) {
+        return number / 100;
+    }
+
+    return number;
+}
+
+function formatWon(value) {
+    return Math.round(Number(value || 0)).toLocaleString("ko-KR") + "원";
+}
+
+function roundToThousand(value) {
+    return Math.round(Number(value || 0) / 1000) * 1000;
+}
+
+function roundToTenThousand(value) {
+    return Math.round(Number(value || 0) / 10000) * 10000;
+}
+
+function formatGram(value) {
+    return Number(value || 0).toFixed(2) + "g";
+}
+
+function setText(id, value) {
+    const el = document.getElementById(id);
+
+    if (el) {
+        el.textContent = value;
+    }
+}
+
+function calculateSimpleJewelryPrice() {
+    const weight14k = getInputNumberById("base14kWeight");
+    const laborFee = getInputNumberById("totalLaborFee");
+    const haeriRate = normalizePercent(getInputNumberById("haeriRate"));
+    const haeriMultiplier = 1 + haeriRate;
+    const multiplier = getInputNumberById("priceMultiplier") || 1.2;
+    const discountRate = normalizePercent(getInputNumberById("discountRate"));
+    const representativePriceInput = document.getElementById("representativePriceInput");
+
+    if (!latestGoldGramPrice || !weight14k) {
+        setText("result14kWeight", "0g");
+        setText("result14kPureWeight", "0g");
+        setText("result14kGoldPrice", "0원");
+        setText("result14kCost", "0원");
+        setText("result14kBasePrice", "0원");
+        setText("result14kMarginAmount", "0원");
+        setText("result14kDiscountPrice", "0원");
+
+        setText("result18kWeight", "0g");
+        setText("result18kPureWeight", "0g");
+        setText("result18kGoldPrice", "0원");
+        setText("result18kCost", "0원");
+        setText("result18kBasePrice", "0원");
+        setText("result18kDiscountPrice", "0원");
+        setText("result18kMarginAmount", "0원");
+        setText("result18kAdditionalPrice", "+0원");
+
+        return;
+    }
+
+    // 14K 계산
+    const pureWeight14k = weight14k * 0.585;
+    const goldPrice14kRaw = pureWeight14k * latestGoldGramPrice * haeriMultiplier;
+    const goldPrice14k = roundToThousand(goldPrice14kRaw);
+    const cost14k = goldPrice14k + laborFee;
+    const basePrice14kRaw = cost14k * multiplier * 1.10;
+    const basePrice14k = roundToTenThousand(basePrice14kRaw);
+    const discountPrice14k = basePrice14k * (1 - discountRate);
+    const marginAmount14k = discountPrice14k - cost14k;
+
+    // 18K 계산
+    const weight18k = weight14k * 1.15;
+    const pureWeight18k = weight18k * 0.75;
+    const goldPrice18kRaw = pureWeight18k * latestGoldGramPrice * haeriMultiplier;
+    const goldPrice18k = roundToThousand(goldPrice18kRaw);
+    const cost18k = goldPrice18k + laborFee;
+    const basePrice18kRaw = cost18k * multiplier * 1.10;
+    const basePrice18k = roundToTenThousand(basePrice18kRaw);
+    const discountPrice18k = basePrice18k * (1 - discountRate);
+    const marginAmount18k = discountPrice18k - cost18k;
+
+    const additional18k = discountPrice18k - discountPrice14k;
+
+    setText("result14kWeight", formatGram(weight14k));
+    setText("result14kPureWeight", formatGram(pureWeight14k));
+    setText("result14kGoldPrice", formatWon(goldPrice14k));
+    setText("result14kCost", formatWon(cost14k));
+    setText("result14kBasePrice", formatWon(basePrice14k));
+    setText("result14kMarginAmount", formatWon(marginAmount14k));
+    setText("result14kDiscountPrice", formatWon(discountPrice14k));
+
+    setText("result18kWeight", formatGram(weight18k));
+    setText("result18kPureWeight", formatGram(pureWeight18k));
+    setText("result18kGoldPrice", formatWon(goldPrice18k));
+    setText("result18kCost", formatWon(cost18k));
+    setText("result18kBasePrice", formatWon(basePrice18k));
+    setText("result18kDiscountPrice", formatWon(discountPrice18k));
+    setText("result18kMarginAmount", formatWon(marginAmount18k));
+    setText("result18kAdditionalPrice", "+" + formatWon(additional18k));
+
+}
+
+document.querySelectorAll(".simple-price-input").forEach((input) => {
+    input.addEventListener("input", calculateSimpleJewelryPrice);
+});
+
+calculateSimpleJewelryPrice();
 </script>
 
 </body>

@@ -1,5 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session
 from models.db import get_db
+import json
+import math
 
  # 소비자 페이지
  
@@ -45,6 +47,270 @@ def get_page_hero_media(db, slot_key):
     """, (slot_key,)).fetchone()
 
     return hero
+
+def safe_float(value, default=0):
+    try:
+        if value is None or value == "":
+            return default
+        return float(value)
+    except (TypeError, ValueError):
+        return default
+
+
+def safe_int(value, default=0):
+    try:
+        if value is None or value == "":
+            return default
+        return int(float(value))
+    except (TypeError, ValueError):
+        return default
+
+
+def row_get(row, key, default=None):
+    if row is None:
+        return default
+
+    if key in row.keys():
+        value = row[key]
+        if value is not None:
+            return value
+
+    return default
+
+
+def row_get_any(row, keys, default=None):
+    for key in keys:
+        if row is not None and key in row.keys() and row[key] is not None:
+            return row[key]
+    return default
+
+
+def normalize_rate(value, default=0):
+    """
+    10 입력 → 0.10
+    0.1 입력 → 0.10
+    """
+    rate = safe_float(value, default)
+
+    if rate > 1:
+        return rate / 100
+
+    return rate
+
+
+def round_at_thousands_digit(value):
+    """
+    천의 자리에서 반올림
+    예: 1,106,600 -> 1,110,000
+    """
+    value = safe_float(value, 0)
+    return int(math.floor((value + 5000) / 10000) * 10000)
+
+
+def calculate_material_price(material_row, gold_rate):
+    material = str(row_get(material_row, "material", "14K")).upper()
+
+    gold_weight = safe_float(row_get(material_row, "gold_weight", 0))
+
+    labor_fee = safe_float(row_get(material_row, "labor_fee", 0))
+    stone_price = safe_float(row_get(material_row, "stone_price", 0))
+    extra_fee = safe_float(row_get(material_row, "extra_fee", 0))
+
+    multiplier = safe_float(row_get(material_row, "multiplier", 1), 1)
+    if multiplier <= 0:
+        multiplier = 1
+
+    vat_rate = normalize_rate(row_get(material_row, "vat_rate", 10), 0.1)
+    discount_rate = normalize_rate(row_get(material_row, "discount_rate", 0), 0)
+
+    # 해리 컬럼명이 프로젝트에서 다를 수 있어서 여러 이름을 같이 대응
+    haeri = safe_float(
+        row_get_any(
+            material_row,
+            ["haeri", "haeri_rate", "loss_rate", "wastage_rate"],
+            1
+        ),
+        1
+    )
+
+    if haeri <= 0:
+        haeri = 1
+
+    # 14K 기준 입력
+    if material == "18K":
+        material_weight = gold_weight * 1.15
+        pure_weight = material_weight * 0.75
+    else:
+        material_weight = gold_weight
+        pure_weight = material_weight * 0.585
+
+    gold_price = (safe_float(gold_rate, 0) / 3.75) * pure_weight * haeri
+
+    product_cost = gold_price + labor_fee + stone_price + extra_fee
+
+    base_price_before_round = product_cost * multiplier * (1 + vat_rate)
+    base_sale_price = round_at_thousands_digit(base_price_before_round)
+
+    discounted_price = int(round(base_sale_price * (1 - discount_rate)))
+
+    margin_price = discounted_price - product_cost
+
+    return {
+        "material": material,
+        "gold_weight": gold_weight,
+        "material_weight": material_weight,
+        "pure_weight": pure_weight,
+        "gold_price": int(round(gold_price)),
+        "product_cost": int(round(product_cost)),
+        "base_sale_price": base_sale_price,
+        "discounted_price": discounted_price,
+        "margin_price": int(round(margin_price)),
+        "labor_fee": int(round(labor_fee)),
+        "stone_price": int(round(stone_price)),
+        "extra_fee": int(round(extra_fee)),
+        "multiplier": multiplier,
+        "vat_rate": vat_rate,
+        "discount_rate": discount_rate,
+        "haeri": haeri
+    }
+
+
+def get_latest_gold_rate(db):
+    rate_row = db.execute("""
+        SELECT *
+        FROM gold_market_rates
+        ORDER BY id DESC
+        LIMIT 1
+    """).fetchone()
+
+    if rate_row is None:
+        return 0
+
+    return safe_float(row_get(rate_row, "base_rate", 0), 0)
+
+
+def get_product_material_price_data(db, product_id):
+    rows = db.execute("""
+        SELECT *
+        FROM product_material_prices
+        WHERE product_id = ?
+        ORDER BY sort_order ASC, id ASC
+    """, (product_id,)).fetchall()
+
+    material_price_data = {}
+
+    for row in rows:
+        material = str(row["material"] or "").upper()
+
+        if not material:
+            continue
+
+        # 관리자에서 저장한 계산 결과를 그대로 사용
+        discount_price = 0
+        base_sale_price = 0
+        product_cost = 0
+        gold_price = 0
+
+        if "discount_price" in row.keys():
+            discount_price = safe_int(row["discount_price"], 0)
+
+        if "base_sale_price" in row.keys():
+            base_sale_price = safe_int(row["base_sale_price"], 0)
+
+        if "base_price" in row.keys() and base_sale_price <= 0:
+            base_sale_price = safe_int(row["base_price"], 0)
+
+        if "calculated_cost" in row.keys():
+            product_cost = safe_int(row["calculated_cost"], 0)
+
+        if "gold_price" in row.keys():
+            gold_price = safe_int(row["gold_price"], 0)
+
+        # 혹시 discount_price가 비어 있으면 base_sale_price로 대체
+        if discount_price <= 0:
+            discount_price = base_sale_price
+
+        material_price_data[material] = {
+            "material": material,
+            "gold_weight": row["gold_weight"] if "gold_weight" in row.keys() else 0,
+            "pure_weight": row["pure_weight"] if "pure_weight" in row.keys() else 0,
+            "gold_price": gold_price,
+            "product_cost": product_cost,
+            "base_sale_price": base_sale_price,
+            "discounted_price": discount_price,
+            "margin_price": discount_price - product_cost,
+            "labor_fee": safe_int(row["labor_fee"], 0) if "labor_fee" in row.keys() else 0,
+            "stone_price": safe_int(row["stone_price"], 0) if "stone_price" in row.keys() else 0,
+            "extra_fee": safe_int(row["extra_fee"], 0) if "extra_fee" in row.keys() else 0,
+            "multiplier": row["margin_multiplier"] if "margin_multiplier" in row.keys() else 1,
+            "discount_rate": row["discount_rate"] if "discount_rate" in row.keys() else 0,
+            "haeri": row["loss_rate"] if "loss_rate" in row.keys() else 0
+        }
+
+    return material_price_data
+
+
+def get_product_option_groups(db, product_id):
+    sections = db.execute("""
+        SELECT *
+        FROM product_price_sections
+        WHERE product_id = ?
+        ORDER BY sort_order ASC, id ASC
+    """, (product_id,)).fetchall()
+
+    option_groups = []
+
+    for section in sections:
+        rows = db.execute("""
+            SELECT *
+            FROM product_price_rows
+            WHERE section_id = ?
+            ORDER BY sort_order ASC, id ASC
+        """, (section["id"],)).fetchall()
+
+        option_rows = []
+
+        for row in rows:
+            values = db.execute("""
+                SELECT *
+                FROM product_price_values
+                WHERE row_id = ?
+                ORDER BY sort_order ASC, id ASC
+            """, (row["id"],)).fetchall()
+
+            prices = {
+                "14K": 0,
+                "18K": 0
+            }
+
+            for value in values:
+                material = str(row_get(value, "material", "") or "").upper()
+
+                if "price_14k" in value.keys():
+                    prices["14K"] = safe_int(value["price_14k"], prices["14K"])
+
+                if "price_18k" in value.keys():
+                    prices["18K"] = safe_int(value["price_18k"], prices["18K"])
+
+                if material in ["14K", "18K"] and "price" in value.keys():
+                    prices[material] = safe_int(value["price"], prices[material])
+
+            option_rows.append({
+                "id": row["id"],
+                "label": row_get(row, "label", ""),
+                "min_value": row_get(row, "min_value", ""),
+                "max_value": row_get(row, "max_value", ""),
+                "prices": prices
+            })
+
+        option_groups.append({
+            "id": section["id"],
+            "title": row_get(section, "title", "옵션"),
+            "option_code": row_get(section, "option_code", ""),
+            "rows": option_rows
+        })
+
+    return option_groups
 
 def ensure_home_media_table(cur):
     cur.execute("""
@@ -330,9 +596,39 @@ def shop():
     product_count = len(products)
     category_label = valid_categories.get(category, "All Jewelry")
 
+    # SHOP / 카테고리별 히어로 슬롯
+    hero_slot_map = {
+        "RING": "page_hero_shop_ring",
+        "NECKLACE": "page_hero_shop_necklace",
+        "EARRINGS": "page_hero_shop_earrings",
+        "BRACELET": "page_hero_shop_bracelet",
+        "ANKLET": "page_hero_shop_anklet",
+    }
+
+    hero_slot_key = hero_slot_map.get(category, "page_hero_shop")
+
+    shop_hero_media = db.execute("""
+        SELECT *
+        FROM home_media
+        WHERE slot_key = ?
+          AND is_active = 1
+        LIMIT 1
+    """, (hero_slot_key,)).fetchone()
+
+    # 카테고리 전용 히어로가 없으면 기본 SHOP 히어로로 대체
+    if shop_hero_media is None and hero_slot_key != "page_hero_shop":
+        shop_hero_media = db.execute("""
+            SELECT *
+            FROM home_media
+            WHERE slot_key = ?
+              AND is_active = 1
+            LIMIT 1
+        """, ("page_hero_shop",)).fetchone()
+
     return render_template(
         "shop/index.html",
         products=products,
+        shop_hero_media=shop_hero_media,
         search=search,
         sort=sort,
         category=category,
@@ -412,6 +708,36 @@ def product_detail(product_id):
     review_count = rating_summary["review_count"]
     avg_rating = rating_summary["avg_rating"]
 
+    # 점수별 리뷰 개수: 5점, 4점, 3점, 2점, 1점
+    rating_rows = db.execute("""
+        SELECT 
+            CAST(rating AS INTEGER) AS score,
+            COUNT(*) AS count
+        FROM product_reviews
+        WHERE product_id = ?
+          AND CAST(rating AS INTEGER) BETWEEN 1 AND 5
+        GROUP BY CAST(rating AS INTEGER)
+    """, (product_id,)).fetchall()
+
+    rating_counts = {
+        1: 0,
+        2: 0,
+        3: 0,
+        4: 0,
+        5: 0
+    }
+
+    for row in rating_rows:
+        rating_counts[row["score"]] = row["count"]
+
+    rating_percentages = {}
+
+    for score in range(1, 6):
+        if review_count > 0:
+            rating_percentages[score] = round((rating_counts[score] / review_count) * 100)
+        else:
+            rating_percentages[score] = 0
+
     # 비슷한 상품 추천
     related_products = db.execute("""
         SELECT *
@@ -445,6 +771,28 @@ def product_detail(product_id):
         if image_col in product.keys() and product[image_col]:
             detail_images.append(product[image_col])
 
+    # =========================
+    # 새 가격 / 옵션 데이터
+    # =========================
+    material_price_data = get_product_material_price_data(db, product_id)
+
+    default_material = "14K"
+
+    if default_material not in material_price_data:
+        if material_price_data:
+            default_material = list(material_price_data.keys())[0]
+        else:
+            default_material = "14K"
+
+    default_price = 0
+
+    if default_material in material_price_data:
+        default_price = material_price_data[default_material]["discounted_price"]
+    else:
+        default_price = safe_int(product["price"], 0) if "price" in product.keys() else 0
+
+    option_groups = get_product_option_groups(db, product_id)
+
     back_url = request.args.get("back", "/shop")
 
     # 이상한 외부 주소 방지
@@ -459,7 +807,15 @@ def product_detail(product_id):
         avg_rating=avg_rating,
         related_products=related_products,
         detail_images=detail_images,
-        back_url=back_url
+        rating_counts=rating_counts,
+        rating_percentages=rating_percentages,
+        back_url=back_url,
+        material_price_data=material_price_data,
+        material_price_json=json.dumps(material_price_data, ensure_ascii=False),
+        default_material=default_material,
+        default_price=default_price,
+        option_groups=option_groups,
+        option_groups_json=json.dumps(option_groups, ensure_ascii=False),
     )
 
 STORY_CATEGORIES = {

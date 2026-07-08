@@ -21,9 +21,17 @@
         </p>
     </section>
 
-    <form method="POST" class="checkout-layout">
+    <form
+        method="POST"
+        class="checkout-layout"
+        action="{% if request.args.get('mode') == 'buy_now' %}{{ url_for('cart.order', mode='buy_now') }}{% else %}{{ url_for('cart.order') }}{% endif %}"
+    >
 
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        {% if request.args.get("mode") == "buy_now" %}
+            <input type="hidden" name="checkout_mode" value="buy_now">
+        {% endif %}
 
         <section class="checkout-form-card">
 
@@ -165,9 +173,21 @@
                 </button>
             {% endif %}
 
-            <a href="/cart" class="checkout-back-link">
-                장바구니로 돌아가기
-            </a>
+            {% if request.args.get("mode") == "buy_now" %}
+                {% if items and items[0].get("id") %}
+                    <a href="{{ url_for('product.product_detail', product_id=items[0].get('id')) }}" class="checkout-back-link">
+                        상품으로 돌아가기
+                    </a>
+                {% else %}
+                    <a href="/shop" class="checkout-back-link">
+                        쇼핑 계속하기
+                    </a>
+                {% endif %}
+            {% else %}
+                <a href="/cart" class="checkout-back-link">
+                    장바구니로 돌아가기
+                </a>
+            {% endif %}
 
         </aside>
 

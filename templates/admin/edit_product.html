@@ -22,6 +22,7 @@
             <a href="/">홈</a>
             <a href="/shop">쇼핑몰</a>
             <a href="/admin">상품관리</a>
+            <a href="/admin/gold-rate">금 시세 관리</a>
             <a href="/admin/orders">주문관리</a>
         </nav>
 
@@ -67,14 +68,11 @@
                             >
                         </div>
 
-                        <div class="admin-field">
-                            <label>가격</label>
-                            <input
-                                type="number"
-                                name="price"
-                                value="{{ product['price'] }}"
-                                required
-                            >
+                        <div class="admin-field readonly-price-field">
+                            <label>현재 대표 가격</label>
+                            <div class="admin-readonly-price" id="currentRepresentativePriceDisplay">
+                                {{ "{:,}".format(product['price']|int) }}원
+                            </div>
                         </div>
 
                         <div class="admin-field">
@@ -171,6 +169,190 @@
                         <div class="admin-field">
                             <label>상품 설명</label>
                             <textarea name="description">{{ product['description'] or '' }}</textarea>
+                        </div>
+                    </div>
+
+                    <!-- PRICE CALCULATION -->
+                    <div class="admin-edit-block price-panel">
+                        <div class="admin-edit-block-head">
+                            <h3>14K 기준 가격 계산</h3>
+                            <p>
+                                14K 금중량, 총 공임, 해리율, 배수, 할인율을 입력하면
+                                14K와 18K 판매가가 자동 계산됩니다.
+                            </p>
+                        </div>
+
+                        <div class="gold-rate-summary">
+                            {% if latest_rate %}
+                                <p>현재 적용 금 시세</p>
+                                <strong>{{ "{:,}".format(latest_rate.pure_gold_price_per_don) }}원 / 돈</strong>
+                                <span>g당 {{ "{:,}".format(latest_rate.pure_gold_price_per_gram) }}원</span>
+                            {% else %}
+                                <p>현재 적용 금 시세가 없습니다.</p>
+                                <strong>금 시세를 먼저 입력해 주세요.</strong>
+                                <a href="/admin/gold-rate">금 시세 관리로 이동</a>
+                            {% endif %}
+                        </div>
+
+                        <div class="price-calc-input-card">
+
+                            <div class="form-row-2">
+                                <div class="form-field">
+                                    <label>14K 금중량(g)</label>
+                                    <input
+                                        type="text"
+                                        name="base_14k_weight"
+                                        id="base14kWeight"
+                                        class="simple-price-input"
+                                        value="{{ price_base.base_14k_weight if price_base else '' }}"
+                                        placeholder="예: 2.16"
+                                    >
+                                </div>
+
+                                <div class="form-field">
+                                    <label>총 공임</label>
+                                    <input
+                                        type="text"
+                                        name="total_labor_fee"
+                                        id="totalLaborFee"
+                                        class="simple-price-input"
+                                        value="{{ price_base.labor_fee if price_base else '' }}"
+                                        placeholder="예: 27000"
+                                    >
+                                </div>
+                            </div>
+
+                            <div class="form-row-2">
+                                <div class="form-field">
+                                    <label>해리율</label>
+                                    <input
+                                        type="text"
+                                        name="haeri_rate"
+                                        id="haeriRate"
+                                        class="simple-price-input"
+                                        value="{{ price_base.loss_rate if price_base else '10' }}"
+                                        placeholder="예: 10 또는 0.10"
+                                    >
+                                    <small>10 입력 시 금값에 10%가 더해집니다.</small>
+                                </div>
+
+                                <div class="form-field">
+                                    <label>배수</label>
+                                    <input
+                                        type="text"
+                                        name="price_multiplier"
+                                        id="priceMultiplier"
+                                        class="simple-price-input"
+                                        value="{{ price_base.margin_multiplier if price_base else '1.20' }}"
+                                        placeholder="예: 1.20"
+                                    >
+                                </div>
+                            </div>
+
+                            <div class="form-row-2">
+                                <div class="form-field">
+                                    <label>할인율</label>
+                                    <input
+                                        type="text"
+                                        name="discount_rate"
+                                        id="discountRate"
+                                        class="simple-price-input"
+                                        value="{{ price_base.discount_rate if price_base else '0' }}"
+                                        placeholder="예: 10 또는 0.10"
+                                    >
+                                    <small>10 입력 시 10% 할인으로 계산됩니다.</small>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="price-result-grid">
+
+                            <article class="price-result-card">
+                                <p>14K</p>
+                                <h3>14K 계산 결과</h3>
+
+                                <dl>
+                                    <div>
+                                        <dt>14K 금중량</dt>
+                                        <dd id="result14kWeight">0g</dd>
+                                    </div>
+
+                                    <div>
+                                        <dt>순중량</dt>
+                                        <dd id="result14kPureWeight">0g</dd>
+                                    </div>
+
+                                    <div>
+                                        <dt>금값</dt>
+                                        <dd id="result14kGoldPrice">0원</dd>
+                                    </div>
+
+                                    <div>
+                                        <dt>제품원가</dt>
+                                        <dd id="result14kCost">0원</dd>
+                                    </div>
+
+                                    <div>
+                                        <dt>기본판매가</dt>
+                                        <dd id="result14kBasePrice">0원</dd>
+                                    </div>
+
+                                    <div>
+                                        <dt>마진비</dt>
+                                        <dd id="result14kMarginAmount">0원</dd>
+                                    </div>
+                                </dl>
+
+                                <div class="final-sale-price">
+                                    <span>14K 할인판매가</span>
+                                    <strong id="result14kDiscountPrice">0원</strong>
+                                </div>
+                            </article>
+
+                            <article class="price-result-card">
+                                <p>18K</p>
+                                <h3>18K 자동 계산 결과</h3>
+
+                                <dl>
+                                    <div>
+                                        <dt>18K 금중량</dt>
+                                        <dd id="result18kWeight">0g</dd>
+                                    </div>
+
+                                    <div>
+                                        <dt>순중량</dt>
+                                        <dd id="result18kPureWeight">0g</dd>
+                                    </div>
+
+                                    <div>
+                                        <dt>금값</dt>
+                                        <dd id="result18kGoldPrice">0원</dd>
+                                    </div>
+
+                                    <div>
+                                        <dt>제품원가</dt>
+                                        <dd id="result18kCost">0원</dd>
+                                    </div>
+
+                                    <div>
+                                        <dt>기본판매가</dt>
+                                        <dd id="result18kBasePrice">0원</dd>
+                                    </div>
+
+                                    <div>
+                                        <dt>마진비</dt>
+                                        <dd id="result18kMarginAmount">0원</dd>
+                                    </div>
+                                </dl>
+
+                                <div class="final-sale-price">
+                                    <span>18K 할인판매가</span>
+                                    <strong id="result18kDiscountPrice">0원</strong>
+                                    <em id="result18kAdditionalPrice">+0원</em>
+                                </div>
+                            </article>
+
                         </div>
                     </div>
 
@@ -396,7 +578,7 @@
                             {{ product['name'] }}
                         </h4>
 
-                        <p class="preview-price">
+                        <p class="preview-price" id="editPreviewPriceDisplay">
                             {{ "{:,}".format(product['price']|int) }}원
                         </p>
 
@@ -431,6 +613,163 @@
 
     </div>
 </main>
+
+<script>
+const latestGoldDonPrice = Number("{{ latest_rate.base_rate|default(0, true) if latest_rate else 0 }}");
+const latestGoldGramPriceFromTemplate = Number("{{ latest_rate.pure_gold_price_per_gram|default(0, true) if latest_rate else 0 }}");
+
+const latestGoldGramPrice = latestGoldGramPriceFromTemplate > 0
+    ? latestGoldGramPriceFromTemplate
+    : latestGoldDonPrice / 3.75;
+
+function getInputNumberById(id) {
+    const input = document.getElementById(id);
+
+    if (!input) {
+        return 0;
+    }
+
+    const value = String(input.value || "").replace(/[^\d.]/g, "");
+
+    return Number(value || 0);
+}
+
+function normalizePercent(value) {
+    const number = Number(value || 0);
+
+    if (number > 1) {
+        return number / 100;
+    }
+
+    return number;
+}
+
+function formatWon(value) {
+    return Math.round(Number(value || 0)).toLocaleString("ko-KR") + "원";
+}
+
+function roundToThousand(value) {
+    return Math.round(Number(value || 0) / 1000) * 1000;
+}
+
+function roundToTenThousand(value) {
+    return Math.round(Number(value || 0) / 10000) * 10000;
+}
+
+function formatGram(value) {
+    return Number(value || 0).toFixed(2) + "g";
+}
+
+function setText(id, value) {
+    const el = document.getElementById(id);
+
+    if (el) {
+        el.textContent = value;
+    }
+}
+
+function resetPriceResult() {
+    setText("result14kWeight", "0g");
+    setText("result14kPureWeight", "0g");
+    setText("result14kGoldPrice", "0원");
+    setText("result14kCost", "0원");
+    setText("result14kBasePrice", "0원");
+    setText("result14kMarginAmount", "0원");
+    setText("result14kDiscountPrice", "0원");
+
+    setText("result18kWeight", "0g");
+    setText("result18kPureWeight", "0g");
+    setText("result18kGoldPrice", "0원");
+    setText("result18kCost", "0원");
+    setText("result18kBasePrice", "0원");
+    setText("result18kMarginAmount", "0원");
+    setText("result18kDiscountPrice", "0원");
+    setText("result18kAdditionalPrice", "+0원");
+
+    setText("currentRepresentativePriceDisplay", "계산 대기");
+    setText("editPreviewPriceDisplay", "계산 대기");
+}
+
+function calculateSimpleJewelryPrice() {
+    const weight14k = getInputNumberById("base14kWeight");
+    const laborFee = getInputNumberById("totalLaborFee");
+    const haeriRate = normalizePercent(getInputNumberById("haeriRate"));
+    const haeriMultiplier = 1 + haeriRate;
+    const multiplier = getInputNumberById("priceMultiplier") || 1.2;
+    const discountRate = normalizePercent(getInputNumberById("discountRate"));
+
+    const representativePriceInput = document.getElementById("representativePriceInput");
+
+    if (!latestGoldGramPrice || !weight14k) {
+        resetPriceResult();
+        return;
+    }
+
+    // 14K 계산
+    const pureWeight14k = weight14k * 0.585;
+    const goldPrice14kRaw = pureWeight14k * latestGoldGramPrice * haeriMultiplier;
+    const goldPrice14k = roundToThousand(goldPrice14kRaw);
+    const cost14k = goldPrice14k + laborFee;
+    const basePrice14kRaw = cost14k * multiplier * 1.10;
+    const basePrice14k = roundToTenThousand(basePrice14kRaw);
+    const discountPrice14k = basePrice14k * (1 - discountRate);
+    const marginAmount14k = discountPrice14k - cost14k;
+
+    // 18K 계산
+    const weight18k = weight14k * 1.15;
+    const pureWeight18k = weight18k * 0.75;
+    const goldPrice18kRaw = pureWeight18k * latestGoldGramPrice * haeriMultiplier;
+    const goldPrice18k = roundToThousand(goldPrice18kRaw);
+    const cost18k = goldPrice18k + laborFee;
+    const basePrice18kRaw = cost18k * multiplier * 1.10;
+    const basePrice18k = roundToTenThousand(basePrice18kRaw);
+    const discountPrice18k = basePrice18k * (1 - discountRate);
+    const marginAmount18k = discountPrice18k - cost18k;
+
+    const additional18k = discountPrice18k - discountPrice14k;
+
+    setText("result14kWeight", formatGram(weight14k));
+    setText("result14kPureWeight", formatGram(pureWeight14k));
+    setText("result14kGoldPrice", formatWon(goldPrice14k));
+    setText("result14kCost", formatWon(cost14k));
+    setText("result14kBasePrice", formatWon(basePrice14k));
+    setText("result14kMarginAmount", formatWon(marginAmount14k));
+    setText("result14kDiscountPrice", formatWon(discountPrice14k));
+    setText("currentRepresentativePriceDisplay", formatWon(discountPrice14k));
+    setText("editPreviewPriceDisplay", formatWon(discountPrice14k));
+
+    setText("result18kWeight", formatGram(weight18k));
+    setText("result18kPureWeight", formatGram(pureWeight18k));
+    setText("result18kGoldPrice", formatWon(goldPrice18k));
+    setText("result18kCost", formatWon(cost18k));
+    setText("result18kBasePrice", formatWon(basePrice18k));
+    setText("result18kMarginAmount", formatWon(marginAmount18k));
+    setText("result18kDiscountPrice", formatWon(discountPrice18k));
+    setText("result18kAdditionalPrice", "+" + formatWon(additional18k));
+
+    if (
+        representativePriceInput &&
+        !representativePriceInput.dataset.touched &&
+        discountPrice14k > 0
+    ) {
+        representativePriceInput.placeholder = `자동 대표 가격: ${formatWon(discountPrice14k)}`;
+    }
+}
+
+document.querySelectorAll(".simple-price-input").forEach((input) => {
+    input.addEventListener("input", calculateSimpleJewelryPrice);
+});
+
+const representativePriceInput = document.getElementById("representativePriceInput");
+
+if (representativePriceInput) {
+    representativePriceInput.addEventListener("input", function () {
+        this.dataset.touched = "1";
+    });
+}
+
+calculateSimpleJewelryPrice();
+</script>
 
 </body>
 </html>

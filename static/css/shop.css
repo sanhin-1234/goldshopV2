@@ -1171,3 +1171,201 @@
         display: none;
     }
 }
+
+/* ================================
+   SHOP CATEGORY HERO MEDIA
+================================ */
+
+.shop-category-hero-visual {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    overflow: hidden;
+}
+
+.shop-category-hero-media {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* 이미지 위 톤 보정 */
+.shop-category-hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(0, 0, 0, 0.18),
+            rgba(0, 0, 0, 0.24)
+        ),
+        radial-gradient(
+            circle at center,
+            rgba(255, 255, 255, 0.08),
+            rgba(0, 0, 0, 0.28)
+        );
+
+    pointer-events: none;
+}
+
+.shop-category-hero-text,
+.shop-category-tabs {
+    position: relative;
+    z-index: 3;
+}
+
+.shop-category-hero-placeholder {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background:
+        radial-gradient(circle at center, rgba(255, 255, 255, 0.45), transparent 58%),
+        #ded6ca;
+
+    color: rgba(90, 72, 49, 0.45);
+    font-size: 13px;
+    letter-spacing: 0.24em;
+}
+
+/* ================================
+   SHOP HERO TEXT - LUXURY TUNING
+================================ */
+
+.shop-category-hero {
+    position: relative;
+    overflow: hidden;
+}
+
+.shop-category-hero-text {
+    position: absolute;
+    z-index: 3;
+
+    left: clamp(48px, 8vw, 140px);
+    top: 50%;
+    transform: translateY(-46%);
+
+    width: min(520px, calc(100% - 96px));
+    text-align: left;
+}
+
+.shop-category-eyebrow {
+    margin: 0 0 16px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.34em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.9);
+
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.16);
+}
+
+.shop-category-hero-text h1 {
+    margin: 0 0 20px;
+
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(68px, 8vw, 118px);
+    font-weight: 400;
+    line-height: 0.95;
+    letter-spacing: -0.05em;
+    color: #111;
+
+    text-shadow:
+        0 10px 34px rgba(255, 255, 255, 0.14),
+        0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.shop-category-hero-text > p:last-of-type {
+    margin: 0;
+    max-width: 420px;
+
+    font-size: 16px;
+    line-height: 1.9;
+    font-weight: 300;
+    color: rgba(255, 255, 255, 0.92);
+
+    text-shadow: 0 2px 14px rgba(0, 0, 0, 0.18);
+}
+
+@media (max-width: 768px) {
+    .shop-category-hero-text {
+        left: 24px;
+        right: 24px;
+        top: 50%;
+        transform: translateY(-44%);
+        width: auto;
+    }
+
+    .shop-category-eyebrow {
+        margin-bottom: 12px;
+        font-size: 11px;
+        letter-spacing: 0.24em;
+    }
+
+    .shop-category-hero-text h1 {
+        margin-bottom: 16px;
+        font-size: 56px;
+    }
+
+    .shop-category-hero-text > p:last-of-type {
+        max-width: 100%;
+        font-size: 14px;
+        line-height: 1.75;
+    }
+}
+
+/* ================================
+   SHOP HERO TEXT POSITION
+================================ */
+
+/* 기본: 왼쪽 배치 */
+.shop-category-hero.hero-text-left .shop-category-hero-text {
+    left: clamp(48px, 8vw, 140px);
+    right: auto;
+    top: 50%;
+    transform: translateY(-46%);
+    text-align: left;
+}
+
+/* NECKLACE / EARRINGS / BRACELET: 오른쪽 배치 */
+.shop-category-hero.hero-text-right .shop-category-hero-text {
+    left: auto;
+    right: clamp(48px, 8vw, 140px);
+    top: 50%;
+    transform: translateY(-46%);
+    text-align: right;
+}
+
+/* 오른쪽 배치일 때 설명문도 오른쪽 정렬 */
+.shop-category-hero.hero-text-right .shop-category-hero-text > p:last-of-type {
+    margin-left: auto;
+}
+
+/* 왼쪽 배치일 때 설명문 */
+.shop-category-hero.hero-text-left .shop-category-hero-text > p:last-of-type {
+    margin-right: auto;
+}
+
+/* 모바일에서는 너무 치우치지 않게 중앙 아래쪽 느낌 */
+@media (max-width: 768px) {
+    .shop-category-hero.hero-text-left .shop-category-hero-text,
+    .shop-category-hero.hero-text-right .shop-category-hero-text {
+        left: 24px;
+        right: 24px;
+        top: 50%;
+        width: auto;
+        transform: translateY(-44%);
+        text-align: left;
+    }
+
+    .shop-category-hero.hero-text-right .shop-category-hero-text > p:last-of-type {
+        margin-left: 0;
+    }
+}

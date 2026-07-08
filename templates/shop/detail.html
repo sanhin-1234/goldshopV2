@@ -81,8 +81,12 @@
                 {{ product['name'] }}
             </h1>
 
-            <p class="detail-price">
-                {{ "{:,}".format(product['price']) }}원
+            <p
+                class="detail-price"
+                id="detailPriceDisplay"
+                data-base-price="{{ default_price }}"
+            >
+                {{ "{:,}".format(default_price) }}원
             </p>
 
             <div class="detail-rating">
@@ -115,14 +119,29 @@
                 {% endif %}
             </div>
 
-            <button
-                class="detail-cart-btn"
-                data-product-id="{{ product['id'] }}"
-                data-product-price="{{ product['price'] }}"
-                data-login="{{ 'true' if session.get('username') else 'false' }}"
-            >
-                옵션 선택하기
-            </button>
+            <div class="detail-action-row">
+                <button
+                    type="button"
+                    class="detail-cart-btn"
+                    id="openOptionDrawer"
+                    data-product-id="{{ product['id'] }}"
+                    data-product-price="{{ default_price }}"
+                    data-login="{{ 'true' if session.get('user_id') else 'false' }}"
+                >
+                    옵션 선택하기
+                </button>
+
+                <button
+                    type="button"
+                    class="detail-buy-now-btn"
+                    id="directBuyNowBtn"
+                    data-product-id="{{ product['id'] }}"
+                    data-product-price="{{ default_price }}"
+                    data-login="{{ 'true' if session.get('user_id') else 'false' }}"
+                >
+                    바로 구매하기
+                </button>
+            </div>
 
             <a href="{{ back_url }}" class="detail-back-link">
                 ← 상품 목록으로 돌아가기
@@ -237,31 +256,56 @@
         {% set review_count = review_list|length %}
         {% set average_rating = avg_rating|default(0) %}
 
-        <div class="review-summary-card">
-            <p class="review-eyebrow">CUSTOMER REVIEW</p>
+                <div class="review-rating-panel">
 
-            <div class="review-score-wrap">
-                <div class="review-score">
-                    {{ "%.1f"|format(average_rating) }}
-                </div>
+                    <div class="review-rating-left">
+                        <p class="review-eyebrow">CUSTOMER REVIEW</p>
 
-                <div class="review-score-info">
-                    <div class="review-stars-display">
-                        {% for i in range(1, 6) %}
-                            {% if i <= average_rating|round(0, 'floor') %}
-                                ★
-                            {% else %}
-                                ☆
-                            {% endif %}
-                        {% endfor %}
+                        <div class="review-rating-score">
+                            {{ "%.1f"|format(average_rating or 0) }}
+                        </div>
+
+                        <div class="review-rating-stars">
+                            {% for i in range(1, 6) %}
+                                {% if i <= average_rating|round(0, 'floor') %}
+                                    <span class="is-filled">★</span>
+                                {% else %}
+                                    <span>★</span>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+
+                        <p class="review-rating-total">
+                            총 <strong>{{ review_count }}</strong>개의 리뷰
+                        </p>
                     </div>
 
-                    <p>
-                        총 <strong>{{ review_count }}</strong>개의 리뷰가 있습니다.
-                    </p>
+                    <div class="review-rating-bars">
+
+                        {% for score in [5, 4, 3, 2, 1] %}
+                        <div class="review-rating-row">
+
+                            <div class="review-rating-label">
+                                {{ score }}.0
+                            </div>
+
+                            <div class="review-rating-track">
+                                <div
+                                    class="review-rating-fill"
+                                    style="--rating-width: {{ rating_percentages.get(score, 0) }}%;"
+                                ></div>
+                            </div>
+
+                            <div class="review-rating-count">
+                                {{ rating_counts.get(score, 0) }}
+                            </div>
+
+                        </div>
+                        {% endfor %}
+
+                    </div>
+
                 </div>
-            </div>
-        </div>
 
         <div class="review-write-card">
             <div class="review-write-head">
@@ -368,10 +412,87 @@
 
         <div>
             <h2>{{ product['name'] }}</h2>
-            <p>{{ "{:,}".format(product['price']) }}원</p>
+            <p id="drawerBasePrice">
+                {{ "{:,}".format(default_price) }}원
+            </p>
         </div>
 
     </div>
+
+    <div class="option-group" data-option="material">
+        <p class="option-label">소재</p>
+
+        <div class="option-buttons">
+            {% if material_price_data %}
+
+                {% set price_14k = material_price_data.get('14K', {}).get('discounted_price', default_price) %}
+
+                {% for material, price_data in material_price_data.items() %}
+
+                    {% set material_price = price_data.discounted_price %}
+                    {% set additional_price = material_price - price_14k %}
+
+                    <button
+                        type="button"
+                        class="material-option-btn {% if material == default_material %}selected{% endif %}"
+                        data-material="{{ material }}"
+                        data-price="{{ material_price }}"
+                        data-additional-price="{{ additional_price }}"
+                    >
+                        {% if material == "14K" %}
+                            14K · 기본
+                        {% elif material == "18K" %}
+                            {% if additional_price > 0 %}
+                                18K · +{{ "{:,}".format(additional_price) }}원
+                            {% else %}
+                                18K
+                            {% endif %}
+                        {% else %}
+                            {{ material }}
+                        {% endif %}
+                    </button>
+                {% endfor %}
+
+            {% else %}
+                <button
+                    type="button"
+                    class="material-option-btn selected"
+                    data-material="{{ default_material }}"
+                    data-price="{{ default_price }}"
+                    data-additional-price="0"
+                >
+                    {{ default_material }} · 기본
+                </button>
+            {% endif %}
+        </div>
+    </div>
+
+    {% for group in option_groups %}
+        <div class="option-group detail-db-option-group" data-section-id="{{ group.id }}">
+            <p class="option-label">{{ group.title }}</p>
+
+            <div class="option-buttons">
+                {% for row in group.rows %}
+                    <button
+                        type="button"
+                        class="detail-option-choice"
+                        data-section-id="{{ group.id }}"
+                        data-section-title="{{ group.title }}"
+                        data-row-id="{{ row.id }}"
+                        data-label="{{ row.label }}"
+                        data-price-14k="{{ row.prices.get('14K', 0) }}"
+                        data-price-18k="{{ row.prices.get('18K', 0) }}"
+                    >
+                        {{ row.label }}
+
+                        {% if row.prices.get(default_material, 0) > 0 %}
+                            · +{{ "{:,}".format(row.prices.get(default_material, 0)) }}원
+                        {% endif %}
+                    </button>
+                {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
 
     <div class="option-quantity">
         <button type="button" id="qtyMinus">−</button>
@@ -379,45 +500,19 @@
         <button type="button" id="qtyPlus">＋</button>
     </div>
 
-    <div class="option-group" data-option="material">
-        <p class="option-label">함량</p>
-
-        <div class="option-buttons">
-            <button type="button" data-value="Silver 925">Silver 925</button>
-            <button type="button" data-value="14K">14K</button>
-            <button type="button" data-value="18K">18K</button>
-        </div>
-    </div>
-
-    <div class="option-group" data-option="length">
-        <p class="option-label">길이</p>
-
-        <div class="option-buttons">
-            <button type="button" data-value="40cm">40cm</button>
-            <button type="button" data-value="42cm">42cm</button>
-            <button type="button" data-value="45cm">45cm</button>
-        </div>
-    </div>
-
-    <div class="option-group" data-option="color">
-        <p class="option-label">색상</p>
-
-        <div class="option-buttons">
-            <button type="button" data-value="Silver">Silver</button>
-            <button type="button" data-value="Gold">Gold</button>
-            <button type="button" data-value="Rose Gold">Rose Gold</button>
-        </div>
-    </div>
-
     <div class="option-total">
         <span>총 결제 금액</span>
         <strong id="optionTotalPrice">
-            {{ "{:,}".format(product['price']) }}원
+            {{ "{:,}".format(default_price) }}원
         </strong>
     </div>
 
-    <button type="button" class="option-submit-btn" id="optionSubmitBtn" disabled>
-        옵션을 선택해주세요
+    <button type="button" class="option-submit-btn" id="optionSubmitBtn">
+        장바구니 담기
+    </button>
+
+    <button type="button" class="option-buy-now-btn" id="optionBuyNowBtn">
+        바로 구매하기
     </button>
 
 </aside>
@@ -426,114 +521,188 @@
     장바구니에 담겼습니다.
 </div>
 
+<!-- MOBILE FIXED OPTION BUTTON -->
+<button type="button" class="detail-mobile-fixed-cart-btn" id="mobileFixedCartBtn">
+    옵션 선택하기
+</button>
+
+<div
+    id="detailTemplateData"
+    data-csrf-token="{{ csrf_token() if csrf_token is defined else '' }}"
+    data-material-price-data='{{ material_price_json | e }}'
+    data-option-groups='{{ option_groups_json | e }}'
+    data-default-material="{{ default_material }}"
+></div>
+
 <script>
+document.addEventListener("DOMContentLoaded", function () {
 
-    const csrfToken = "{{ csrf_token() }}";
+    const templateData = document.getElementById("detailTemplateData");
 
-        const productMainImage = document.getElementById("productMainImage");
-        const thumbButtons = document.querySelectorAll(".detail-thumb-btn");
-        const thumbScroll = document.getElementById("detailThumbnailScroll");
-        const thumbLeftBtn = document.getElementById("thumbLeftBtn");
-        const thumbRightBtn = document.getElementById("thumbRightBtn");
+    const csrfToken = templateData ? templateData.dataset.csrfToken : "";
 
-        if (productMainImage && thumbButtons.length > 0) {
-            thumbButtons.forEach(function (button) {
-                button.addEventListener("click", function () {
-                    const newImage = this.dataset.image;
+    let materialPriceData = {};
+    let optionGroups = [];
 
-                    if (!newImage) {
-                        return;
-                    }
+    try {
+        materialPriceData = JSON.parse(templateData?.dataset.materialPriceData || "{}");
+    } catch (error) {
+        console.log("materialPriceData 파싱 오류:", error);
+        materialPriceData = {};
+    }
 
-                    productMainImage.classList.add("is-changing");
+    try {
+        optionGroups = JSON.parse(templateData?.dataset.optionGroups || "[]");
+    } catch (error) {
+        console.log("optionGroups 파싱 오류:", error);
+        optionGroups = [];
+    }
 
-                    setTimeout(function () {
-                        productMainImage.src = newImage;
-                        productMainImage.classList.remove("is-changing");
-                    }, 160);
+    const productMainImage = document.getElementById("productMainImage");
+    const thumbButtons = document.querySelectorAll(".detail-thumb-btn");
+    const thumbScroll = document.getElementById("detailThumbnailScroll");
+    const thumbLeftBtn = document.getElementById("thumbLeftBtn");
+    const thumbRightBtn = document.getElementById("thumbRightBtn");
 
-                    thumbButtons.forEach(function (btn) {
-                        btn.classList.remove("is-active");
-                    });
+    if (productMainImage && thumbButtons.length > 0) {
+        thumbButtons.forEach(function (button) {
+            button.addEventListener("click", function () {
+                const newImage = this.dataset.image;
 
-                    this.classList.add("is-active");
-                });
-            });
-        }
-
-        if (thumbScroll) {
-            thumbScroll.addEventListener("wheel", function (event) {
-                if (Math.abs(event.deltaY) > Math.abs(event.deltaX)) {
-                    event.preventDefault();
-                    thumbScroll.scrollLeft += event.deltaY;
+                if (!newImage) {
+                    return;
                 }
-            }, { passive: false });
-        }
 
-        if (thumbLeftBtn && thumbScroll) {
-            thumbLeftBtn.addEventListener("click", function () {
-                thumbScroll.scrollBy({
-                    left: -180,
-                    behavior: "smooth"
-                });
-            });
-        }
+                productMainImage.classList.add("is-changing");
 
-        if (thumbRightBtn && thumbScroll) {
-            thumbRightBtn.addEventListener("click", function () {
-                thumbScroll.scrollBy({
-                    left: 180,
-                    behavior: "smooth"
+                setTimeout(function () {
+                    productMainImage.src = newImage;
+                    productMainImage.classList.remove("is-changing");
+                }, 160);
+
+                thumbButtons.forEach(function (btn) {
+                    btn.classList.remove("is-active");
                 });
+
+                this.classList.add("is-active");
             });
-        }
+        });
+    }
+
+    if (thumbScroll) {
+        thumbScroll.addEventListener("wheel", function (event) {
+            if (Math.abs(event.deltaY) > Math.abs(event.deltaX)) {
+                event.preventDefault();
+                thumbScroll.scrollLeft += event.deltaY;
+            }
+        }, { passive: false });
+    }
+
+    if (thumbLeftBtn && thumbScroll) {
+        thumbLeftBtn.addEventListener("click", function () {
+            thumbScroll.scrollBy({
+                left: -180,
+                behavior: "smooth"
+            });
+        });
+    }
+
+    if (thumbRightBtn && thumbScroll) {
+        thumbRightBtn.addEventListener("click", function () {
+            thumbScroll.scrollBy({
+                left: 180,
+                behavior: "smooth"
+            });
+        });
+    }
 
     const cartBtn = document.querySelector(".detail-cart-btn");
+    const mobileFixedBtn = document.getElementById("mobileFixedCartBtn");
+    const directBuyNowBtn = document.getElementById("directBuyNowBtn");
+    const optionBuyNowBtn = document.getElementById("optionBuyNowBtn");
+
     const toast = document.getElementById("toast");
 
     const optionOverlay = document.getElementById("optionOverlay");
     const optionDrawer = document.getElementById("optionDrawer");
     const optionCloseBtn = document.getElementById("optionCloseBtn");
     const optionSubmitBtn = document.getElementById("optionSubmitBtn");
+
     const optionTotalPrice = document.getElementById("optionTotalPrice");
+    const detailPriceDisplay = document.getElementById("detailPriceDisplay");
+    const drawerBasePrice = document.getElementById("drawerBasePrice");
 
     const qtyMinus = document.getElementById("qtyMinus");
     const qtyPlus = document.getElementById("qtyPlus");
     const optionQty = document.getElementById("optionQty");
 
-    let selectedOptions = {
-        material: "",
-        length: "",
-        color: ""
-    };
-
-    let quantity = 1;
+    if (!cartBtn) {
+        return;
+    }
 
     const productId = cartBtn.dataset.productId;
-    const productPrice = Number(cartBtn.dataset.productPrice);
+    const isLoggedIn = cartBtn.dataset.login === "true";
 
-    function openOptionDrawer() {
-        optionOverlay.classList.add("show");
-        optionDrawer.classList.add("show");
+    let selectedMaterial = templateData?.dataset.defaultMaterial || "14K";
+    let selectedOptions = {};
+    let quantity = 1;
+
+    function formatWon(value) {
+        value = Number(value || 0);
+        return value.toLocaleString("ko-KR") + "원";
     }
 
-    function closeOptionDrawer() {
-        optionOverlay.classList.remove("show");
-        optionDrawer.classList.remove("show");
+    function getBasePrice() {
+        if (materialPriceData && materialPriceData[selectedMaterial]) {
+            return Number(materialPriceData[selectedMaterial].discounted_price || 0);
+        }
+
+        return Number(cartBtn.dataset.productPrice || 0);
     }
 
-    function updateTotalPrice() {
-        const total = productPrice * quantity;
-        optionTotalPrice.textContent = total.toLocaleString() + "원";
+    function getSelectedOptionTotal() {
+        let total = 0;
+
+        Object.values(selectedOptions).forEach(function (option) {
+            if (selectedMaterial === "18K") {
+                total += Number(option.price18k || 0);
+            } else {
+                total += Number(option.price14k || 0);
+            }
+        });
+
+        return total;
+    }
+
+    function getUnitPrice() {
+        return getBasePrice() + getSelectedOptionTotal();
+    }
+
+    function getTotalPrice() {
+        return getUnitPrice() * quantity;
+    }
+
+    function refreshOptionButtonLabels() {
+        document.querySelectorAll(".detail-option-choice").forEach(function (button) {
+            const label = button.dataset.label || "";
+            const price14k = Number(button.dataset.price14k || 0);
+            const price18k = Number(button.dataset.price18k || 0);
+
+            const currentPrice = selectedMaterial === "18K" ? price18k : price14k;
+
+            if (currentPrice > 0) {
+                button.textContent = label + " · +" + formatWon(currentPrice);
+            } else {
+                button.textContent = label;
+            }
+        });
     }
 
     function checkOptionComplete() {
-        const isComplete =
-            selectedOptions.material &&
-            selectedOptions.length &&
-            selectedOptions.color;
+        const requiredGroupCount = Array.isArray(optionGroups) ? optionGroups.length : 0;
+        const selectedGroupCount = Object.keys(selectedOptions).length;
 
-        if (isComplete) {
+        if (selectedMaterial && selectedGroupCount >= requiredGroupCount) {
             optionSubmitBtn.disabled = false;
             optionSubmitBtn.textContent = "장바구니 담기";
         } else {
@@ -542,145 +711,312 @@
         }
     }
 
-    cartBtn.addEventListener("click", function () {
-        const isLoggedIn = this.dataset.login === "true";
+    function updatePrice() {
+        const basePrice = getBasePrice();
+        const totalPrice = getTotalPrice();
 
+        if (detailPriceDisplay) {
+            detailPriceDisplay.textContent = formatWon(basePrice);
+            detailPriceDisplay.dataset.basePrice = basePrice;
+        }
+
+        if (drawerBasePrice) {
+            drawerBasePrice.textContent = formatWon(basePrice);
+        }
+
+        if (optionTotalPrice) {
+            optionTotalPrice.textContent = formatWon(totalPrice);
+        }
+
+        if (optionQty) {
+            optionQty.textContent = quantity;
+        }
+
+        refreshOptionButtonLabels();
+        checkOptionComplete();
+    }
+
+    function openOptionDrawer() {
         if (!isLoggedIn) {
             alert("로그인 후 장바구니에 담을 수 있습니다.");
             window.location.href = "/login";
             return;
         }
 
-        openOptionDrawer();
-    });
+        optionOverlay.classList.add("show");
+        optionDrawer.classList.add("show");
+        document.body.style.overflow = "hidden";
+    }
 
-    optionCloseBtn.addEventListener("click", function () {
-    closeOptionDrawer();
-    });
+    function closeOptionDrawer() {
+        optionOverlay.classList.remove("show");
+        optionDrawer.classList.remove("show");
+        document.body.style.overflow = "";
+    }
 
-    optionOverlay.addEventListener("click", function () {
-        closeOptionDrawer();
-    });
+    cartBtn.addEventListener("click", openOptionDrawer);
 
-    qtyMinus.addEventListener("click", function () {
-        if (quantity > 1) {
-            quantity -= 1;
-            optionQty.textContent = quantity;
-            updateTotalPrice();
-        }
-    });
+    if (mobileFixedBtn) {
+        mobileFixedBtn.addEventListener("click", openOptionDrawer);
+    }
 
-    qtyPlus.addEventListener("click", function () {
-        quantity += 1;
-        optionQty.textContent = quantity;
-        updateTotalPrice();
-    });
+    if (optionCloseBtn) {
+        optionCloseBtn.addEventListener("click", closeOptionDrawer);
+    }
 
-    const optionButtons = document.querySelectorAll(".option-group button");
+    if (optionOverlay) {
+        optionOverlay.addEventListener("click", closeOptionDrawer);
+    }
 
-    optionButtons.forEach(function (button) {
+    document.querySelectorAll(".material-option-btn").forEach(function (button) {
         button.addEventListener("click", function () {
-            const group = this.closest(".option-group");
-            const optionName = group.dataset.option;
-            const optionValue = this.dataset.value;
+            selectedMaterial = button.dataset.material || "14K";
 
-            group.querySelectorAll("button").forEach(function (btn) {
+            document.querySelectorAll(".material-option-btn").forEach(function (btn) {
                 btn.classList.remove("selected");
             });
 
-            this.classList.add("selected");
+            button.classList.add("selected");
 
-            selectedOptions[optionName] = optionValue;
-
-            checkOptionComplete();
+            updatePrice();
         });
     });
+
+    document.querySelectorAll(".detail-option-choice").forEach(function (button) {
+        button.addEventListener("click", function () {
+            const sectionId = button.dataset.sectionId;
+            const sectionTitle = button.dataset.sectionTitle;
+            const rowId = button.dataset.rowId;
+            const label = button.dataset.label;
+
+            const group = button.closest(".option-group");
+
+            if (group) {
+                group.querySelectorAll(".detail-option-choice").forEach(function (btn) {
+                    btn.classList.remove("selected");
+                });
+            }
+
+            button.classList.add("selected");
+
+            selectedOptions[sectionId] = {
+                sectionId: sectionId,
+                sectionTitle: sectionTitle,
+                rowId: rowId,
+                label: label,
+                price14k: Number(button.dataset.price14k || 0),
+                price18k: Number(button.dataset.price18k || 0)
+            };
+
+            updatePrice();
+        });
+    });
+
+    if (qtyMinus) {
+        qtyMinus.addEventListener("click", function () {
+            if (quantity > 1) {
+                quantity -= 1;
+                updatePrice();
+            }
+        });
+    }
+
+    if (qtyPlus) {
+        qtyPlus.addEventListener("click", function () {
+            quantity += 1;
+            updatePrice();
+        });
+    }
+
+    function getSelectedOptionCount() {
+        return Object.keys(selectedOptions || {}).length;
+    }
+
+    function getRequiredOptionCount() {
+        return Array.isArray(optionGroups) ? optionGroups.length : 0;
+    }
+
+    function getDefaultBuyNowPayload() {
+        return {
+            quantity: 1,
+            material: templateData?.dataset.defaultMaterial || "14K",
+            unit_price: Number(cartBtn.dataset.productPrice || 0),
+            default_option: true,
+            options: {
+                material: templateData?.dataset.defaultMaterial || "14K",
+                details: {},
+                default_option: true
+            }
+        };
+    }
+
+    function getSelectedBuyNowPayload() {
+        const selectedCount = getSelectedOptionCount();
+        const requiredCount = getRequiredOptionCount();
+
+        const hasMissingOptions = selectedCount < requiredCount;
+
+        return {
+            quantity: quantity || 1,
+            material: selectedMaterial || "14K",
+            unit_price: getUnitPrice(),
+            default_option: hasMissingOptions,
+            options: {
+                material: selectedMaterial || "14K",
+                details: selectedOptions || {},
+                default_option: hasMissingOptions
+            }
+        };
+    }
+
+    async function submitBuyNow(payload) {
+        if (!isLoggedIn) {
+            alert("로그인 후 구매할 수 있습니다.");
+            window.location.href = "/login";
+            return;
+        }
+
+        try {
+            const response = await fetch("/buy-now/" + productId, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-Token": csrfToken,
+                    "X-CSRFToken": csrfToken
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+                if (response.status === 400) {
+                    alert("보안 토큰이 맞지 않습니다. 페이지를 새로고침한 뒤 다시 시도해 주세요.");
+                    return;
+                }
+
+                if (response.status === 401) {
+                    alert("로그인 후 구매할 수 있습니다.");
+                    window.location.href = "/login";
+                    return;
+                }
+
+                alert("바로 구매 처리 중 오류가 발생했습니다.");
+                return;
+            }
+
+            const data = await response.json();
+
+            if (!data.success) {
+                alert(data.message || "바로 구매 처리 중 오류가 발생했습니다.");
+
+                if (data.require_login) {
+                    window.location.href = data.redirect_url || "/login";
+                }
+
+                return;
+            }
+
+            window.location.href = data.redirect_url || "/order?mode=buy_now";
+
+        } catch (error) {
+            console.log("바로 구매 오류:", error);
+            alert("바로 구매 처리 중 오류가 발생했습니다.");
+        }
+    }
+
+    if (directBuyNowBtn) {
+        directBuyNowBtn.addEventListener("click", function () {
+            submitBuyNow(getDefaultBuyNowPayload());
+        });
+    }
+
+    if (optionBuyNowBtn) {
+        optionBuyNowBtn.addEventListener("click", function () {
+            submitBuyNow(getSelectedBuyNowPayload());
+        });
+    }
 
     optionSubmitBtn.addEventListener("click", async function () {
-    if (optionSubmitBtn.disabled) {
-        return;
-    }
+        if (optionSubmitBtn.disabled) {
+            return;
+        }
 
-    try {
-        const response = await fetch("/add-to-cart/{{ product['id'] }}", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRF-Token": csrfToken
-            },
-            body: JSON.stringify({
-                quantity: quantity,
-                options: selectedOptions
-            })
-        });
+        const unitPrice = getUnitPrice();
+        const totalPrice = getTotalPrice();
 
-        if (!response.ok) {
-            console.log("장바구니 요청 실패 상태:", response.status);
+        try {
+            const response = await fetch("/add-to-cart/" + productId, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-Token": csrfToken,
+                    "X-CSRFToken": csrfToken
+                },
+                body: JSON.stringify({
+                    quantity: quantity,
+                    material: selectedMaterial,
+                    unit_price: unitPrice,
+                    total_price: totalPrice,
+                    options: {
+                        material: selectedMaterial,
+                        details: selectedOptions
+                    }
+                })
+            });
 
-            if (response.status === 400) {
-                alert("보안 토큰이 맞지 않습니다. 페이지를 새로고침한 뒤 다시 시도해 주세요.");
+            if (!response.ok) {
+                console.log("장바구니 요청 실패 상태:", response.status);
+
+                if (response.status === 400) {
+                    alert("보안 토큰이 맞지 않습니다. 페이지를 새로고침한 뒤 다시 시도해 주세요.");
+                    return;
+                }
+
+                if (response.status === 401) {
+                    alert("로그인 후 장바구니에 담을 수 있습니다.");
+                    window.location.href = "/login";
+                    return;
+                }
+
+                alert("장바구니 담기 중 오류가 발생했습니다.");
                 return;
             }
 
-            if (response.status === 401) {
-                alert("로그인 후 장바구니에 담을 수 있습니다.");
-                window.location.href = "/login";
+            const data = await response.json();
+
+            if (!data.success) {
+                alert(data.message || "장바구니 담기 중 오류가 발생했습니다.");
+
+                if (data.require_login) {
+                    window.location.href = data.redirect_url || "/login";
+                }
+
                 return;
             }
 
+            closeOptionDrawer();
+
+            if (toast) {
+                toast.classList.add("show");
+
+                setTimeout(function () {
+                    toast.classList.remove("show");
+                }, 1800);
+            }
+
+            const cartCounts = document.querySelectorAll(".cart-count");
+
+            cartCounts.forEach(function (cartCount) {
+                cartCount.textContent = data.count;
+            });
+
+        } catch (error) {
+            console.log("장바구니 담기 오류:", error);
             alert("장바구니 담기 중 오류가 발생했습니다.");
-            return;
         }
-
-        const data = await response.json();
-
-        if (!data.success) {
-            alert(data.message || "장바구니 담기 중 오류가 발생했습니다.");
-
-            if (data.require_login) {
-                window.location.href = data.redirect_url || "/login";
-            }
-
-            return;
-        }
-
-        closeOptionDrawer();
-
-        toast.classList.add("show");
-
-        setTimeout(function () {
-            toast.classList.remove("show");
-        }, 1800);
-
-        const cartCounts = document.querySelectorAll(".cart-count");
-
-        cartCounts.forEach(function (cartCount) {
-            cartCount.textContent = data.count;
-        });
-
-    } catch (error) {
-        console.log("장바구니 담기 오류:", error);
-        alert("장바구니 담기 중 오류가 발생했습니다.");
-    }
-});
-
-</script>
-
-<!-- MOBILE FIXED OPTION BUTTON -->
-<button type="button" class="detail-mobile-fixed-cart-btn" id="mobileFixedCartBtn">
-    옵션 선택하기
-</button>
-
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    const originalCartBtn = document.querySelector(".detail-cart-btn");
-    const mobileFixedBtn = document.getElementById("mobileFixedCartBtn");
-
-    if (!originalCartBtn || !mobileFixedBtn) return;
-
-    mobileFixedBtn.addEventListener("click", function () {
-        originalCartBtn.click();
     });
+
+    updatePrice();
+
 });
 </script>
 
