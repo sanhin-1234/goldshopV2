@@ -1589,3 +1589,252 @@
         grid-template-columns: 1fr;
     }
 }
+
+.option-selected-summary {
+    margin-top: 28px;
+    padding: 22px 0;
+    border-top: 1px solid rgba(112, 88, 58, 0.16);
+    border-bottom: 1px solid rgba(112, 88, 58, 0.16);
+}
+
+.option-selected-summary-head {
+    margin-bottom: 16px;
+}
+
+.option-selected-summary-head span {
+    color: #8b6a47;
+    font-size: 14px;
+    letter-spacing: 0.08em;
+}
+
+.option-selected-summary-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.option-summary-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.option-summary-label {
+    flex-shrink: 0;
+    color: #8b8177;
+    font-size: 14px;
+}
+
+.option-summary-value-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 8px;
+    text-align: right;
+}
+
+.option-summary-value {
+    color: #1c1814;
+    font-size: 15px;
+    font-weight: 500;
+    word-break: break-word;
+}
+
+.option-summary-price {
+    color: #9b6b37;
+    font-size: 13px;
+}
+
+.option-summary-empty {
+    margin: 0;
+    color: #aaa098;
+    font-size: 14px;
+}
+
+@media (max-width: 768px) {
+    .option-selected-summary {
+        margin-top: 22px;
+        padding: 18px 0;
+    }
+
+    .option-summary-row {
+        gap: 14px;
+    }
+
+    .option-summary-label {
+        font-size: 13px;
+    }
+
+    .option-summary-value {
+        font-size: 14px;
+    }
+}
+
+.detail-price-area {
+    margin-top: 14px;
+}
+
+.detail-original-price-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+}
+
+.detail-original-price {
+    color: #9a9289;
+    font-size: 15px;
+    text-decoration: line-through;
+    text-decoration-thickness: 1px;
+}
+
+.detail-discount-rate {
+    color: #a56f35;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.detail-price {
+    margin: 0;
+    color: #17130f;
+    font-size: 28px;
+    font-weight: 600;
+}
+
+.detail-title-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+    padding-top: 4px;
+}
+
+.detail-wishlist-btn,
+.detail-share-btn {
+    position: relative;
+
+    width: 46px;
+    height: 46px;
+    padding: 0;
+
+    border: 1px solid rgba(155, 116, 70, 0.34);
+    border-radius: 50%;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255, 255, 255, 0.9),
+            rgba(244, 238, 228, 0.72)
+        );
+
+    color: #2a2119;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 20px;
+    line-height: 1;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 8px 24px rgba(70, 52, 34, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.9);
+
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        border-color 0.25s ease,
+        background 0.25s ease,
+        color 0.25s ease;
+}
+
+.detail-wishlist-btn::before,
+.detail-share-btn::before {
+    content: "";
+    position: absolute;
+    inset: 4px;
+    border-radius: 50%;
+    border: 1px solid rgba(171, 132, 85, 0.12);
+    pointer-events: none;
+}
+
+.detail-wishlist-btn:hover,
+.detail-share-btn:hover {
+    transform: translateY(-2px);
+
+    border-color: rgba(155, 116, 70, 0.62);
+
+    box-shadow:
+        0 12px 30px rgba(70, 52, 34, 0.13),
+        inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+
+.detail-wishlist-btn:active,
+.detail-share-btn:active {
+    transform: translateY(0) scale(0.96);
+}
+
+.detail-wishlist-btn.active {
+    color: #fffaf2;
+
+    border-color: #8c6239;
+
+    background:
+        linear-gradient(
+            145deg,
+            #2b2118,
+            #17110d
+        );
+
+    box-shadow:
+        0 10px 26px rgba(31, 23, 17, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.detail-wishlist-btn.active::before {
+    border-color: rgba(216, 179, 128, 0.22);
+}
+
+.detail-share-btn {
+    font-size: 17px;
+    color: #8b633d;
+}
+
+@media (max-width: 768px) {
+    .detail-title-actions {
+        gap: 8px;
+        padding-top: 2px;
+    }
+
+    .detail-wishlist-btn,
+    .detail-share-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+    }
+
+    .detail-share-btn {
+        font-size: 15px;
+    }
+}
+
+.detail-share-icon {
+    width: 21px;
+    height: 21px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.detail-share-icon circle {
+    fill: transparent;
+}

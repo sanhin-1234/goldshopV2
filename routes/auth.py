@@ -3,6 +3,7 @@ from models.db import get_db
 from werkzeug.security import generate_password_hash, check_password_hash
 import secrets
 import hmac
+from urllib.parse import urlparse
 
 auth_bp = Blueprint("auth", __name__)
 
@@ -90,8 +91,23 @@ def signup():
 
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
-
     error = None
+
+    next_url = (
+        request.args.get("next")
+        or request.form.get("next")
+        or "/"
+    )
+
+    # 외부 사이트로 강제 이동하는 것을 방지
+    parsed_next = urlparse(next_url)
+
+    if (
+        not next_url.startswith("/")
+        or next_url.startswith("//")
+        or parsed_next.netloc
+    ):
+        next_url = "/"
 
     if request.method == "POST":
         username = request.form.get("username", "").strip()
@@ -113,11 +129,15 @@ def login():
             session["username"] = user["username"]
             session["name"] = user["name"]
 
-            return redirect("/")
+            return redirect(next_url)
 
         error = "아이디 혹은 패스워드 정보가 일치하지 않습니다."
 
-    return render_template("shop/login.html", error=error)
+    return render_template(
+        "shop/login.html",
+        error=error,
+        next_url=next_url
+    )
 
 @auth_bp.route("/logout")
 def logout():

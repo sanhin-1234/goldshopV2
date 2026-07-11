@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>상품 옵션 설정 | GY JEWELRY ADMIN</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+        .option-admin-page {
+            max-width: 980px;
+            margin: 60px auto;
+            padding: 0 20px 80px;
+            font-family: inherit;
+        }
+
+        .option-admin-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            gap: 20px;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 20px;
+        }
+
+        .option-admin-head p {
+            margin: 0 0 8px;
+            font-size: 12px;
+            letter-spacing: 0.18em;
+            color: #999;
+        }
+
+        .option-admin-head h1 {
+            margin: 0;
+            font-size: 26px;
+            font-weight: 500;
+        }
+
+        .option-back-link {
+            text-decoration: none;
+            color: #555;
+            font-size: 14px;
+        }
+
+        .option-group-card {
+            border: 1px solid #ddd;
+            background: #fff;
+            padding: 22px;
+            margin-bottom: 18px;
+        }
+
+        .option-group-top {
+            display: grid;
+            grid-template-columns: 90px 1fr auto auto;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+
+        .option-group-top label {
+            font-size: 14px;
+            color: #555;
+        }
+
+        .option-group-title {
+            height: 42px;
+            border: 1px solid #ccc;
+            padding: 0 12px;
+            font-size: 15px;
+        }
+
+        .required-check {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: #555;
+            white-space: nowrap;
+        }
+
+        .option-choice-row {
+            display: grid;
+            grid-template-columns: 70px 1fr 110px 34px;
+            gap: 8px;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .choice-delete-btn,
+        .group-delete-btn,
+        .add-choice-btn,
+        .add-group-btn,
+        .save-option-btn {
+            border: 1px solid #222;
+            background: #fff;
+            color: #222;
+            cursor: pointer;
+            height: 38px;
+            padding: 0 14px;
+            font-size: 13px;
+        }
+
+        .choice-delete-btn {
+            border-color: #ccc;
+            color: #777;
+            padding: 0;
+        }
+
+        .group-delete-btn {
+            border-color: #999;
+            color: #555;
+        }
+
+        .option-choice-row input {
+            height: 38px;
+            border: 1px solid #ccc;
+            padding: 0 10px;
+            font-size: 14px;
+        }
+
+        .price-field-wrap {
+            position: relative;
+        }
+
+        .price-field-wrap input {
+            width: 100%;
+            padding-right: 28px;
+        }
+
+        .price-field-wrap span {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #777;
+            font-size: 13px;
+        }
+
+        .add-choice-btn {
+            margin-top: 8px;
+            border-color: #aaa;
+        }
+
+        .option-admin-actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 28px;
+        }
+
+        .add-group-btn {
+            min-width: 140px;
+        }
+
+        .save-option-btn {
+            min-width: 160px;
+            background: #222;
+            color: #fff;
+        }
+
+        .empty-guide {
+            border: 1px dashed #bbb;
+            padding: 30px;
+            text-align: center;
+            color: #777;
+            margin-bottom: 18px;
+        }
+
+        @media (max-width: 720px) {
+            .option-group-top {
+                grid-template-columns: 1fr;
+            }
+
+            .option-choice-row {
+                grid-template-columns: 54px 1fr;
+            }
+
+            .price-field-wrap {
+                grid-column: 2 / 3;
+            }
+
+            .option-admin-actions {
+                flex-direction: column;
+            }
+
+            .add-group-btn,
+            .save-option-btn {
+                width: 100%;
+            }
+        }
+
+        .engraving-option-check {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin: 18px 0 24px;
+            padding: 16px;
+            border: 1px solid #e5e0d8;
+            background: #faf8f3;
+            cursor: pointer;
+        }
+
+        .engraving-option-check input {
+            margin-top: 4px;
+        }
+
+        .engraving-option-check span {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .engraving-option-check small {
+            font-size: 12px;
+            color: #777;
+        }
+
+        .engraving-price-field {
+            position: relative;
+            margin-left: auto;
+            width: 160px;
+        }
+
+        .engraving-price-field input {
+            width: 100%;
+            height: 38px;
+            border: 1px solid #ccc;
+            padding: 0 34px 0 10px;
+            font-size: 14px;
+        }
+
+        .engraving-price-field em {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-style: normal;
+            font-size: 13px;
+            color: #777;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<main class="option-admin-page">
+
+    <div class="option-admin-head">
+        <div>
+            <p>PRODUCT OPTION</p>
+            <h1>{{ product['name'] }} 옵션 설정</h1>
+        </div>
+
+        <a href="{{ url_for('admin.edit_product', product_id=product['id']) }}" class="option-back-link">
+            ← 상품 수정으로 돌아가기
+        </a>
+    </div>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div style="margin-bottom: 20px; color: #2f6b3f;">
+                {% for message in messages %}
+                    <p>{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <form method="POST" id="productOptionForm">
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="options_json" id="optionsJsonInput">
+
+        <div id="optionGroupList"></div>
+
+        <label class="engraving-option-check">
+            <input type="checkbox" id="editEngravingCheck">
+
+            <span>
+                각인 기능 추가하기
+                <small>고객이 상품 상세페이지에서 각인 문구를 입력할 수 있습니다.</small>
+            </span>
+
+            <div class="engraving-price-field">
+                <input
+                    type="text"
+                    id="editEngravingPrice"
+                    placeholder="각인 추가 비용"
+                    value="0"
+                >
+                <em>원</em>
+            </div>
+        </label>
+
+        <div class="option-admin-actions">
+            <button type="button" class="add-group-btn" id="addGroupBtn">
+                큰 옵션 추가
+            </button>
+
+            <button type="submit" class="save-option-btn">
+                옵션 저장하기
+            </button>
+        </div>
+    </form>
+
+</main>
+
+<script type="application/json" id="optionGroupsJson">
+{{ option_groups_json | safe }}
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const optionGroupList = document.getElementById("optionGroupList");
+    const addGroupBtn = document.getElementById("addGroupBtn");
+    const productOptionForm = document.getElementById("productOptionForm");
+    const optionsJsonInput = document.getElementById("optionsJsonInput");
+    const editEngravingCheck = document.getElementById("editEngravingCheck");
+    const editEngravingPrice = document.getElementById("editEngravingPrice");
+
+    let optionGroups = [];
+
+    try {
+        optionGroups = JSON.parse(
+            document.getElementById("optionGroupsJson").textContent || "[]"
+        );
+    } catch (error) {
+        console.log("optionGroups 파싱 오류:", error);
+        optionGroups = [];
+    }
+
+    function createChoiceRow(choice = {}) {
+        const row = document.createElement("div");
+        row.className = "option-choice-row";
+
+        row.innerHTML = `
+            <button type="button" class="choice-delete-btn">삭제</button>
+
+            <input
+                type="text"
+                class="choice-label-input"
+                placeholder="세부 옵션 내용 예: 12호, 기본 포장"
+                value="${escapeHtml(choice.label || "")}"
+            >
+
+            <div class="price-field-wrap">
+                <input
+                    type="text"
+                    class="choice-price-input"
+                    placeholder="0"
+                    value="${formatNumber(choice.add_price || 0)}"
+                >
+                <span>원</span>
+            </div>
+
+            <span></span>
+        `;
+
+        row.querySelector(".choice-delete-btn").addEventListener("click", function () {
+            row.remove();
+        });
+
+        const priceInput = row.querySelector(".choice-price-input");
+
+        priceInput.addEventListener("input", function () {
+            priceInput.value = formatNumber(unformatNumber(priceInput.value));
+        });
+
+        return row;
+    }
+
+    function createGroupCard(group = {}) {
+        const card = document.createElement("div");
+        card.className = "option-group-card";
+
+        card.innerHTML = `
+            <div class="option-group-top">
+                <label>큰 옵션</label>
+
+                <input
+                    type="text"
+                    class="option-group-title"
+                    placeholder="예: 호수, 체인 길이, 선물 포장"
+                    value="${escapeHtml(group.title || "")}"
+                >
+
+                <label class="required-check">
+                    <input type="checkbox" class="option-required-input" ${Number(group.is_required || 0) === 1 ? "checked" : ""}>
+                    필수 옵션
+                </label>
+
+                <button type="button" class="group-delete-btn">큰 옵션 삭제</button>
+            </div>
+
+            <div class="choice-list"></div>
+
+            <button type="button" class="add-choice-btn">
+                세부 옵션 추가
+            </button>
+        `;
+
+        const choiceList = card.querySelector(".choice-list");
+        const addChoiceBtn = card.querySelector(".add-choice-btn");
+        const deleteGroupBtn = card.querySelector(".group-delete-btn");
+
+        const choices = Array.isArray(group.choices) && group.choices.length > 0
+            ? group.choices
+            : [{ label: "", add_price: 0 }];
+
+        choices.forEach(function (choice) {
+            choiceList.appendChild(createChoiceRow(choice));
+        });
+
+        addChoiceBtn.addEventListener("click", function () {
+            choiceList.appendChild(createChoiceRow());
+        });
+
+        deleteGroupBtn.addEventListener("click", function () {
+            if (confirm("이 큰 옵션과 세부 옵션을 모두 삭제할까요?")) {
+                card.remove();
+                renderEmptyGuide();
+            }
+        });
+
+        return card;
+    }
+
+    function renderEmptyGuide() {
+        const hasGroup = optionGroupList.querySelector(".option-group-card");
+
+        let guide = optionGroupList.querySelector(".empty-guide");
+
+        if (hasGroup && guide) {
+            guide.remove();
+            return;
+        }
+
+        if (!hasGroup && !guide) {
+            guide = document.createElement("div");
+            guide.className = "empty-guide";
+            guide.textContent = "아직 옵션이 없습니다. 큰 옵션 추가 버튼으로 옵션을 만들어 주세요.";
+            optionGroupList.appendChild(guide);
+        }
+    }
+
+    function isEngravingGroup(group) {
+    return group.option_code === "engraving" || group.input_type === "text";
+}
+
+function renderInitialGroups() {
+    optionGroupList.innerHTML = "";
+
+    const groups = Array.isArray(optionGroups) ? optionGroups : [];
+
+    const hasEngraving = groups.some(function (group) {
+        return isEngravingGroup(group);
+    });
+
+    if (editEngravingCheck) {
+        editEngravingCheck.checked = hasEngraving;
+    }
+
+    const engravingGroup = groups.find(function (group) {
+        return isEngravingGroup(group);
+    });
+
+    if (
+        editEngravingPrice &&
+        engravingGroup &&
+        Array.isArray(engravingGroup.choices) &&
+        engravingGroup.choices.length > 0
+    ) {
+        editEngravingPrice.value = formatNumber(
+            engravingGroup.choices[0].add_price || 0
+        );
+    }
+
+    const selectGroups = groups.filter(function (group) {
+        return !isEngravingGroup(group);
+    });
+
+    if (selectGroups.length === 0) {
+        optionGroupList.appendChild(createGroupCard({
+            title: "",
+            is_required: 1,
+            choices: [
+                { label: "", add_price: 0 }
+            ]
+        }));
+        return;
+    }
+
+    selectGroups.forEach(function (group) {
+        optionGroupList.appendChild(createGroupCard(group));
+    });
+}
+
+    function collectOptions() {
+        const result = [];
+
+        optionGroupList.querySelectorAll(".option-group-card").forEach(function (card) {
+            const title = card.querySelector(".option-group-title").value.trim();
+            const isRequired = card.querySelector(".option-required-input").checked;
+
+            if (!title) {
+                return;
+            }
+
+            const choices = [];
+
+            card.querySelectorAll(".option-choice-row").forEach(function (row) {
+                const label = row.querySelector(".choice-label-input").value.trim();
+                const addPrice = unformatNumber(row.querySelector(".choice-price-input").value);
+
+                if (!label) {
+                    return;
+                }
+
+                choices.push({
+                    label: label,
+                    add_price: addPrice,
+                    is_default: choices.length === 0 ? 1 : 0
+                });
+            });
+
+            if (choices.length === 0) {
+                return;
+            }
+
+            result.push({
+                title: title,
+                is_required: isRequired ? 1 : 0,
+                choices: choices
+            });
+        });
+        
+        if (editEngravingCheck && editEngravingCheck.checked) {
+            const engravingPrice = editEngravingPrice
+                ? unformatNumber(editEngravingPrice.value)
+                : 0;
+
+            result.push({
+                title: "각인",
+                option_code: "engraving",
+                input_type: "text",
+                is_required: 0,
+                choices: [
+                    {
+                        label: "각인 추가",
+                        add_price: engravingPrice,
+                        is_default: 0
+                    }
+                ]
+            });
+        }
+
+        return result;
+    }
+
+    function escapeHtml(value) {
+        return String(value)
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#039;");
+    }
+
+    function unformatNumber(value) {
+        const digits = String(value || "").replace(/[^0-9]/g, "");
+
+        if (!digits) {
+            return 0;
+        }
+
+        return Number(digits);
+    }
+
+    function formatNumber(value) {
+        value = Number(value || 0);
+        return value.toLocaleString("ko-KR");
+    }
+
+    if (editEngravingPrice) {
+        editEngravingPrice.addEventListener("input", function () {
+            editEngravingPrice.value = formatNumber(
+                unformatNumber(editEngravingPrice.value)
+            );
+        });
+    }
+
+    addGroupBtn.addEventListener("click", function () {
+        optionGroupList.appendChild(createGroupCard({
+            title: "",
+            is_required: 1,
+            choices: [
+                { label: "", add_price: 0 }
+            ]
+        }));
+
+        renderEmptyGuide();
+    });
+
+    productOptionForm.addEventListener("submit", function (event) {
+        const options = collectOptions();
+
+        optionsJsonInput.value = JSON.stringify(options);
+    });
+
+    renderInitialGroups();
+});
+</script>
+
+</body>
+</html>

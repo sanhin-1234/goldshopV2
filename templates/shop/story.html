@@ -18,8 +18,8 @@
         <p class="story-eyebrow">STORY COLLECTION</p>
 
         <h1>
-            여덜 가지 결,<br>
-            여덜 가지 마음의 이야기
+            여덟 가지 결,<br>
+            여덟 가지 마음의 이야기
         </h1>
 
         <p>
@@ -31,53 +31,59 @@
 
     <div class="story-grid">
 
-        <a href="/story/yeon" class="story-card">
-            <span>01</span>
-            <h2>결 ; 연</h2>
-            <p>서로 다른 시간이 하나의 인연으로 묶이는 순간</p>
-        </a>
+        {% for story in story_cards %}
 
-        <a href="/story/sum" class="story-card">
-            <span>02</span>
-            <h2>숨 ; 결</h2>
-            <p>보이지 않지만 분명히 남아 있는 숨결</p>
-        </a>
+            <a
+                href="{{ url_for('product.story_detail', slug=story.slug) }}"
+                class="story-card"
+            >
 
-        <a href="/story/go" class="story-card">
-            <span>04</span>
-            <h2>고 ; 결</h2>
-            <p>지나온 시간 위에 남겨진 깊은 흔적</p>
-        </a>
+                <div class="story-card-media">
 
-        <a href="/story/gan" class="story-card">
-            <span>05</span>
-            <h2>간 ; 결</h2>
-            <p>사이와 사이에 머무는 마음</p>
-        </a>
+                    {% if story.media and story.media['filename'] %}
 
-        <a href="/story/bit" class="story-card">
-            <span>06</span>
-            <h2>빛 ; 결</h2>
-            <p>어둠 속에서도 사라지지 않는 작은 빛</p>
-        </a>
+                        {% if story.media['media_type'] == 'video' %}
+                            <video
+                                autoplay
+                                muted
+                                loop
+                                playsinline
+                                class="story-card-image"
+                            >
+                                <source src="/uploads/{{ story.media['filename'] }}">
+                            </video>
+                        {% else %}
+                            <img
+                                src="/uploads/{{ story.media['filename'] }}"
+                                alt="{{ story.title }}"
+                                class="story-card-image"
+                            >
+                        {% endif %}
 
-        <a href="/story/hon" class="story-card">
-            <span>08</span>
-            <h2>흔 ; 결</h2>
-            <p>두 마음이 하나의 결로 묶이는 순간</p>
-        </a>
+                    {% else %}
 
-        <a href="/story/sok" class="story-card">
-            <span>09</span>
-            <h2>결 ; 속</h2>
-            <p>겉보다 깊은 곳에 간직된 이야기</p>
-        </a>
+                        <div class="story-card-placeholder">
+                            GY JEWELRY
+                        </div>
 
-        <a href="/story/chae" class="story-card">
-            <span>10</span>
-            <h2>결 ; 채</h2>
-            <p>각자의 색이 하나의 기억으로 남는 순간</p>
-        </a>
+                    {% endif %}
+
+                    <div class="story-card-overlay"></div>
+
+                    <span class="story-card-number">
+                        {{ story.number }}
+                    </span>
+
+                    <div class="story-card-content">
+                        <h2>{{ story.title }}</h2>
+                        <p>{{ story.description }}</p>
+                    </div>
+
+                </div>
+
+            </a>
+
+        {% endfor %}
 
     </div>
 

@@ -4,6 +4,35 @@
     <meta charset="UTF-8">
     <title>상품 수정 | GY JEWELRY ADMIN</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+    .option-setting-field {
+        border-top: 1px solid #eee;
+        padding-top: 18px;
+        margin-top: 18px;
+    }
+
+    .admin-option-setting-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: fit-content;
+        min-width: 160px;
+        height: 42px;
+        padding: 0 18px;
+        border: 1px solid #222;
+        color: #222;
+        background: #fff;
+        text-decoration: none;
+        font-size: 14px;
+        letter-spacing: 0.03em;
+    }
+
+    .admin-option-setting-btn:hover {
+        background: #222;
+        color: #fff;
+    }
+    </style>
 </head>
 
 <body>
@@ -170,6 +199,19 @@
                             <label>상품 설명</label>
                             <textarea name="description">{{ product['description'] or '' }}</textarea>
                         </div>
+
+                        <div class="admin-field option-setting-field">
+                            <label>상품 옵션</label>
+
+                            <a
+                                href="{{ url_for('admin.product_options', product_id=product['id']) }}"
+                                class="admin-option-setting-btn"
+                            >
+                                옵션 설정하기
+                            </a>
+
+                        </div>
+
                     </div>
 
                     <!-- PRICE CALCULATION -->
@@ -261,6 +303,34 @@
                                         placeholder="예: 10 또는 0.10"
                                     >
                                     <small>10 입력 시 10% 할인으로 계산됩니다.</small>
+                                </div>
+                            </div>
+
+                            <div class="form-row-2">
+                                <div class="form-field">
+                                    <label>보석가</label>
+                                    <input
+                                        type="text"
+                                        name="stone_price"
+                                        id="stone_price"
+                                        class="simple-price-input"
+                                        value="{{ price_base.stone_price if price_base else 0 }}"
+                                        placeholder="예: 50000"
+                                    >
+                                    <small>제품원가에 포함되는 보석 비용입니다.</small>
+                                </div>
+
+                                <div class="form-field">
+                                    <label>기타 비용</label>
+                                    <input
+                                        type="text"
+                                        name="extra_fee"
+                                        id="extra_fee"
+                                        class="simple-price-input"
+                                        value="{{ price_base.extra_fee if price_base else 0 }}"
+                                        placeholder="예: 10000"
+                                    >
+                                    <small>포장, 부속, 도금 등 기타 원가입니다.</small>
                                 </div>
                             </div>
 
@@ -693,6 +763,8 @@ function resetPriceResult() {
 function calculateSimpleJewelryPrice() {
     const weight14k = getInputNumberById("base14kWeight");
     const laborFee = getInputNumberById("totalLaborFee");
+    const stonePrice = getInputNumberById("stone_price");
+    const extraFee = getInputNumberById("extra_fee");
     const haeriRate = normalizePercent(getInputNumberById("haeriRate"));
     const haeriMultiplier = 1 + haeriRate;
     const multiplier = getInputNumberById("priceMultiplier") || 1.2;
@@ -709,7 +781,7 @@ function calculateSimpleJewelryPrice() {
     const pureWeight14k = weight14k * 0.585;
     const goldPrice14kRaw = pureWeight14k * latestGoldGramPrice * haeriMultiplier;
     const goldPrice14k = roundToThousand(goldPrice14kRaw);
-    const cost14k = goldPrice14k + laborFee;
+    const cost14k = goldPrice14k + laborFee + stonePrice + extraFee;
     const basePrice14kRaw = cost14k * multiplier * 1.10;
     const basePrice14k = roundToTenThousand(basePrice14kRaw);
     const discountPrice14k = basePrice14k * (1 - discountRate);
@@ -720,7 +792,7 @@ function calculateSimpleJewelryPrice() {
     const pureWeight18k = weight18k * 0.75;
     const goldPrice18kRaw = pureWeight18k * latestGoldGramPrice * haeriMultiplier;
     const goldPrice18k = roundToThousand(goldPrice18kRaw);
-    const cost18k = goldPrice18k + laborFee;
+    const cost18k = goldPrice18k + laborFee + stonePrice + extraFee;
     const basePrice18kRaw = cost18k * multiplier * 1.10;
     const basePrice18k = roundToTenThousand(basePrice18kRaw);
     const discountPrice18k = basePrice18k * (1 - discountRate);

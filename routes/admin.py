@@ -5,6 +5,7 @@ import sqlite3
 import secrets
 import hmac
 import uuid
+import json
 from werkzeug.utils import secure_filename
 from werkzeug.security import check_password_hash
 from datetime import datetime, date
@@ -373,6 +374,8 @@ def calculate_price_from_14k_weight(
     pure_gold_price_per_gram,
     weight_14k,
     labor_fee,
+    stone_price,
+    extra_fee,
     multiplier,
     discount_rate,
     haeri_rate
@@ -405,6 +408,8 @@ def calculate_price_from_14k_weight(
     gram_price = to_decimal(pure_gold_price_per_gram)
     weight_14k = to_decimal(weight_14k)
     labor_fee = to_decimal(labor_fee)
+    stone_price = to_decimal(stone_price)
+    extra_fee = to_decimal(extra_fee)
     multiplier = to_decimal(multiplier, "1.20")
     discount_rate = normalize_percent_rate(discount_rate)
     haeri_rate = normalize_haeri_rate(haeri_rate)
@@ -414,7 +419,7 @@ def calculate_price_from_14k_weight(
     pure_weight_14k = weight_14k * GOLD_PURITY_14K
     gold_price_14k_raw = pure_weight_14k * gram_price * haeri_multiplier
     gold_price_14k = Decimal(round_1000_won(gold_price_14k_raw))
-    cost_14k = gold_price_14k + labor_fee
+    cost_14k = gold_price_14k + labor_fee + stone_price + extra_fee
     base_sale_price_14k_raw = cost_14k * multiplier * VAT_MULTIPLIER
     base_sale_price_14k = Decimal(round_10000_won(base_sale_price_14k_raw))
     discount_price_14k = base_sale_price_14k * (Decimal("1") - discount_rate)
@@ -425,7 +430,7 @@ def calculate_price_from_14k_weight(
     pure_weight_18k = weight_18k * GOLD_PURITY_18K
     gold_price_18k_raw = pure_weight_18k * gram_price * haeri_multiplier
     gold_price_18k = Decimal(round_1000_won(gold_price_18k_raw))
-    cost_18k = gold_price_18k + labor_fee
+    cost_18k = gold_price_18k + labor_fee + stone_price + extra_fee
     base_sale_price_18k_raw = cost_18k * multiplier * VAT_MULTIPLIER
     base_sale_price_18k = Decimal(round_10000_won(base_sale_price_18k_raw))
     discount_price_18k = base_sale_price_18k * (Decimal("1") - discount_rate)
@@ -440,6 +445,8 @@ def calculate_price_from_14k_weight(
             "pure_weight": str(pure_weight_14k.quantize(Decimal("0.01"))),
             "gold_price": round_won(gold_price_14k),
             "labor_fee": round_won(labor_fee),
+            "stone_price": round_won(stone_price),
+            "extra_fee": round_won(extra_fee),
             "cost": round_won(cost_14k),
             "base_sale_price": round_won(base_sale_price_14k),
             "discount_rate": float(discount_rate),
@@ -454,6 +461,8 @@ def calculate_price_from_14k_weight(
             "pure_weight": str(pure_weight_18k.quantize(Decimal("0.01"))),
             "gold_price": round_won(gold_price_18k),
             "labor_fee": round_won(labor_fee),
+            "stone_price": round_won(stone_price),
+            "extra_fee": round_won(extra_fee),
             "cost": round_won(cost_18k),
             "base_sale_price": round_won(base_sale_price_18k),
             "discount_rate": float(discount_rate),
@@ -507,6 +516,14 @@ def get_14k_base_price_result(db, form):
         "1.20"
     )
 
+    stone_price = parse_admin_number(
+        form.get("stone_price")
+    )
+
+    extra_fee = parse_admin_number(
+        form.get("extra_fee")
+    )
+
     discount_rate = parse_admin_decimal_string(
         form.get("discount_rate"),
         "0"
@@ -527,6 +544,8 @@ def get_14k_base_price_result(db, form):
         pure_gold_price_per_gram=latest_rate["pure_gold_price_per_gram"],
         weight_14k=weight_14k,
         labor_fee=labor_fee,
+        stone_price=stone_price,
+        extra_fee=extra_fee,
         multiplier=multiplier,
         discount_rate=discount_rate,
         haeri_rate=haeri_rate
@@ -582,6 +601,14 @@ def save_product_material_prices(db, product_id, form):
         "0"
     )
 
+    stone_price = parse_admin_number(
+        form.get("stone_price")
+    )
+
+    extra_fee = parse_admin_number(
+        form.get("extra_fee")
+    )
+
     for sort_order, material_label in enumerate(["14K", "18K"], start=1):
         data = result[material_label]
 
@@ -613,8 +640,8 @@ def save_product_material_prices(db, product_id, form):
             data["base_sale_price"],
             sort_order,
             data["labor_fee"],
-            0,
-            data["additional_price"],
+            data["stone_price"],
+            data["extra_fee"],
             haeri_rate,
             multiplier,
             data["cost"],
@@ -865,6 +892,12 @@ def add_product():
 
         save_product_material_prices(db, product_id, request.form)
 
+        save_product_simple_options_from_json(
+            db,
+            product_id,
+            request.form.get("options_json", "[]")
+        )
+
         db.commit()
 
         return redirect("/admin")
@@ -882,15 +915,19 @@ def uploaded_file(filename):
 # 상품 삭제
 @admin_bp.route("/delete-product/<int:id>", methods=["POST"])
 def delete_product(id):
+    db = get_db()
 
-    conn = get_db()
-    cur = conn.cursor()
+    db.execute("""
+        DELETE FROM products
+        WHERE id = ?
+    """, (id,))
 
-    cur.execute("DELETE FROM products WHERE id=?", (id,))
-    conn.commit()
-    conn.close()
+    db.commit()
+    db.close()
 
-    return redirect("/admin")
+    flash("상품이 삭제되었습니다.")
+
+    return redirect(url_for("admin.admin_home"))
 
 @admin_bp.route("/orders")
 def admin_orders():
@@ -1202,6 +1239,306 @@ def edit_product(product_id):
 def old_edit_product_url(product_id):
     return redirect(f"/admin/edit/{product_id}")
 
+# =========================================================
+# PRODUCT OPTIONS ADMIN
+# =========================================================
+
+def ensure_product_simple_option_tables(db):
+    db.execute("""
+        CREATE TABLE IF NOT EXISTS product_simple_option_groups (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            product_id INTEGER NOT NULL,
+            title TEXT NOT NULL,
+            option_code TEXT,
+            input_type TEXT NOT NULL DEFAULT 'select',
+            is_required INTEGER NOT NULL DEFAULT 0,
+            sort_order INTEGER NOT NULL DEFAULT 0,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+
+    db.execute("""
+        CREATE TABLE IF NOT EXISTS product_simple_option_choices (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            group_id INTEGER NOT NULL,
+            label TEXT NOT NULL,
+            value TEXT,
+            add_price INTEGER NOT NULL DEFAULT 0,
+            is_default INTEGER NOT NULL DEFAULT 0,
+            sort_order INTEGER NOT NULL DEFAULT 0,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+
+    db.commit()
+
+def save_product_simple_options_from_json(db, product_id, options_json):
+    ensure_product_simple_option_tables(db)
+
+    try:
+        option_groups = json.loads(options_json or "[]")
+    except json.JSONDecodeError:
+        option_groups = []
+
+    if not isinstance(option_groups, list):
+        option_groups = []
+
+    # 기존 세부 옵션 삭제
+    db.execute("""
+        DELETE FROM product_simple_option_choices
+        WHERE group_id IN (
+            SELECT id
+            FROM product_simple_option_groups
+            WHERE product_id = ?
+        )
+    """, (product_id,))
+
+    # 기존 큰 옵션 삭제
+    db.execute("""
+        DELETE FROM product_simple_option_groups
+        WHERE product_id = ?
+    """, (product_id,))
+
+    for group_index, group in enumerate(option_groups, start=1):
+        title = str(group.get("title", "")).strip()
+
+        if not title:
+            continue
+
+        is_required = 1 if group.get("is_required") else 0
+
+        option_code = str(
+            group.get("option_code", "")
+        ).strip()
+
+        input_type = str(
+            group.get("input_type", "select")
+        ).strip()
+
+        if input_type not in ["select", "text"]:
+            input_type = "select"
+
+        cursor = db.execute("""
+            INSERT INTO product_simple_option_groups (
+                product_id,
+                title,
+                option_code,
+                input_type,
+                is_required,
+                sort_order
+            )
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, (
+            product_id,
+            title,
+            option_code,
+            input_type,
+            is_required,
+            group_index
+        ))
+
+        group_id = cursor.lastrowid
+
+        choices = group.get("choices", [])
+
+        if not isinstance(choices, list):
+            choices = []
+
+        for choice_index, choice in enumerate(choices, start=1):
+            label = str(choice.get("label", "")).strip()
+
+            if not label:
+                continue
+
+            add_price = str(choice.get("add_price", "0")).replace(",", "").strip()
+
+            try:
+                add_price = int(float(add_price or 0))
+            except ValueError:
+                add_price = 0
+
+            db.execute("""
+                INSERT INTO product_simple_option_choices (
+                    group_id,
+                    label,
+                    value,
+                    add_price,
+                    is_default,
+                    sort_order
+                )
+                VALUES (?, ?, ?, ?, ?, ?)
+            """, (
+                group_id,
+                label,
+                label,
+                add_price,
+                1 if choice_index == 1 else 0,
+                choice_index
+            ))
+
+def get_admin_product_options(db, product_id):
+    ensure_product_simple_option_tables(db)
+
+    groups = db.execute("""
+        SELECT *
+        FROM product_simple_option_groups
+        WHERE product_id = ?
+        ORDER BY sort_order ASC, id ASC
+    """, (product_id,)).fetchall()
+
+    option_groups = []
+
+    for group in groups:
+        choices = db.execute("""
+            SELECT *
+            FROM product_simple_option_choices
+            WHERE group_id = ?
+            ORDER BY sort_order ASC, id ASC
+        """, (group["id"],)).fetchall()
+
+        option_groups.append({
+            "id": group["id"],
+            "title": group["title"],
+            "option_code": group["option_code"] or "",
+            "input_type": group["input_type"] or "select",
+            "is_required": int(group["is_required"] or 0),
+            "choices": [
+                {
+                    "id": choice["id"],
+                    "label": choice["label"],
+                    "value": choice["value"] or "",
+                    "add_price": int(choice["add_price"] or 0),
+                    "is_default": int(choice["is_default"] or 0)
+                }
+                for choice in choices
+            ]
+        })
+
+    return option_groups
+
+
+@admin_bp.route("/product-options/<int:product_id>", methods=["GET", "POST"])
+def product_options(product_id):
+    db = get_db()
+
+    ensure_product_simple_option_tables(db)
+
+    product = db.execute("""
+        SELECT *
+        FROM products
+        WHERE id = ?
+    """, (product_id,)).fetchone()
+
+    if product is None:
+        return redirect("/admin")
+
+    if request.method == "POST":
+        options_json = request.form.get("options_json", "[]")
+
+        try:
+            option_groups = json.loads(options_json)
+        except json.JSONDecodeError:
+            option_groups = []
+
+        db.execute("""
+            DELETE FROM product_simple_option_choices
+            WHERE group_id IN (
+                SELECT id
+                FROM product_simple_option_groups
+                WHERE product_id = ?
+            )
+        """, (product_id,))
+
+        db.execute("""
+            DELETE FROM product_simple_option_groups
+            WHERE product_id = ?
+        """, (product_id,))
+
+        for group_index, group in enumerate(option_groups, start=1):
+            title = str(group.get("title", "")).strip()
+
+            if not title:
+                continue
+
+            is_required = 1 if group.get("is_required") else 0
+
+            option_code = str(group.get("option_code", "")).strip()
+            input_type = str(group.get("input_type", "select")).strip() or "select"
+
+            if input_type not in ["select", "text"]:
+                input_type = "select"
+
+            cursor = db.execute("""
+                INSERT INTO product_simple_option_groups (
+                    product_id,
+                    title,
+                    option_code,
+                    input_type,
+                    is_required,
+                    sort_order
+                )
+                VALUES (?, ?, ?, ?, ?, ?)
+            """, (
+                product_id,
+                title,
+                option_code,
+                input_type,
+                is_required,
+                group_index
+            ))
+
+            group_id = cursor.lastrowid
+
+            choices = group.get("choices", [])
+
+            if not isinstance(choices, list):
+                choices = []
+
+            for choice_index, choice in enumerate(choices, start=1):
+                label = str(choice.get("label", "")).strip()
+
+                if not label:
+                    continue
+
+                add_price = str(choice.get("add_price", "0")).replace(",", "").strip()
+
+                try:
+                    add_price = int(float(add_price or 0))
+                except ValueError:
+                    add_price = 0
+
+                db.execute("""
+                    INSERT INTO product_simple_option_choices (
+                        group_id,
+                        label,
+                        value,
+                        add_price,
+                        is_default,
+                        sort_order
+                    )
+                    VALUES (?, ?, ?, ?, ?, ?)
+                """, (
+                    group_id,
+                    label,
+                    label,
+                    add_price,
+                    1 if choice_index == 1 else 0,
+                    choice_index
+                ))
+
+        db.commit()
+
+        flash("상품 옵션이 저장되었습니다.")
+        return redirect(url_for("admin.product_options", product_id=product_id))
+
+    option_groups = get_admin_product_options(db, product_id)
+
+    return render_template(
+        "admin/product_options.html",
+        product=product,
+        option_groups=option_groups,
+        option_groups_json=json.dumps(option_groups, ensure_ascii=False)
+    )
 
 @admin_bp.route("/update-product/<int:product_id>", methods=["POST"])
 def update_product(product_id):

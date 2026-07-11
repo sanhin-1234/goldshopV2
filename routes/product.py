@@ -37,6 +37,67 @@ def attach_rating_to_products(db, products):
 
     return rated_products
 
+def attach_shop_price_to_products(db, products):
+    priced_products = []
+
+    for product in products:
+        item = dict(product)
+
+        price_row = db.execute("""
+            SELECT
+                base_price,
+                discount_price,
+                discount_rate
+            FROM product_material_prices
+            WHERE product_id = ?
+              AND UPPER(material) = '14K'
+            ORDER BY sort_order ASC, id ASC
+            LIMIT 1
+        """, (item["id"],)).fetchone()
+
+        sale_price = safe_int(item.get("price", 0), 0)
+        original_price = sale_price
+        discount_percent = 0
+
+        if price_row:
+            if (
+                "base_price" in price_row.keys()
+                and price_row["base_price"] is not None
+            ):
+                original_price = safe_int(
+                    price_row["base_price"],
+                    sale_price
+                )
+
+            if (
+                "discount_price" in price_row.keys()
+                and price_row["discount_price"] is not None
+            ):
+                sale_price = safe_int(
+                    price_row["discount_price"],
+                    sale_price
+                )
+
+            if (
+                "discount_rate" in price_row.keys()
+                and price_row["discount_rate"] is not None
+            ):
+                discount_percent = safe_float(
+                    price_row["discount_rate"],
+                    0
+                )
+
+                if 0 < discount_percent <= 1:
+                    discount_percent *= 100
+
+        item["shop_original_price"] = original_price
+        item["shop_sale_price"] = sale_price
+        item["shop_discount_percent"] = int(round(discount_percent))
+
+        priced_products.append(item)
+
+    return priced_products
+
 def get_page_hero_media(db, slot_key):
     hero = db.execute("""
         SELECT *
@@ -312,6 +373,74 @@ def get_product_option_groups(db, product_id):
 
     return option_groups
 
+def get_product_simple_option_groups(db, product_id):
+    ensure_product_simple_option_tables(db)
+    groups = db.execute("""
+        SELECT *
+        FROM product_simple_option_groups
+        WHERE product_id = ?
+        ORDER BY sort_order ASC, id ASC
+    """, (product_id,)).fetchall()
+
+    simple_option_groups = []
+
+    for group in groups:
+        choices = db.execute("""
+            SELECT *
+            FROM product_simple_option_choices
+            WHERE group_id = ?
+            ORDER BY sort_order ASC, id ASC
+        """, (group["id"],)).fetchall()
+
+        simple_option_groups.append({
+            "id": group["id"],
+            "title": row_get(group, "title", "옵션"),
+            "option_code": row_get(group, "option_code", ""),
+            "input_type": row_get(group, "input_type", "select"),
+            "is_required": safe_int(row_get(group, "is_required", 0), 0),
+            "choices": [
+                {
+                    "id": choice["id"],
+                    "label": row_get(choice, "label", ""),
+                    "value": row_get(choice, "value", ""),
+                    "add_price": safe_int(row_get(choice, "add_price", 0), 0),
+                    "is_default": safe_int(row_get(choice, "is_default", 0), 0)
+                }
+                for choice in choices
+            ]
+        })
+
+    return simple_option_groups
+
+def ensure_product_simple_option_tables(db):
+    db.execute("""
+        CREATE TABLE IF NOT EXISTS product_simple_option_groups (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            product_id INTEGER NOT NULL,
+            title TEXT NOT NULL,
+            option_code TEXT,
+            input_type TEXT NOT NULL DEFAULT 'select',
+            is_required INTEGER NOT NULL DEFAULT 0,
+            sort_order INTEGER NOT NULL DEFAULT 0,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+
+    db.execute("""
+        CREATE TABLE IF NOT EXISTS product_simple_option_choices (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            group_id INTEGER NOT NULL,
+            label TEXT NOT NULL,
+            value TEXT,
+            add_price INTEGER NOT NULL DEFAULT 0,
+            is_default INTEGER NOT NULL DEFAULT 0,
+            sort_order INTEGER NOT NULL DEFAULT 0,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+
+    db.commit()
+
 def ensure_home_media_table(cur):
     cur.execute("""
         CREATE TABLE IF NOT EXISTS home_media (
@@ -577,6 +706,7 @@ def shop():
 
     products = db.execute(query, params).fetchall()
     products = attach_rating_to_products(db, products)
+    products = attach_shop_price_to_products(db, products)
 
     # 로그인한 사용자의 위시리스트 상품 id 목록
     wished_product_ids = []
@@ -694,6 +824,22 @@ def product_detail(product_id):
 
     if product is None:
         return redirect("/shop")
+    
+    is_wished = False
+
+    if session.get("username"):
+        wished_row = db.execute("""
+            SELECT id
+            FROM wishlists
+            WHERE username = ?
+            AND product_id = ?
+            LIMIT 1
+        """, (
+            session.get("username"),
+            product_id
+        )).fetchone()
+
+        is_wished = wished_row is not None
 
     # 리뷰 목록
     reviews = db.execute("""
@@ -792,6 +938,7 @@ def product_detail(product_id):
         default_price = safe_int(product["price"], 0) if "price" in product.keys() else 0
 
     option_groups = get_product_option_groups(db, product_id)
+    simple_option_groups = get_product_simple_option_groups(db, product_id)
 
     back_url = request.args.get("back", "/shop")
 
@@ -816,6 +963,9 @@ def product_detail(product_id):
         default_price=default_price,
         option_groups=option_groups,
         option_groups_json=json.dumps(option_groups, ensure_ascii=False),
+        simple_option_groups=simple_option_groups,
+        simple_option_groups_json=json.dumps(simple_option_groups, ensure_ascii=False),
+        is_wished=is_wished,
     )
 
 STORY_CATEGORIES = {
@@ -894,11 +1044,93 @@ STORY_CATEGORIES = {
 
 @product_bp.route("/story")
 def story():
+    db = get_db()
+
+    media_rows = db.execute("""
+        SELECT *
+        FROM home_media
+        WHERE slot_key IN (
+            'home_yeon_01',
+            'home_yeon_02',
+            'home_yeon_03',
+            'home_yeon_04',
+            'home_yeon_05',
+            'home_yeon_06',
+            'home_yeon_07',
+            'home_yeon_08'
+        )
+          AND is_active = 1
+        ORDER BY sort_order ASC, id ASC
+    """).fetchall()
+
+    yeon_media = {
+        row["slot_key"]: row
+        for row in media_rows
+    }
+
+    story_cards = [
+        {
+            "number": "01",
+            "title": "결 ; 연",
+            "description": "서로 다른 시간이 하나의 인연으로 묶이는 순간",
+            "slug": "yeon",
+            "media": yeon_media.get("home_yeon_01")
+        },
+        {
+            "number": "02",
+            "title": "숨 ; 결",
+            "description": "보이지 않지만 분명히 남아 있는 숨결",
+            "slug": "sum",
+            "media": yeon_media.get("home_yeon_02")
+        },
+        {
+            "number": "03",
+            "title": "고 ; 결",
+            "description": "지나온 시간 위에 남겨진 깊은 흔적",
+            "slug": "go",
+            "media": yeon_media.get("home_yeon_03")
+        },
+        {
+            "number": "04",
+            "title": "간 ; 결",
+            "description": "사이와 사이에 머무는 마음",
+            "slug": "gan",
+            "media": yeon_media.get("home_yeon_04")
+        },
+        {
+            "number": "05",
+            "title": "빛 ; 결",
+            "description": "어둠 속에서도 사라지지 않는 작은 빛",
+            "slug": "bit",
+            "media": yeon_media.get("home_yeon_05")
+        },
+        {
+            "number": "06",
+            "title": "흔 ; 결",
+            "description": "시간이 지나도 사라지지 않고 남은 흔적",
+            "slug": "hon",
+            "media": yeon_media.get("home_yeon_06")
+        },
+        {
+            "number": "07",
+            "title": "결 ; 속",
+            "description": "겉보다 깊은 곳에 간직된 이야기",
+            "slug": "sok",
+            "media": yeon_media.get("home_yeon_07")
+        },
+        {
+            "number": "08",
+            "title": "결 ; 채",
+            "description": "각자의 색이 하나의 기억으로 남는 순간",
+            "slug": "chae",
+            "media": yeon_media.get("home_yeon_08")
+        }
+    ]
+
     return render_template(
         "shop/story.html",
-        stories=STORY_CATEGORIES
+        story_cards=story_cards
     )
-
 
 @product_bp.route("/story/<slug>")
 def story_detail(slug):

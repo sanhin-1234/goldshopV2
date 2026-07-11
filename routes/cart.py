@@ -304,15 +304,32 @@ def get_option_extra_price(cur, selected_details, material):
 
     return total
 
+def get_simple_option_extra_price(selected_simple_options):
+    if not isinstance(selected_simple_options, dict):
+        return 0
 
-def make_option_text(material, selected_details, legacy_options=None):
+    total = 0
+
+    for option in selected_simple_options.values():
+        if not isinstance(option, dict):
+            continue
+
+        total += safe_int(
+            option.get("addPrice") or option.get("add_price"),
+            0
+        )
+
+    return total
+
+def make_option_text(material, selected_price_options, selected_simple_options=None, legacy_options=None):
     parts = []
 
     if material:
         parts.append(f"소재: {material}")
 
-    if isinstance(selected_details, dict):
-        for option in selected_details.values():
+    # 호수 / 길이 같은 가격 옵션
+    if isinstance(selected_price_options, dict):
+        for option in selected_price_options.values():
             if not isinstance(option, dict):
                 continue
 
@@ -320,6 +337,7 @@ def make_option_text(material, selected_details, legacy_options=None):
                 option.get("sectionTitle")
                 or option.get("section_title")
                 or option.get("title")
+                or option.get("sectionTitle")
                 or "옵션"
             )
 
@@ -327,6 +345,28 @@ def make_option_text(material, selected_details, legacy_options=None):
 
             if label:
                 parts.append(f"{section_title}: {label}")
+
+    # 선물포장 / 각인 / 메시지카드 같은 단순 옵션
+    if isinstance(selected_simple_options, dict):
+        for option in selected_simple_options.values():
+            if not isinstance(option, dict):
+                continue
+
+            group_title = (
+                option.get("groupTitle")
+                or option.get("group_title")
+                or option.get("title")
+                or "옵션"
+            )
+
+            label = (
+                option.get("label")
+                or option.get("value")
+                or ""
+            )
+
+            if label:
+                parts.append(f"{group_title}: {label}")
 
     # 예전 장바구니 옵션 구조도 혹시 들어오면 대응
     if legacy_options and isinstance(legacy_options, dict):
@@ -376,10 +416,19 @@ def add_to_cart(id):
 
     material = str(material).upper()
 
-    selected_details = options.get("details", {})
+    selected_price_options = (
+        options.get("price_options")
+        or options.get("details")
+        or {}
+    )
 
-    if not isinstance(selected_details, dict):
-        selected_details = {}
+    if not isinstance(selected_price_options, dict):
+        selected_price_options = {}
+
+    selected_simple_options = options.get("simple_options", {})
+
+    if not isinstance(selected_simple_options, dict):
+        selected_simple_options = {}
 
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
@@ -396,31 +445,66 @@ def add_to_cart(id):
             "message": "상품 없음"
         })
 
-    base_price = get_product_base_price(
-        cur,
-        id,
-        material,
-        product["price"]
+    frontend_unit_price = safe_int(data.get("unit_price"), 0)
+
+    price_option_extra_price = 0
+
+    if isinstance(selected_price_options, dict):
+        for option in selected_price_options.values():
+            if not isinstance(option, dict):
+                continue
+
+            if material == "18K":
+                price_option_extra_price += safe_int(
+                    option.get("price18k")
+                    or option.get("price_18k"),
+                    0
+                )
+            else:
+                price_option_extra_price += safe_int(
+                    option.get("price14k")
+                    or option.get("price_14k"),
+                    0
+                )
+
+    simple_option_extra_price = get_simple_option_extra_price(
+        selected_simple_options
     )
 
-    option_extra_price = get_option_extra_price(
-        cur,
-        selected_details,
-        material
-    )
+    option_extra_price = price_option_extra_price + simple_option_extra_price
 
-    unit_price = base_price + option_extra_price
+    if frontend_unit_price > 0:
+        unit_price = frontend_unit_price
+        base_price = max(unit_price - option_extra_price, 0)
+    else:
+        base_price = get_product_base_price(
+            cur,
+            id,
+            material,
+            product["price"]
+        )
+
+        db_price_option_extra_price = get_option_extra_price(
+            cur,
+            selected_price_options,
+            material
+        )
+
+        option_extra_price = db_price_option_extra_price + simple_option_extra_price
+        unit_price = base_price + option_extra_price
 
     conn.close()
 
     normalized_options = {
         "material": material,
-        "details": selected_details
+        "price_options": selected_price_options,
+        "simple_options": selected_simple_options
     }
 
     option_text = make_option_text(
         material,
-        selected_details,
+        selected_price_options,
+        selected_simple_options,
         legacy_options=options
     )
 
@@ -500,10 +584,16 @@ def make_buy_now_option_text(material, options):
         parts.append("기본 옵션: 상품 설명 기준")
         return " / ".join(parts)
 
-    details = options.get("details", {})
+    price_options = (
+        options.get("price_options")
+        or options.get("details")
+        or {}
+    )
 
-    if isinstance(details, dict):
-        for option in details.values():
+    simple_options = options.get("simple_options", {})
+
+    if isinstance(price_options, dict):
+        for option in price_options.values():
             if not isinstance(option, dict):
                 continue
 
@@ -518,6 +608,27 @@ def make_buy_now_option_text(material, options):
 
             if label:
                 parts.append(f"{section_title}: {label}")
+
+    if isinstance(simple_options, dict):
+        for option in simple_options.values():
+            if not isinstance(option, dict):
+                continue
+
+            group_title = (
+                option.get("groupTitle")
+                or option.get("group_title")
+                or option.get("title")
+                or "옵션"
+            )
+
+            label = (
+                option.get("label")
+                or option.get("value")
+                or ""
+            )
+
+            if label:
+                parts.append(f"{group_title}: {label}")
 
     if len(parts) <= 1:
         parts.append("기본 옵션: 상품 설명 기준")
@@ -564,9 +675,24 @@ def buy_now(id):
         or options.get("default_option")
     )
 
+    selected_price_options = (
+        options.get("price_options")
+        or options.get("details")
+        or {}
+    )
+
+    if not isinstance(selected_price_options, dict):
+        selected_price_options = {}
+
+    selected_simple_options = options.get("simple_options", {})
+
+    if not isinstance(selected_simple_options, dict):
+        selected_simple_options = {}
+
     normalized_options = {
         "material": material,
-        "details": options.get("details", {}),
+        "price_options": selected_price_options,
+        "simple_options": selected_simple_options,
         "default_option": default_option
     }
 

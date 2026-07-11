@@ -266,9 +266,31 @@
                             {{ p['name'] }}
                         </h2>
 
-                        <p class="product-price">
-                            {{ "{:,}".format(p['price']) }}원
-                        </p>
+                        <div class="product-card-price-area">
+
+                            {% set original_price = p['shop_original_price']|default(p['price'])|int %}
+                            {% set sale_price = p['shop_sale_price']|default(p['price'])|int %}
+                            {% set discount_percent = p['shop_discount_percent']|default(0)|int %}
+
+                            {% if discount_percent > 0 and original_price > sale_price %}
+                                <div class="product-card-original-row">
+
+                                    <span class="product-card-original-price">
+                                        {{ "{:,}".format(original_price) }}원
+                                    </span>
+
+                                    <span class="product-card-discount-rate">
+                                        {{ discount_percent }}% 할인
+                                    </span>
+
+                                </div>
+                            {% endif %}
+
+                            <p class="product-price">
+                                {{ "{:,}".format(sale_price) }}원
+                            </p>
+
+                        </div>
 
                         <div class="product-card-rating">
                             <span class="product-card-stars">

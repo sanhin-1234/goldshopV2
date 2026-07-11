@@ -139,11 +139,16 @@
                             수정
                         </a>
 
-                        <form method="POST"
-                              action="/admin/delete-product/{{ product['id'] }}"
-                              onsubmit="return confirm('정말 이 상품을 삭제하시겠습니까?');">
-
-                            <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                        <form
+                            method="POST"
+                            action="{{ url_for('admin.delete_product', id=product['id']) }}"
+                            onsubmit="return confirm('정말 이 상품을 삭제하시겠습니까?');"
+                        >
+                            <input
+                                type="hidden"
+                                name="csrf_token"
+                                value="{{ csrf_token() }}"
+                            >
 
                             <button type="submit" class="admin-delete-btn">
                                 삭제

@@ -49,19 +49,32 @@
 
                     <article class="cart-item" data-price="{{ item['price'] }}">
 
-                        <div class="cart-image-area">
-                            {% if item['image'] and item['image']|length > 0 %}
-                                <img src="/uploads/{{ item['image'] }}" alt="{{ item['name'] }}">
-                            {% else %}
-                                <div class="cart-no-image">
-                                    이미지 없음
-                                </div>
-                            {% endif %}
-                        </div>
+                        <a
+                            href="{{ url_for('product.product_detail', product_id=item['id']) }}"
+                            class="cart-image-link"
+                            aria-label="{{ item['name'] }} 상품 상세페이지로 이동"
+                        >
+                            <div class="cart-image-area">
+                                {% if item['image'] and item['image']|length > 0 %}
+                                    <img src="/uploads/{{ item['image'] }}" alt="{{ item['name'] }}">
+                                {% else %}
+                                    <div class="cart-no-image">
+                                        이미지 없음
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </a>
 
                         <div class="cart-info-area">
 
-                            <h2>{{ item['name'] }}</h2>
+                            <h2>
+                                <a
+                                    href="{{ url_for('product.product_detail', product_id=item['id']) }}"
+                                    class="cart-product-name-link"
+                                >
+                                    {{ item['name'] }}
+                                </a>
+                            </h2>
 
                             {% if item.get("option_text") %}
                                 <p class="cart-option-text">

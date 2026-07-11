@@ -55,9 +55,9 @@ def inject_home_media():
 
 # secret key
 
-app.secret_key = os.getenv("SECRET_KEY")
+app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "dev-secret-key-change-later")
 
-if not app.secret_key:
+if not app.config["SECRET_KEY"]:
     raise RuntimeError("SECRET_KEY가 설정되지 않았습니다. .env 파일을 확인하세요.")
 
 app.config["SESSION_COOKIE_HTTPONLY"] = True

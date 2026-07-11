@@ -112,8 +112,7 @@ h6,
 ================================ */
 
 /* 일반 페이지 헤더 */
-body:not(.home-page):not(.new-page):not(.season-page):not(.best-page-body):not(.story-page-body):not(.yeon-story-body):not(.brand-story-page-body) .site-header {
-    background: #f7f7f7 !important;
+body:not(.home-page):not(.new-page):not(.season-page):not(.best-page-body):not(.story-page-body):not(.story-detail-body):not(.yeon-story-body):not(.brand-story-page-body) .site-header {
     background-color: #f7f7f7 !important;
     background-image: none !important;
 
@@ -130,6 +129,7 @@ body.new-page .site-header,
 body.season-page .site-header,
 body.best-page-body .site-header,
 body.story-page-body .site-header,
+body.story-detail-body .site-header,
 body.yeon-story-body .site-header,
 body.brand-story-page-body .site-header {
     background: transparent !important;
@@ -702,7 +702,7 @@ img {
         background: var(--mono-bg) !important;
     }
 
-    body:not(.home-page):not(.new-page):not(.season-page):not(.best-page-body):not(.story-page-body):not(.yeon-story-body):not(.brand-story-page-body) .site-header {
+    body:not(.home-page):not(.new-page):not(.season-page):not(.best-page-body):not(.story-page-body):not(.story-detail-body):not(.yeon-story-body):not(.brand-story-page-body) .site-header {
         background: #f7f7f7 !important;
         background-color: #f7f7f7 !important;
         border-bottom: 1px solid var(--mono-line-soft) !important;
@@ -713,6 +713,7 @@ img {
     body.season-page .site-header,
     body.best-page-body .site-header,
     body.story-page-body .site-header,
+    body.story-detail-body .site-header,
     body.yeon-story-body .site-header,
     body.brand-story-page-body .site-header {
         background: transparent !important;
@@ -864,4 +865,35 @@ body.home-page main,
 .home-page .main-slider-dot.is-active,
 .home-page .yeon-dot.is-active {
     background: #111111 !important;
+}
+
+/* STORY DETAIL FINAL HEADER FIX */
+
+body.story-detail-body {
+    padding-top: 0 !important;
+}
+
+body.story-detail-body:not(.mega-open) .site-header {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+
+    border: none !important;
+    box-shadow: none !important;
+
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+body.story-detail-body:not(.mega-open) .menu-btn,
+body.story-detail-body:not(.mega-open) .brand-logo,
+body.story-detail-body:not(.mega-open) .header-link,
+body.story-detail-body:not(.mega-open) .cart-count {
+    color: #111 !important;
+}
+
+body.story-detail-body.mega-open .site-header {
+    background: #f7f7f7 !important;
+    background-color: #f7f7f7 !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
 }
